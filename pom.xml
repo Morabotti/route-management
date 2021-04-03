@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>fi.jubic</groupId>
+        <artifactId>snoozy-starter-jooq</artifactId>
+        <version>0.6.8</version>
+    </parent>
+
+    <groupId>fi.morabotti</groupId>
+    <artifactId>route-management</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <repositories>
+        <repository>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>fi.jubic</groupId>
+            <artifactId>easyvalue</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.jubic</groupId>
+            <artifactId>easyutils</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.jubic</groupId>
+            <artifactId>easymapper-jooq</artifactId>
+            <version>0.4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.jubic</groupId>
+            <artifactId>easymapper-generator-jooq</artifactId>
+            <version>0.4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.jubic</groupId>
+            <artifactId>easymapper-generator-core</artifactId>
+            <version>0.4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.jubic</groupId>
+            <artifactId>easymapper-core</artifactId>
+            <version>0.4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.jubic</groupId>
+            <artifactId>easyschedule-inmemory</artifactId>
+            <version>0.1.8</version>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <snoozy.mainClass>fi.morabotti.routemanagement.RouteApplication</snoozy.mainClass>
+        <snoozy.jooq.jdbcUrl>jdbc:mysql://localhost:3306/route-management</snoozy.jooq.jdbcUrl>
+        <snoozy.jooq.jdbcDriver>com.mysql.cj.jdbc.Driver</snoozy.jooq.jdbcDriver>
+        <snoozy.jooq.user>test</snoozy.jooq.user>
+        <snoozy.jooq.password>test</snoozy.jooq.password>
+        <snoozy.jooq.databaseMetaName>org.jooq.meta.mysql.MySQLDatabase</snoozy.jooq.databaseMetaName>
+        <snoozy.jooq.includes>.*</snoozy.jooq.includes>
+        <snoozy.jooq.excludes>
+            DATABASECHANGELOG
+            | DATABASECHANGELOGLOCK
+        </snoozy.jooq.excludes>
+        <snoozy.jooq.inputSchema>route-management</snoozy.jooq.inputSchema>
+        <snoozy.jooq.targetPackage>fi.morabotti.routemanagement.db</snoozy.jooq.targetPackage>
+    </properties>
+
+    <build>
+      <plugins>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <configuration>
+                  <source>11</source>
+                  <target>11</target>
+              </configuration>
+          </plugin>
+      </plugins>
+  </build>
+</project>

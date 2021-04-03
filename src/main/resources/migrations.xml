@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="Jesse Batman">
+        <createTable tableName="person">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="deleted_at" type="datetime" />
+        </createTable>
+        <createTable tableName="location">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="address" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="zip" type="varchar(10)">
+                <constraints nullable="false" />
+            </column>
+            <column name="city" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="latitude" type="decimal(10, 8)">
+                <constraints nullable="false" />
+            </column>
+            <column name="longitude" type="decimal(11, 8)">
+                <constraints nullable="false" />
+            </column>
+            <column name="deleted_at" type="datetime" />
+        </createTable>
+        <createTable tableName="primary_location">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="person_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_primary_location_person"
+                        references="person(id)" />
+            </column>
+            <column name="location_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_primary_location_location"
+                        references="location(id)" />
+            </column>
+        </createTable>
+        <createTable tableName="vehicle">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="license_number" type="varchar(16)">
+                <constraints nullable="false" />
+            </column>
+            <column name="deleted_at" type="datetime" />
+        </createTable>
+        <createTable tableName="route">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="start_time" type="datetime" />
+            <column name="vehicle_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_route_vehicle"
+                        references="vehicle(id)" />
+            </column>
+            <column name="destination_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_route_location"
+                        references="location(id)" />
+            </column>
+            <column name="deleted_at" type="datetime" />
+        </createTable>
+        <createTable tableName="step">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="order" type="int" />
+            <column name="route_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_step_route"
+                        references="route(id)" />
+            </column>
+            <column name="location_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_step_location"
+                        references="location(id)" />
+            </column>
+            <column name="deleted_at" type="datetime" />
+        </createTable>
+        <createTable tableName="step_item">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="person_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_step_item_person"
+                        references="person(id)" />
+            </column>
+            <column name="step_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_step_item_step"
+                        references="step(id)" />
+            </column>
+            <column name="deleted_at" type="datetime" />
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
