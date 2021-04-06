@@ -14,10 +14,12 @@ public class ResourceModule {
     @Singleton
     @Resources
     static Set<Object> provideResources(
-            AssetResource assetResource
+            AssetResource assetResource,
+            LocationResource locationResource
     ) {
         return Stream.of(
-                assetResource
+                assetResource,
+                locationResource
         )
                 .collect(Collectors.toSet());
     }

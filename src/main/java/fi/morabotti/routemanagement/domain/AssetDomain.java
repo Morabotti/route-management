@@ -1,7 +1,7 @@
 package fi.morabotti.routemanagement.domain;
 
 import fi.morabotti.routemanagement.model.Person;
-import fi.morabotti.routemanagement.view.CreatePersonRequest;
+import fi.morabotti.routemanagement.view.PersonView;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -13,10 +13,10 @@ public class AssetDomain {
     public AssetDomain() {
     }
 
-    public Person createPerson(CreatePersonRequest personRequest) {
+    public Person createPerson(PersonView personView) {
         return Person.builder()
-                .setId(0L)
-                .setName(personRequest.getName())
+                .setId(personView.getId())
+                .setName(personView.getName())
                 .build();
     }
 }

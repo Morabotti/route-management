@@ -1,0 +1,67 @@
+package fi.morabotti.routemanagement.resources;
+
+import fi.morabotti.routemanagement.controller.LocationController;
+import fi.morabotti.routemanagement.model.Location;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.List;
+
+@Path("/location")
+@Singleton
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class LocationResource {
+    private final LocationController locationController;
+
+    @Inject
+    public LocationResource(LocationController locationController) {
+        this.locationController = locationController;
+    }
+
+    @GET
+    public List<Location> getLocations() {
+        return locationController.getLocations();
+    }
+
+    @POST
+    public Location createLocation(Location location) {
+        return locationController.createLocation(location);
+    }
+
+    @GET
+    @Path("/{locationId}")
+    public Location getLocationById(
+            @PathParam("locationId") Long id
+    ) {
+        return locationController.getLocationById(id);
+    }
+
+    @PUT
+    @Path("/{locationId}")
+    public Location editLocation(
+            @PathParam("locationId") Long id,
+            Location location
+    ) {
+        return locationController.updateLocation(id, location);
+    }
+
+    @DELETE
+    @Path("/{locationId}")
+    public Response deleteLocation(
+            @PathParam("locationId") Long id
+    ) {
+        locationController.deleteLocation(id);
+        return Response.ok().build();
+    }
+}
