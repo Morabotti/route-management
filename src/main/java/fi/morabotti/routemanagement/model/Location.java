@@ -9,6 +9,8 @@ import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
 
 import static fi.morabotti.routemanagement.db.tables.Location.LOCATION;
 
@@ -28,6 +30,8 @@ public abstract class Location {
 
     public abstract BigDecimal getLongitude();
 
+    public abstract List<PrimaryLocation> getPrimaryPersons();
+
     @Nullable
     public abstract Instant getDeletedAt();
 
@@ -38,6 +42,10 @@ public abstract class Location {
     }
 
     public static class Builder extends EasyValue_Location.Builder {
+        public Builder defaults(Builder builder) {
+            return builder
+                    .setPrimaryPersons(Collections.emptyList());
+        }
     }
 
     public static final LocationRecordMapper<LocationRecord> mapper

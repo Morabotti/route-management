@@ -10,6 +10,8 @@ import javax.annotation.Nullable;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
 
 import static fi.morabotti.routemanagement.db.tables.Step.STEP;
 
@@ -28,6 +30,8 @@ public abstract class Step {
     @Nullable
     public abstract Instant getDeletedAt();
 
+    public abstract List<StepItem> getStepItems();
+
     public abstract Location getLocation();
 
     public abstract Builder toBuilder();
@@ -37,6 +41,10 @@ public abstract class Step {
     }
 
     public static class Builder extends EasyValue_Step.Builder {
+        public Builder defaults(Builder builder) {
+            return builder
+                    .setStepItems(Collections.emptyList());
+        }
     }
 
     public static final StepRecordMapper<StepRecord> mapper

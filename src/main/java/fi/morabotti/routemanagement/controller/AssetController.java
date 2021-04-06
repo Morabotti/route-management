@@ -2,8 +2,10 @@ package fi.morabotti.routemanagement.controller;
 
 import fi.morabotti.routemanagement.dao.PersonDao;
 import fi.morabotti.routemanagement.dao.VehicleDao;
+import fi.morabotti.routemanagement.domain.AssetDomain;
 import fi.morabotti.routemanagement.model.Person;
 import fi.morabotti.routemanagement.model.Vehicle;
+import fi.morabotti.routemanagement.view.CreatePersonRequest;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -17,13 +19,17 @@ public class AssetController {
     private final PersonDao personDao;
     private final VehicleDao vehicleDao;
 
+    private final AssetDomain assetDomain;
+
     @Inject
     public AssetController(
             PersonDao personDao,
-            VehicleDao vehicleDao
+            VehicleDao vehicleDao,
+            AssetDomain assetDomain
     ) {
         this.personDao = personDao;
         this.vehicleDao = vehicleDao;
+        this.assetDomain = assetDomain;
     }
 
     public List<Vehicle> getVehicles() {
@@ -63,8 +69,8 @@ public class AssetController {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Person createPerson(Person person) {
-        return personDao.create(person)
+    public Person createPerson(CreatePersonRequest personRequest) {
+        return personDao.create(assetDomain.createPerson(personRequest))
                 .flatMap(personDao::getById)
                 .get()
                 .orElseThrow(BadRequestException::new);

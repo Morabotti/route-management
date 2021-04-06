@@ -3,6 +3,7 @@ package fi.morabotti.routemanagement.resources;
 import fi.morabotti.routemanagement.controller.AssetController;
 import fi.morabotti.routemanagement.model.Person;
 import fi.morabotti.routemanagement.model.Vehicle;
+import fi.morabotti.routemanagement.view.CreatePersonRequest;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -76,8 +77,8 @@ public class AssetResource {
 
     @POST
     @Path("/person")
-    public Person createPerson(Person person) {
-        return assetController.createPerson(person);
+    public Person createPerson(CreatePersonRequest personRequest) {
+        return assetController.createPerson(personRequest);
     }
 
     @GET

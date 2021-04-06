@@ -3,9 +3,14 @@ package fi.morabotti.routemanagement.dao;
 import fi.jubic.easyutils.transactional.TransactionProvider;
 import fi.jubic.easyutils.transactional.Transactional;
 import fi.morabotti.routemanagement.configuration.ApplicationConfiguration;
+import fi.morabotti.routemanagement.db.Keys;
+import fi.morabotti.routemanagement.model.Location;
 import fi.morabotti.routemanagement.model.Person;
+import fi.morabotti.routemanagement.model.PrimaryLocation;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import javax.inject.Inject;
@@ -15,7 +20,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+import static fi.morabotti.routemanagement.db.tables.Location.LOCATION;
 import static fi.morabotti.routemanagement.db.tables.Person.PERSON;
+import static fi.morabotti.routemanagement.db.tables.PrimaryLocation.PRIMARY_LOCATION;
 
 @Singleton
 public class PersonDao {
@@ -32,24 +39,33 @@ public class PersonDao {
     }
 
     public List<Person> fetchPersons() {
-        return DSL.using(jooqConfiguration)
-                .select(PERSON.asterisk())
-                .from(PERSON)
+        return selectPerson(DSL.using(jooqConfiguration))
                 .where(PERSON.DELETED_AT.isNull())
                 .fetch()
                 .stream()
-                .collect(Person.mapper);
+                .collect(
+                        Person.mapper.collectingManyWithPrimaryLocations(
+                                PrimaryLocation.mapper.withLocation(
+                                        Location.mapper
+                                )
+                        )
+                );
     }
 
     public Transactional<Optional<Person>, DSLContext> getById(Long id) {
         return Transactional.of(
-                context -> context
-                        .select(PERSON.asterisk())
-                        .from(PERSON)
+                context -> selectPerson(context)
                         .where(PERSON.ID.eq(id))
                         .and(PERSON.DELETED_AT.isNull())
-                        .fetchOptional()
-                        .flatMap(Person.mapper::mapOptional),
+                        .fetch()
+                        .stream()
+                        .collect(
+                                Person.mapper.collectingWithPrimaryLocations(
+                                        PrimaryLocation.mapper.withLocation(
+                                                Location.mapper
+                                        )
+                                )
+                        ),
                 transactionProvider
         );
     }
@@ -95,5 +111,16 @@ public class PersonDao {
                         .execute(),
                 transactionProvider
         ).flatMap(ignored -> getById(person.getId()));
+    }
+
+    private SelectJoinStep<Record> selectPerson(DSLContext context) {
+        return context.select(
+                PERSON.asterisk(),
+                PRIMARY_LOCATION.asterisk(),
+                LOCATION.asterisk()
+        )
+                .from(PERSON)
+                .leftJoin(PRIMARY_LOCATION).onKey(Keys.FK_PRIMARY_LOCATION_PERSON)
+                .leftJoin(LOCATION).onKey(Keys.FK_PRIMARY_LOCATION_LOCATION);
     }
 }

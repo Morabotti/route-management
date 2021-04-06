@@ -8,6 +8,8 @@ import fi.morabotti.routemanagement.db.tables.records.PersonRecord;
 import javax.annotation.Nullable;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
 
 import static fi.morabotti.routemanagement.db.tables.Person.PERSON;
 
@@ -22,6 +24,8 @@ public abstract class Person {
     @Nullable
     public abstract Instant getDeletedAt();
 
+    public abstract List<PrimaryLocation> getPrimaryLocations();
+
     public abstract Builder toBuilder();
 
     public static Builder builder() {
@@ -29,6 +33,10 @@ public abstract class Person {
     }
 
     public static class Builder extends EasyValue_Person.Builder {
+        public Builder defaults(Builder builder) {
+            return builder
+                    .setPrimaryLocations(Collections.emptyList());
+        }
     }
 
     public static final PersonRecordMapper<PersonRecord> mapper
