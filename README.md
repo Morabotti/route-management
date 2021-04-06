@@ -37,8 +37,7 @@ Creating and managing routes. Primarly focuses on human transport.
 Environment variables can be seen in `.env.template` file.
 Renaming `.env.template` to `.env` applies env variables. `.env.template` contains default development env variables.
 
-* `JOOQ_DIALECT` defaults: `MYSQL`. If using MariaDB: `MARIADB`
-* `DBUNIT_RUN` defaults: `true`. This defines whether to run populate to db on run. Populate is based on `/src/main/resources/dataset.xml`
+* `DBUNIT_RUN` defaults: `false`. This defines whether to run populate to db on run. Populate is based on `/src/main/resources/dataset.xml`
 * `SERVER_PORT` defaults `8080`. Can be changed freely if port is not free.
 * `SERVER_HOST` defaults `127.0.0.1 (localhost)`. Optional. If planning to use localhost as host ip, this doesn't need to be set.
 

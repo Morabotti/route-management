@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Step extends TableImpl<StepRecord> {
 
-    private static final long serialVersionUID = -2025356814;
+    private static final long serialVersionUID = 207647218;
 
     /**
      * The reference instance of <code>step</code>
@@ -63,9 +63,9 @@ public class Step extends TableImpl<StepRecord> {
     public final TableField<StepRecord, Long> ID = createField("id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).identity(true), this, "");
 
     /**
-     * The column <code>step.order</code>.
+     * The column <code>step.priority</code>.
      */
-    public final TableField<StepRecord, Integer> ORDER = createField("order", org.jooq.impl.SQLDataType.INTEGER.defaultValue(org.jooq.impl.DSL.inline("NULL", org.jooq.impl.SQLDataType.INTEGER)), this, "");
+    public final TableField<StepRecord, Integer> PRIORITY = createField("priority", org.jooq.impl.SQLDataType.INTEGER.defaultValue(org.jooq.impl.DSL.inline("NULL", org.jooq.impl.SQLDataType.INTEGER)), this, "");
 
     /**
      * The column <code>step.route_id</code>.

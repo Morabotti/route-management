@@ -3,7 +3,7 @@ package fi.morabotti.routemanagement.resources;
 import fi.morabotti.routemanagement.controller.AssetController;
 import fi.morabotti.routemanagement.model.Person;
 import fi.morabotti.routemanagement.model.Vehicle;
-import fi.morabotti.routemanagement.view.PersonView;
+import fi.morabotti.routemanagement.view.CreatePersonRequest;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -71,29 +71,29 @@ public class AssetResource {
 
     @GET
     @Path("/person")
-    public List<PersonView> getPersons() {
+    public List<Person> getPersons() {
         return assetController.getPersons();
     }
 
     @POST
     @Path("/person")
-    public PersonView createPerson(PersonView personView) {
-        return assetController.createPerson(personView);
+    public Person createPerson(CreatePersonRequest request) {
+        return assetController.createPerson(request);
     }
 
     @GET
     @Path("/person/{personId}")
-    public PersonView getPersonById(@PathParam("personId") Long id) {
+    public Person getPersonById(@PathParam("personId") Long id) {
         return assetController.getPersonById(id);
     }
 
     @PUT
     @Path("/person/{personId}")
-    public PersonView editPerson(
+    public Person editPerson(
             @PathParam("personId") Long id,
-            PersonView personView
+            Person person
     ) {
-        return assetController.updatePerson(id, personView);
+        return assetController.updatePerson(id, person);
     }
 
     @DELETE

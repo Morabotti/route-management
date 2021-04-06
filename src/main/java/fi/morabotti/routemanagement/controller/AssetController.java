@@ -5,8 +5,9 @@ import fi.morabotti.routemanagement.dao.PrimaryLocationDao;
 import fi.morabotti.routemanagement.dao.VehicleDao;
 import fi.morabotti.routemanagement.domain.AssetDomain;
 import fi.morabotti.routemanagement.model.Location;
+import fi.morabotti.routemanagement.model.Person;
 import fi.morabotti.routemanagement.model.Vehicle;
-import fi.morabotti.routemanagement.view.PersonView;
+import fi.morabotti.routemanagement.view.CreatePersonRequest;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -64,35 +65,28 @@ public class AssetController {
                 .orElseThrow(InternalServerErrorException::new);
     }
 
-    public List<PersonView> getPersons() {
-        return personDao.fetchPersons()
-                .stream()
-                .map(PersonView::of)
-                .collect(Collectors.toList());
+    public List<Person> getPersons() {
+        return personDao.fetchPersons();
     }
 
-    public PersonView getPersonById(Long id) {
-        return PersonView.of(
-                personDao.getById(id)
-                        .get()
-                        .orElseThrow(NotFoundException::new)
-        );
+    public Person getPersonById(Long id) {
+        return personDao.getById(id)
+                .get()
+                .orElseThrow(NotFoundException::new);
     }
 
-    public PersonView createPerson(PersonView personView) {
-        return PersonView.of(
-                personDao.create(assetDomain.createPerson(personView))
-                        .peek(ignored -> primaryLocationDao.batchCreate(
-                                personView.getPrimaryLocations()
-                                        .stream()
-                                        .map(Location::getId)
-                                        .collect(Collectors.toList()),
-                                ignored
-                        ))
-                        .flatMap(personDao::getById)
-                        .get()
-                        .orElseThrow(BadRequestException::new)
-        );
+    public Person createPerson(CreatePersonRequest request) {
+        return personDao.create(assetDomain.createPerson(request))
+                .peek(personId -> primaryLocationDao.batchCreate(
+                        request.getPrimaryLocations()
+                                .stream()
+                                .map(Location::getId)
+                                .collect(Collectors.toList()),
+                        personId
+                ))
+                .flatMap(personDao::getById)
+                .get()
+                .orElseThrow(BadRequestException::new);
     }
 
     public Void deletePerson(Long id) {
@@ -101,11 +95,9 @@ public class AssetController {
                 .get();
     }
 
-    public PersonView updatePerson(Long id, PersonView personView) {
-        return PersonView.of(
-                personDao.update(id, assetDomain.createPerson(personView))
+    public Person updatePerson(Long id, Person person) {
+        return personDao.update(id, person)
                         .get()
-                        .orElseThrow(InternalServerErrorException::new)
-        );
+                        .orElseThrow(InternalServerErrorException::new);
     }
 }

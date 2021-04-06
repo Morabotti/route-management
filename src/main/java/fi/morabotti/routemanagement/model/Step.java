@@ -21,7 +21,7 @@ public abstract class Step {
     @EasyId
     public abstract Long getId();
 
-    public abstract Integer getOrder();
+    public abstract Integer getPriority();
 
     @Nullable
     @JsonIgnore
@@ -50,7 +50,7 @@ public abstract class Step {
     public static final StepRecordMapper<StepRecord> mapper
             = StepRecordMapper.builder(STEP)
             .setIdAccessor(STEP.ID)
-            .setOrderAccessor(STEP.ORDER)
+            .setPriorityAccessor(STEP.PRIORITY)
             .setRouteAccessor(STEP.ROUTE_ID, Route::getId)
             .setLocationAccessor(STEP.LOCATION_ID, Location::getId)
             .setDeletedAtAccessor(

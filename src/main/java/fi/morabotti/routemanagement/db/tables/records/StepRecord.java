@@ -29,7 +29,7 @@ import org.jooq.impl.TableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class StepRecord extends TableRecordImpl<StepRecord> implements Record5<Long, Integer, Long, Long, Timestamp> {
 
-    private static final long serialVersionUID = 628963741;
+    private static final long serialVersionUID = -128623657;
 
     /**
      * Setter for <code>step.id</code>.
@@ -46,16 +46,16 @@ public class StepRecord extends TableRecordImpl<StepRecord> implements Record5<L
     }
 
     /**
-     * Setter for <code>step.order</code>.
+     * Setter for <code>step.priority</code>.
      */
-    public void setOrder(Integer value) {
+    public void setPriority(Integer value) {
         set(1, value);
     }
 
     /**
-     * Getter for <code>step.order</code>.
+     * Getter for <code>step.priority</code>.
      */
-    public Integer getOrder() {
+    public Integer getPriority() {
         return (Integer) get(1);
     }
 
@@ -134,7 +134,7 @@ public class StepRecord extends TableRecordImpl<StepRecord> implements Record5<L
      */
     @Override
     public Field<Integer> field2() {
-        return Step.STEP.ORDER;
+        return Step.STEP.PRIORITY;
     }
 
     /**
@@ -174,7 +174,7 @@ public class StepRecord extends TableRecordImpl<StepRecord> implements Record5<L
      */
     @Override
     public Integer component2() {
-        return getOrder();
+        return getPriority();
     }
 
     /**
@@ -214,7 +214,7 @@ public class StepRecord extends TableRecordImpl<StepRecord> implements Record5<L
      */
     @Override
     public Integer value2() {
-        return getOrder();
+        return getPriority();
     }
 
     /**
@@ -255,7 +255,7 @@ public class StepRecord extends TableRecordImpl<StepRecord> implements Record5<L
      */
     @Override
     public StepRecord value2(Integer value) {
-        setOrder(value);
+        setPriority(value);
         return this;
     }
 
@@ -313,11 +313,11 @@ public class StepRecord extends TableRecordImpl<StepRecord> implements Record5<L
     /**
      * Create a detached, initialised StepRecord
      */
-    public StepRecord(Long id, Integer order, Long routeId, Long locationId, Timestamp deletedAt) {
+    public StepRecord(Long id, Integer priority, Long routeId, Long locationId, Timestamp deletedAt) {
         super(Step.STEP);
 
         set(0, id);
-        set(1, order);
+        set(1, priority);
         set(2, routeId);
         set(3, locationId);
         set(4, deletedAt);

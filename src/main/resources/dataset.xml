@@ -1,4 +1,43 @@
 <!DOCTYPE dataset SYSTEM "dataset.dtd">
 <dataset>
+  <person id="1" name="Test Person" />
+  <person id="2" name="Example Molly" />
 
+  <location
+    id="1"
+    address="teststreet 2"
+    zip="65200"
+    city="Vaasa"
+    latitude="63.1092301"
+    longitude="21.6019174"
+  />
+  <location
+    id="2"
+    address="teststreet 3"
+    zip="65200"
+    city="Vaasa"
+    latitude="63.2092301"
+    longitude="21.7019174"
+  />
+  <location
+    id="3"
+    address="teststreet 5"
+    zip="65200"
+    city="Vaasa"
+    latitude="63.3092301"
+    longitude="21.8019174"
+  />
+
+  <vehicle id="1" license_number="ABC-123" />
+
+  <primary_location id="1" person_id="1" location_id="1" />
+  <primary_location id="2" person_id="2" location_id="2" />
+
+  <route id="1" vehicle_id="1" destination_id="3" />
+
+  <step id="1" route_id="1" location_id="2" priority="1" />
+  <step id="2" route_id="1" location_id="1" priority="2" />
+
+  <step_item id="1" step_id="1" person_id="1" />
+  <step_item id="2" step_id="2" person_id="2" />
 </dataset>

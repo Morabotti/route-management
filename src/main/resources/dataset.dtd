@@ -1,1 +1,67 @@
-<!ELEMENT dataset ()>
+<!ELEMENT dataset (
+        person*,
+        location*,
+        primary_location*,
+        vehicle*,
+        step*,
+        route*,
+        step_item*
+)>
+
+<!ELEMENT person EMPTY>
+<!ATTLIST person
+        id CDATA #REQUIRED
+        name CDATA #REQUIRED
+        deleted_at CDATA #IMPLIED
+>
+
+<!ELEMENT location EMPTY>
+<!ATTLIST location
+        id CDATA #REQUIRED
+        address CDATA #REQUIRED
+        zip CDATA #REQUIRED
+        city CDATA #REQUIRED
+        latitude CDATA #REQUIRED
+        longitude CDATA #REQUIRED
+        deleted_at CDATA #IMPLIED
+>
+
+<!ELEMENT primary_location EMPTY>
+<!ATTLIST primary_location
+        id CDATA #REQUIRED
+        person_id CDATA #REQUIRED
+        location_id CDATA #REQUIRED
+>
+
+<!ELEMENT vehicle EMPTY>
+<!ATTLIST vehicle
+        id CDATA #REQUIRED
+        license_number CDATA #REQUIRED
+        deleted_at CDATA #IMPLIED
+>
+
+<!ELEMENT route EMPTY>
+<!ATTLIST route
+        id CDATA #REQUIRED
+        vehicle_id CDATA #REQUIRED
+        destination_id CDATA #REQUIRED
+        start_time CDATA #IMPLIED
+        deleted_at CDATA #IMPLIED
+>
+
+<!ELEMENT step EMPTY>
+<!ATTLIST step
+        id CDATA #REQUIRED
+        route_id CDATA #REQUIRED
+        location_id CDATA #REQUIRED
+        priority CDATA #IMPLIED
+        deleted_at CDATA #IMPLIED
+>
+
+<!ELEMENT step_item EMPTY>
+<!ATTLIST step_item
+        id CDATA #REQUIRED
+        step_id CDATA #REQUIRED
+        person_id CDATA #REQUIRED
+        deleted_at CDATA #IMPLIED
+>
