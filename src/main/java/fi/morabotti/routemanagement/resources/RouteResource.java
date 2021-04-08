@@ -2,6 +2,7 @@ package fi.morabotti.routemanagement.resources;
 
 import fi.morabotti.routemanagement.controller.RouteController;
 import fi.morabotti.routemanagement.model.Route;
+import fi.morabotti.routemanagement.view.CreateRouteRequest;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -9,6 +10,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -34,8 +36,8 @@ public class RouteResource {
     }
 
     @POST
-    public Route createRoute(Route route) {
-        return routeController.createRoute(route);
+    public Route createRoute(CreateRouteRequest request) {
+        return routeController.createRoute(request);
     }
 
     @GET
@@ -44,6 +46,15 @@ public class RouteResource {
             @PathParam("routeId") Long id
     ) {
         return routeController.getRouteById(id);
+    }
+
+    @PUT
+    @Path("/{routeId}")
+    public Route updateRoute(
+            @PathParam("routeId") Long id,
+            Route route
+    ) {
+        return routeController.updateRoute(id, route);
     }
 
     @DELETE

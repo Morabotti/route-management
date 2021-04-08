@@ -4,7 +4,6 @@ import fi.morabotti.routemanagement.dao.PersonDao;
 import fi.morabotti.routemanagement.dao.PrimaryLocationDao;
 import fi.morabotti.routemanagement.dao.VehicleDao;
 import fi.morabotti.routemanagement.domain.AssetDomain;
-import fi.morabotti.routemanagement.model.Location;
 import fi.morabotti.routemanagement.model.Person;
 import fi.morabotti.routemanagement.model.Vehicle;
 import fi.morabotti.routemanagement.view.CreatePersonRequest;
@@ -15,7 +14,6 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Singleton
 public class AssetController {
@@ -55,8 +53,8 @@ public class AssetController {
                 .orElseThrow(BadRequestException::new);
     }
 
-    public Void deleteVehicle(Long id) {
-        return vehicleDao.delete(id).get();
+    public void deleteVehicle(Long id) {
+        vehicleDao.delete(id).get();
     }
 
     public Vehicle updateVehicle(Long id, Vehicle vehicle) {
@@ -78,10 +76,7 @@ public class AssetController {
     public Person createPerson(CreatePersonRequest request) {
         return personDao.create(assetDomain.createPerson(request))
                 .peek(personId -> primaryLocationDao.batchCreate(
-                        request.getPrimaryLocations()
-                                .stream()
-                                .map(Location::getId)
-                                .collect(Collectors.toList()),
+                        assetDomain.mapLocationIds(request),
                         personId
                 ))
                 .flatMap(personDao::getById)
@@ -89,8 +84,8 @@ public class AssetController {
                 .orElseThrow(BadRequestException::new);
     }
 
-    public Void deletePerson(Long id) {
-        return personDao.delete(id)
+    public void deletePerson(Long id) {
+        personDao.delete(id)
                 .flatMap(ignored -> primaryLocationDao.deleteByPersonId(id))
                 .get();
     }

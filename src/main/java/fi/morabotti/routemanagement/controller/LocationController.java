@@ -1,6 +1,7 @@
 package fi.morabotti.routemanagement.controller;
 
 import fi.morabotti.routemanagement.dao.LocationDao;
+import fi.morabotti.routemanagement.dao.PrimaryLocationDao;
 import fi.morabotti.routemanagement.model.Location;
 
 import javax.inject.Inject;
@@ -13,12 +14,15 @@ import java.util.List;
 @Singleton
 public class LocationController {
     private final LocationDao locationDao;
+    private final PrimaryLocationDao primaryLocationDao;
 
     @Inject
     public LocationController(
-            LocationDao locationDao
+            LocationDao locationDao,
+            PrimaryLocationDao primaryLocationDao
     ) {
         this.locationDao = locationDao;
+        this.primaryLocationDao = primaryLocationDao;
     }
 
     public List<Location> getLocations() {
@@ -38,8 +42,10 @@ public class LocationController {
                 .orElseThrow(BadRequestException::new);
     }
 
-    public Void deleteLocation(Long id) {
-        return locationDao.delete(id).get();
+    public void deleteLocation(Long id) {
+        locationDao.delete(id)
+                .flatMap(ignored -> primaryLocationDao.deleteByLocationId(id))
+                .get();
     }
 
     public Location updateLocation(Long id, Location location) {
