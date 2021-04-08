@@ -5,24 +5,26 @@ Creating and managing routes. Primarly focuses on human transport.
 ### Backend:
 * Java JRE
 * Maven
-* MYSQL Database (Docker)
+* MariaDB Database (Docker)
 
 ### Frontend:
-* NODE & NPM
+* Node & NPM
 
 ## How to run
 1. Copy `.env.template` and rename it as `.env` to configure environment variables
 2. Setup database
-  * Database can be set up with Docker or docker-compose
+  * Database can be set up with Docker or docker-compose:
     * With Docker: `docker run -d --name route-management-db
     -e MYSQL_USER=test-e MYSQL_PASSWORD=test -e MYSQL_DATABASE=route-management
     -e MYSQL_ROOT_PASSWORD=test -p 3306:3306 mysql:5.7 --skip-name-resolve`
     * With Docker-Compose: `docker-compose up -d`
-  * `mvn liquibase:dropAll` to clear database
+  * `mvn liquibase:dropAll` to clear database.
 3. Setup java server
-  * `mvn install` to install dependencies. Usually IDEs do this automatically
-  * `mvn package` to to setup project
+  * `mvn install` to install dependencies. Usually IDEs do this automatically.
+  * `mvn package` to to setup project.
   * `mvn clean` if everything else fails and retry.
+4. Running java server
+  * `java -jar target/route-management-1.0-SNAPSHOT.jar` to run backend.
 
 ## Development
   * This project uses Snoozy, which comes automatically configured with Jubics Checkstyle.
