@@ -15,11 +15,13 @@ public class ResourceModule {
     @Resources
     static Set<Object> provideResources(
             AssetResource assetResource,
-            LocationResource locationResource
+            LocationResource locationResource,
+            RouteResource routeResource
     ) {
         return Stream.of(
                 assetResource,
-                locationResource
+                locationResource,
+                routeResource
         )
                 .collect(Collectors.toSet());
     }

@@ -8,6 +8,7 @@ import fi.morabotti.routemanagement.db.tables.records.RouteRecord;
 import javax.annotation.Nullable;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 
 import static fi.morabotti.routemanagement.db.tables.Route.ROUTE;
 
@@ -17,6 +18,7 @@ public abstract class Route {
     @EasyId
     public abstract Long getId();
 
+    @Nullable
     public abstract Instant getStartTime();
 
     public abstract Vehicle getVehicle();
@@ -25,6 +27,8 @@ public abstract class Route {
 
     @Nullable
     public abstract Instant getDeletedAt();
+
+    public abstract List<Step> getSteps();
 
     public abstract Builder toBuilder();
 
