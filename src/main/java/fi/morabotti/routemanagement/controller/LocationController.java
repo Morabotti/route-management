@@ -3,6 +3,8 @@ package fi.morabotti.routemanagement.controller;
 import fi.morabotti.routemanagement.dao.LocationDao;
 import fi.morabotti.routemanagement.dao.PrimaryLocationDao;
 import fi.morabotti.routemanagement.model.Location;
+import fi.morabotti.routemanagement.model.PrimaryLocation;
+import fi.morabotti.routemanagement.view.PrimaryLocationQuery;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -44,7 +46,12 @@ public class LocationController {
 
     public void deleteLocation(Long id) {
         locationDao.delete(id)
-                .flatMap(ignored -> primaryLocationDao.deleteByLocationId(id))
+                .flatMap(ignored ->
+                        primaryLocationDao.delete(
+                                new PrimaryLocationQuery()
+                                        .withLocationId(id)
+                        )
+                )
                 .get();
     }
 
@@ -53,4 +60,24 @@ public class LocationController {
                 .get()
                 .orElseThrow(InternalServerErrorException::new);
     }
+
+    public void deletePrimaryLocation(Long locationId, Long personId) {
+        primaryLocationDao.delete(
+                new PrimaryLocationQuery(
+                        null,
+                        personId,
+                        locationId
+                )
+        ).get();
+    }
+
+    public PrimaryLocation addPrimaryLocation(Long locationId, Long personId) {
+        return primaryLocationDao.create(locationId, personId)
+                .flatMap(primaryLocationDao::getById)
+                .get()
+                .orElseThrow(BadRequestException::new);
+    }
+
+
+
 }

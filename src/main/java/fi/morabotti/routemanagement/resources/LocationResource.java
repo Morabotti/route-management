@@ -2,6 +2,7 @@ package fi.morabotti.routemanagement.resources;
 
 import fi.morabotti.routemanagement.controller.LocationController;
 import fi.morabotti.routemanagement.model.Location;
+import fi.morabotti.routemanagement.model.PrimaryLocation;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -62,6 +63,25 @@ public class LocationResource {
             @PathParam("locationId") Long id
     ) {
         locationController.deleteLocation(id);
+        return Response.ok().build();
+    }
+
+    @POST
+    @Path("/{locationId}/primary/{personId}")
+    public PrimaryLocation addLocationAsPrimary(
+            @PathParam("locationId") Long locationId,
+            @PathParam("personId") Long personId
+    ) {
+        return locationController.addPrimaryLocation(locationId, personId);
+    }
+
+    @DELETE
+    @Path("/{locationId}/primary/{personId}")
+    public Response deleteLocationAsPrimary(
+            @PathParam("locationId") Long locationId,
+            @PathParam("personId") Long personId
+    ) {
+        locationController.deletePrimaryLocation(locationId, personId);
         return Response.ok().build();
     }
 }

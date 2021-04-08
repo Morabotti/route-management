@@ -8,6 +8,7 @@ import fi.morabotti.routemanagement.model.Route;
 import fi.morabotti.routemanagement.model.Step;
 import fi.morabotti.routemanagement.view.CreateRouteRequest;
 import fi.morabotti.routemanagement.view.CreateStepRequest;
+import fi.morabotti.routemanagement.view.StepItemQuery;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -59,7 +60,11 @@ public class RouteController {
     public void deleteRoute(Long id) {
         routeDao.delete(id)
                 .flatMap(ignored -> stepDao.deleteByRouteId(id))
-                .flatMap(ignored -> stepItemDao.deleteByRouteId(id, false))
+                .flatMap(ignored -> stepItemDao.delete(
+                                new StepItemQuery().withRouteId(id),
+                                false
+                        )
+                )
                 .get();
     }
 
@@ -75,9 +80,10 @@ public class RouteController {
                 routeId
         )
                 .peek(stepId -> stepItemDao.batchCreate(
-                        routeDomain.mapPersonIds(request),
-                        stepId
-                ))
+                                routeDomain.mapPersonIds(request),
+                                stepId
+                        )
+                )
                 .flatMap(routeDao::getById)
                 .get()
                 .orElseThrow(BadRequestException::new);
@@ -85,7 +91,11 @@ public class RouteController {
 
     public Route deleteStep(Long routeId, Long stepId) {
         return stepDao.deleteById(stepId)
-                .flatMap(ignored -> stepItemDao.deleteByStepId(stepId, true))
+                .flatMap(ignored -> stepItemDao.delete(
+                                new StepItemQuery().withStepId(stepId),
+                                true
+                        )
+                )
                 .flatMap(ignored -> routeDao.getById(routeId))
                 .get()
                 .orElseThrow(InternalServerErrorException::new);

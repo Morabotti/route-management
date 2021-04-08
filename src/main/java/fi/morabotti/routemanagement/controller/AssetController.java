@@ -7,6 +7,7 @@ import fi.morabotti.routemanagement.domain.AssetDomain;
 import fi.morabotti.routemanagement.model.Person;
 import fi.morabotti.routemanagement.model.Vehicle;
 import fi.morabotti.routemanagement.view.CreatePersonRequest;
+import fi.morabotti.routemanagement.view.PrimaryLocationQuery;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -86,7 +87,11 @@ public class AssetController {
 
     public void deletePerson(Long id) {
         personDao.delete(id)
-                .flatMap(ignored -> primaryLocationDao.deleteByPersonId(id))
+                .flatMap(ignored ->
+                        primaryLocationDao.delete(
+                                new PrimaryLocationQuery().withPersonId(id)
+                        )
+                )
                 .get();
     }
 
