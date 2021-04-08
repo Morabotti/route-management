@@ -2,7 +2,9 @@ package fi.morabotti.routemanagement.resources;
 
 import fi.morabotti.routemanagement.controller.RouteController;
 import fi.morabotti.routemanagement.model.Route;
+import fi.morabotti.routemanagement.model.Step;
 import fi.morabotti.routemanagement.view.CreateRouteRequest;
+import fi.morabotti.routemanagement.view.CreateStepRequest;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -64,5 +66,33 @@ public class RouteResource {
     ) {
         routeController.deleteRoute(id);
         return Response.ok().build();
+    }
+
+    @POST
+    @Path("/{routeId}/step")
+    public Route addStepToRoute(
+            @PathParam("routeId") Long id,
+            CreateStepRequest request
+    ) {
+        return routeController.createStep(request, id);
+    }
+
+    @PUT
+    @Path("/{routeId}/step/{stepId}")
+    public Route updateStepFromRoute(
+            @PathParam("routeId") Long routeId,
+            @PathParam("stepId") Long stepId,
+            Step step
+    ) {
+        return routeController.updateStep(routeId, stepId, step);
+    }
+
+    @DELETE
+    @Path("/{routeId}/step/{stepId}")
+    public Route deleteStepFromRoute(
+            @PathParam("routeId") Long routeId,
+            @PathParam("stepId") Long stepId
+    ) {
+        return routeController.deleteStep(routeId, stepId);
     }
 }

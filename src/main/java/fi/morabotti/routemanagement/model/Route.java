@@ -37,6 +37,7 @@ public abstract class Route {
     }
 
     public static class Builder extends EasyValue_Route.Builder {
+        public EasyValue_Route.Builder set;
     }
 
     public static final RouteRecordMapper<RouteRecord> mapper

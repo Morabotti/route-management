@@ -5,7 +5,9 @@ import fi.morabotti.routemanagement.dao.StepDao;
 import fi.morabotti.routemanagement.dao.StepItemDao;
 import fi.morabotti.routemanagement.domain.RouteDomain;
 import fi.morabotti.routemanagement.model.Route;
+import fi.morabotti.routemanagement.model.Step;
 import fi.morabotti.routemanagement.view.CreateRouteRequest;
+import fi.morabotti.routemanagement.view.CreateStepRequest;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -57,12 +59,41 @@ public class RouteController {
     public void deleteRoute(Long id) {
         routeDao.delete(id)
                 .flatMap(ignored -> stepDao.deleteByRouteId(id))
-                .flatMap(ignored -> stepItemDao.deleteByRouteId(id))
+                .flatMap(ignored -> stepItemDao.deleteByRouteId(id, false))
                 .get();
     }
 
     public Route updateRoute(Long id, Route route) {
         return routeDao.update(id, route)
+                .get()
+                .orElseThrow(InternalServerErrorException::new);
+    }
+
+    public Route createStep(CreateStepRequest request, Long routeId) {
+        return stepDao.create(
+                routeDomain.createStep(request),
+                routeId
+        )
+                .peek(stepId -> stepItemDao.batchCreate(
+                        routeDomain.mapPersonIds(request),
+                        stepId
+                ))
+                .flatMap(routeDao::getById)
+                .get()
+                .orElseThrow(BadRequestException::new);
+    }
+
+    public Route deleteStep(Long routeId, Long stepId) {
+        return stepDao.deleteById(stepId)
+                .flatMap(ignored -> stepItemDao.deleteByStepId(stepId, true))
+                .flatMap(ignored -> routeDao.getById(routeId))
+                .get()
+                .orElseThrow(InternalServerErrorException::new);
+    }
+
+    public Route updateStep(Long routeId, Long stepId, Step step) {
+        return stepDao.update(routeId, stepId, step)
+                .flatMap(ignored -> routeDao.getById(routeId))
                 .get()
                 .orElseThrow(InternalServerErrorException::new);
     }

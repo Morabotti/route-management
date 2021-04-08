@@ -4,6 +4,7 @@ import fi.jubic.easyutils.transactional.TransactionProvider;
 import fi.jubic.easyutils.transactional.Transactional;
 import fi.morabotti.routemanagement.configuration.ApplicationConfiguration;
 import fi.morabotti.routemanagement.db.tables.records.StepItemRecord;
+import fi.morabotti.routemanagement.model.StepItem;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
@@ -35,12 +36,30 @@ public class StepItemDao {
 
     public Transactional<Long, DSLContext> create(
             Long personId,
-            Long locationId
+            Long stepId
     ) {
         return Transactional.of(
                 context -> context.insertInto(STEP_ITEM)
                         .set(STEP_ITEM.PERSON_ID, personId)
-                        .set(STEP_ITEM.STEP_ID, locationId)
+                        .set(STEP_ITEM.STEP_ID, stepId)
+                        .returning()
+                        .fetchOne()
+                        .get(STEP_ITEM.ID),
+                transactionProvider
+        );
+    }
+
+    public Transactional<Long, DSLContext> create(
+            StepItem stepItem
+    ) {
+        return Transactional.of(
+                context -> context.insertInto(STEP_ITEM)
+                        .set(
+                                StepItem.mapper.write(
+                                        context.newRecord(STEP_ITEM),
+                                        stepItem
+                                )
+                        )
                         .returning()
                         .fetchOne()
                         .get(STEP_ITEM.ID),
@@ -72,58 +91,92 @@ public class StepItemDao {
         );
     }
 
-    public Transactional<Void, DSLContext> deleteByPersonId(Long personId) {
+    public Transactional<Void, DSLContext> deleteByPersonId(Long personId, Boolean hardDelete) {
         return Transactional.of(
                 context -> {
-                    context.update(STEP_ITEM)
-                            .set(STEP_ITEM.DELETED_AT, Timestamp.from(Instant.now()))
-                            .where(STEP_ITEM.PERSON_ID.eq(personId))
-                            .execute();
+                    if (hardDelete) {
+                        context.delete(STEP_ITEM)
+                                .where(STEP_ITEM.PERSON_ID.eq(personId))
+                                .execute();
+                    }
+                    else {
+                        context.update(STEP_ITEM)
+                                .set(STEP_ITEM.DELETED_AT, Timestamp.from(Instant.now()))
+                                .where(STEP_ITEM.PERSON_ID.eq(personId))
+                                .execute();
+                    }
                     return null;
                 },
                 transactionProvider
         );
     }
 
-    public Transactional<Void, DSLContext> deleteByRouteId(Long routeId) {
+    public Transactional<Void, DSLContext> deleteByRouteId(Long routeId, Boolean hardDelete) {
         return Transactional.of(
                 context -> {
-                    context.update(STEP_ITEM)
-                            .set(STEP_ITEM.DELETED_AT, Timestamp.from(Instant.now()))
-                            .where(
-                                    STEP_ITEM.STEP_ID.in(
-                                            DSL.select(STEP.ID)
-                                            .from(STEP)
-                                            .where(STEP.ROUTE_ID.eq(routeId))
-                                    )
-                            )
-                            .execute();
+                    if (hardDelete) {
+                        context.delete(STEP_ITEM)
+                                .where(
+                                        STEP_ITEM.STEP_ID.in(
+                                                DSL.select(STEP.ID)
+                                                        .from(STEP)
+                                                        .where(STEP.ROUTE_ID.eq(routeId))
+                                        )
+                                )
+                                .execute();
+                    }
+                    else {
+                        context.update(STEP_ITEM)
+                                .set(STEP_ITEM.DELETED_AT, Timestamp.from(Instant.now()))
+                                .where(
+                                        STEP_ITEM.STEP_ID.in(
+                                                DSL.select(STEP.ID)
+                                                        .from(STEP)
+                                                        .where(STEP.ROUTE_ID.eq(routeId))
+                                        )
+                                )
+                                .execute();
+                    }
                     return null;
                 },
                 transactionProvider
         );
     }
 
-    public Transactional<Void, DSLContext> deleteByStepId(Long stepId) {
+    public Transactional<Void, DSLContext> deleteByStepId(Long stepId, Boolean hardDelete) {
         return Transactional.of(
                 context -> {
-                    context.update(STEP_ITEM)
-                            .set(STEP_ITEM.DELETED_AT, Timestamp.from(Instant.now()))
-                            .where(STEP_ITEM.STEP_ID.eq(stepId))
-                            .execute();
+                    if (hardDelete) {
+                        context.delete(STEP_ITEM)
+                                .where(STEP_ITEM.STEP_ID.eq(stepId))
+                                .execute();
+                    }
+                    else {
+                        context.update(STEP_ITEM)
+                                .set(STEP_ITEM.DELETED_AT, Timestamp.from(Instant.now()))
+                                .where(STEP_ITEM.STEP_ID.eq(stepId))
+                                .execute();
+                    }
                     return null;
                 },
                 transactionProvider
         );
     }
 
-    public Transactional<Void, DSLContext> delete(Long id) {
+    public Transactional<Void, DSLContext> delete(Long id, Boolean hardDelete) {
         return Transactional.of(
                 context -> {
-                    context.update(STEP_ITEM)
-                            .set(STEP_ITEM.DELETED_AT, Timestamp.from(Instant.now()))
-                            .where(STEP_ITEM.ID.eq(id))
-                            .execute();
+                    if (hardDelete) {
+                        context.delete(STEP_ITEM)
+                                .where(STEP_ITEM.ID.eq(id))
+                                .execute();
+                    }
+                    else {
+                        context.update(STEP_ITEM)
+                                .set(STEP_ITEM.DELETED_AT, Timestamp.from(Instant.now()))
+                                .where(STEP_ITEM.ID.eq(id))
+                                .execute();
+                    }
                     return null;
                 },
                 transactionProvider

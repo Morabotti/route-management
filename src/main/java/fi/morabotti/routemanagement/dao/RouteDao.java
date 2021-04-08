@@ -133,17 +133,17 @@ public class RouteDao {
         return context.select(
                 ROUTE.asterisk(),
                 VEHICLE.asterisk(),
-                LOCATION.as("destination").asterisk(),
+                LOCATION.asterisk(),
                 STEP.asterisk(),
                 STEP_ITEM.asterisk(),
                 PERSON.asterisk(),
-                LOCATION.asterisk()
+                LOCATION.as("step_location").asterisk()
         )
                 .from(ROUTE)
-                .leftJoin(LOCATION.as("destination")).onKey(Keys.FK_ROUTE_LOCATION)
+                .leftJoin(LOCATION).onKey(Keys.FK_ROUTE_LOCATION)
                 .leftJoin(VEHICLE).onKey(Keys.FK_ROUTE_VEHICLE)
                 .leftJoin(STEP).onKey(Keys.FK_STEP_ROUTE)
-                .leftJoin(LOCATION).onKey(Keys.FK_STEP_LOCATION)
+                .leftJoin(LOCATION.as("step_location")).onKey(Keys.FK_STEP_LOCATION)
                 .leftJoin(STEP_ITEM).onKey(Keys.FK_STEP_ITEM_STEP)
                 .leftJoin(PERSON).onKey(Keys.FK_STEP_ITEM_PERSON);
     }

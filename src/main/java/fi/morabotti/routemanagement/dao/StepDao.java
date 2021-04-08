@@ -69,7 +69,7 @@ public class StepDao {
         );
     }
 
-    public Transactional<Long, DSLContext> create(Step step) {
+    public Transactional<Long, DSLContext> create(Step step, Long routeId) {
         return Transactional.of(
                 context -> context.insertInto(STEP)
                         .set(
@@ -78,6 +78,7 @@ public class StepDao {
                                         step
                                 )
                         )
+                        .set(STEP.ROUTE_ID, routeId)
                         .returning()
                         .fetchOne()
                         .get(STEP.ID),
@@ -111,14 +112,15 @@ public class StepDao {
         );
     }
 
-    public Transactional<Optional<Step>, DSLContext> update(Long id, Step step) {
+    public Transactional<Optional<Step>, DSLContext> update(Long routeId, Long stepId, Step step) {
         return Transactional.of(
                 context -> context.update(STEP)
                         .set(Step.mapper.write(
                                 context.newRecord(STEP),
                                 step
                         ))
-                        .where(STEP.ID.eq(id))
+                        .set(STEP.ROUTE_ID, routeId)
+                        .where(STEP.ID.eq(stepId))
                         .and(STEP.DELETED_AT.isNull())
                         .execute(),
                 transactionProvider
