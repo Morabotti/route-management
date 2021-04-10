@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => createStyles({
 }));
 
 interface Props {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export const SnackbarContainer: FC<Props> = ({

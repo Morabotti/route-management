@@ -21,6 +21,7 @@ public abstract class Step {
     @EasyId
     public abstract Long getId();
 
+    @Nullable
     public abstract Integer getPriority();
 
     @Nullable

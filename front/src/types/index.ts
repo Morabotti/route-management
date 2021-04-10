@@ -1,0 +1,80 @@
+
+export interface Person {
+  id: number;
+  name: string;
+  primaryLocations: PrimaryLocation[];
+  deletedAt: null | string;
+}
+
+export interface CreatePerson {
+  name: string;
+  primaryLocations: LocationType[];
+}
+
+export interface LocationType {
+  id: number;
+  address: string;
+  zip: string;
+  city: string;
+  latitude: number;
+  longitude: number;
+  primaryPersons: PrimaryLocation[];
+  deletedAt: null | string;
+}
+
+export interface CreateLocation {
+  address: string;
+  zip: string;
+  city: string;
+  latitude: number;
+  longitude: number;
+  primaryPersons: Person[];
+}
+
+export interface PrimaryLocation {
+  id: number;
+  person: null | Person;
+  location: null | LocationType;
+}
+
+export interface StepItem {
+  id: number;
+  person: Person | null;
+  step: Step | null;
+  deletedAt: null | string;
+}
+
+export interface Step {
+  id: number;
+  priority: number | null;
+  location: LocationType;
+  stepItems: StepItem[];
+  deletedAt: null | string;
+}
+
+export interface CreateStep {
+  priority: number | null;
+  location: LocationType;
+  stepItems: Person[];
+}
+
+export interface RouteType {
+  id: number;
+  startTime: null | string;
+  vehicle: Vehicle;
+  destination: LocationType;
+  steps: Step[];
+  deletedAt: null | string;
+}
+
+export interface CreateRoute {
+  vehicle: Vehicle;
+  destination: LocationType;
+  startTime: null | string;
+}
+
+export interface Vehicle {
+  id: number;
+  licenseNumber: string;
+  deletedAt: null | string;
+}

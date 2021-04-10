@@ -3,6 +3,7 @@ package fi.morabotti.routemanagement.resources;
 import fi.morabotti.routemanagement.controller.LocationController;
 import fi.morabotti.routemanagement.model.Location;
 import fi.morabotti.routemanagement.model.PrimaryLocation;
+import fi.morabotti.routemanagement.view.CreateLocationRequest;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -36,8 +37,8 @@ public class LocationResource {
     }
 
     @POST
-    public Location createLocation(Location location) {
-        return locationController.createLocation(location);
+    public Location createLocation(CreateLocationRequest request) {
+        return locationController.createLocation(request);
     }
 
     @GET

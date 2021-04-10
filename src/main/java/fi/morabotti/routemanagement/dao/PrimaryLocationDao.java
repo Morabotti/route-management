@@ -74,7 +74,7 @@ public class PrimaryLocationDao {
         );
     }
 
-    public Transactional<Long, DSLContext> batchCreate(
+    public Transactional<Long, DSLContext> batchCreateWithLocations(
             List<Long> locationIds,
             Long personId
     ) {
@@ -84,6 +84,29 @@ public class PrimaryLocationDao {
                             locationIds
                                     .stream()
                                     .map(locationId -> new PrimaryLocationRecord(
+                                            0L,
+                                            personId,
+                                            locationId
+                                    ))
+                                    .collect(Collectors.toList())
+                    )
+                            .execute();
+                    return null;
+                },
+                transactionProvider
+        );
+    }
+
+    public Transactional<Long, DSLContext> batchCreateWithPersons(
+            List<Long> personIds,
+            Long locationId
+    ) {
+        return Transactional.of(
+                context -> {
+                    context.batchInsert(
+                            personIds
+                                    .stream()
+                                    .map(personId -> new PrimaryLocationRecord(
                                             0L,
                                             personId,
                                             locationId

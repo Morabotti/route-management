@@ -17,7 +17,7 @@ const className = createGenerateClassName({
 });
 
 interface Props {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export const ApplicationProviders: FC<Props> = ({ children }: Props) => {

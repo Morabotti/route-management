@@ -2,8 +2,10 @@ package fi.morabotti.routemanagement.controller;
 
 import fi.morabotti.routemanagement.dao.LocationDao;
 import fi.morabotti.routemanagement.dao.PrimaryLocationDao;
+import fi.morabotti.routemanagement.domain.LocationDomain;
 import fi.morabotti.routemanagement.model.Location;
 import fi.morabotti.routemanagement.model.PrimaryLocation;
+import fi.morabotti.routemanagement.view.CreateLocationRequest;
 import fi.morabotti.routemanagement.view.PrimaryLocationQuery;
 
 import javax.inject.Inject;
@@ -18,13 +20,17 @@ public class LocationController {
     private final LocationDao locationDao;
     private final PrimaryLocationDao primaryLocationDao;
 
+    private final LocationDomain locationDomain;
+
     @Inject
     public LocationController(
             LocationDao locationDao,
-            PrimaryLocationDao primaryLocationDao
+            PrimaryLocationDao primaryLocationDao,
+            LocationDomain locationDomain
     ) {
         this.locationDao = locationDao;
         this.primaryLocationDao = primaryLocationDao;
+        this.locationDomain = locationDomain;
     }
 
     public List<Location> getLocations() {
@@ -37,8 +43,14 @@ public class LocationController {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Location createLocation(Location location) {
-        return locationDao.create(location)
+    public Location createLocation(CreateLocationRequest request) {
+        return locationDao.create(
+                locationDomain.createLocation(request)
+        )
+                .peek(locationId -> primaryLocationDao.batchCreateWithPersons(
+                        locationDomain.mapPersonIds(request),
+                        locationId
+                ))
                 .flatMap(locationDao::getById)
                 .get()
                 .orElseThrow(BadRequestException::new);

@@ -76,7 +76,7 @@ public class AssetController {
 
     public Person createPerson(CreatePersonRequest request) {
         return personDao.create(assetDomain.createPerson(request))
-                .peek(personId -> primaryLocationDao.batchCreate(
+                .peek(personId -> primaryLocationDao.batchCreateWithLocations(
                         assetDomain.mapLocationIds(request),
                         personId
                 ))

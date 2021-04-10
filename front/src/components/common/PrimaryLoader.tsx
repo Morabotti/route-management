@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 interface Props {
-  text?: string | null
+  text?: string | null;
 }
 
 export const PrimaryLoader = memo(({
