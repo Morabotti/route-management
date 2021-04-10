@@ -1,0 +1,17 @@
+{
+  "extends": ["jubic-typescript"],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "no-use-before-define": "off",
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-use-before-define": "error"
+  },
+  "globals": {
+    "fetch": false,
+    "localStorage": false
+  }
+}
