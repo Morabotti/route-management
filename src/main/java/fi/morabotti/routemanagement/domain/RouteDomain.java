@@ -3,6 +3,7 @@ package fi.morabotti.routemanagement.domain;
 import fi.morabotti.routemanagement.model.Person;
 import fi.morabotti.routemanagement.model.Route;
 import fi.morabotti.routemanagement.model.Step;
+import fi.morabotti.routemanagement.model.StepItem;
 import fi.morabotti.routemanagement.view.CreateRouteRequest;
 import fi.morabotti.routemanagement.view.CreateStepRequest;
 
@@ -10,6 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -44,6 +46,15 @@ public class RouteDomain {
     public List<Long> mapPersonIds(CreateStepRequest request) {
         return request.getStepItems()
                 .stream()
+                .map(Person::getId)
+                .collect(Collectors.toList());
+    }
+
+    public List<Long> mapPersonIds(List<StepItem> stepItems) {
+        return stepItems
+                .stream()
+                .map(StepItem::getPerson)
+                .filter(Objects::nonNull)
                 .map(Person::getId)
                 .collect(Collectors.toList());
     }

@@ -107,4 +107,21 @@ public class RouteController {
                 .get()
                 .orElseThrow(InternalServerErrorException::new);
     }
+
+    public Step addStepItemToStep(Long stepId, Long personId) {
+        return stepItemDao.create(personId, stepId)
+                .flatMap(i -> stepDao.getById(stepId))
+                .get()
+                .orElseThrow(BadRequestException::new);
+    }
+
+    public Step deleteStepItemFromStep(Long stepId, Long personId) {
+        return stepItemDao.delete(
+                new StepItemQuery().withStepId(stepId).withPersonId(personId),
+                true
+        )
+                .flatMap(i -> stepDao.getById(stepId))
+                .get()
+                .orElseThrow(BadRequestException::new);
+    }
 }

@@ -95,4 +95,22 @@ public class RouteResource {
     ) {
         return routeController.deleteStep(routeId, stepId);
     }
+
+    @POST
+    @Path("/step/{stepId}/item/{personId}")
+    public Step addStepItem(
+            @PathParam("routeId") Long stepId,
+            @PathParam("personId") Long personId
+    ) {
+        return routeController.addStepItemToStep(stepId, personId);
+    }
+
+    @DELETE
+    @Path("/step/{stepId}/item/{personId}")
+    public Step deleteStepItem(
+            @PathParam("routeId") Long stepId,
+            @PathParam("personId") Long personId
+    ) {
+        return routeController.deleteStepItemFromStep(stepId, personId);
+    }
 }

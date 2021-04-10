@@ -35,6 +35,9 @@ public class RouteDao {
     private final Configuration jooqConfiguration;
     private final TransactionProvider<DSLContext> transactionProvider;
 
+    private final fi.morabotti.routemanagement.db.tables.Location stepLocation = LOCATION
+            .as("step_location");
+
     @Inject
     public RouteDao(
             ApplicationConfiguration applicationConfiguration,
@@ -53,7 +56,7 @@ public class RouteDao {
                         .withDestination(Location.mapper)
                         .withVehicle(Vehicle.mapper)
                         .collectingManyWithSteps(
-                                Step.mapper.withLocation(Location.mapper)
+                                Step.mapper.withLocation(Location.mapper.alias(stepLocation))
                                         .collectingManyWithStepItems(
                                                 StepItem.mapper.withPerson(
                                                         Person.mapper
@@ -74,7 +77,9 @@ public class RouteDao {
                                 .withDestination(Location.mapper)
                                 .withVehicle(Vehicle.mapper)
                                 .collectingWithSteps(
-                                        Step.mapper.withLocation(Location.mapper)
+                                        Step.mapper.withLocation(
+                                                Location.mapper.alias(stepLocation)
+                                        )
                                                 .collectingManyWithStepItems(
                                                         StepItem.mapper.withPerson(
                                                                 Person.mapper
@@ -129,7 +134,9 @@ public class RouteDao {
         ).flatMap(ignored -> getById(route.getId()));
     }
 
-    private SelectJoinStep<Record> selectRoute(DSLContext context) {
+    private SelectJoinStep<Record> selectRoute(
+            DSLContext context
+    ) {
         return context.select(
                 ROUTE.asterisk(),
                 VEHICLE.asterisk(),
@@ -137,13 +144,13 @@ public class RouteDao {
                 STEP.asterisk(),
                 STEP_ITEM.asterisk(),
                 PERSON.asterisk(),
-                LOCATION.as("step_location").asterisk()
+                stepLocation.asterisk()
         )
                 .from(ROUTE)
                 .leftJoin(LOCATION).onKey(Keys.FK_ROUTE_LOCATION)
                 .leftJoin(VEHICLE).onKey(Keys.FK_ROUTE_VEHICLE)
                 .leftJoin(STEP).onKey(Keys.FK_STEP_ROUTE)
-                .leftJoin(LOCATION.as("step_location")).onKey(Keys.FK_STEP_LOCATION)
+                .leftJoin(stepLocation).onKey(Keys.FK_STEP_LOCATION)
                 .leftJoin(STEP_ITEM).onKey(Keys.FK_STEP_ITEM_STEP)
                 .leftJoin(PERSON).onKey(Keys.FK_STEP_ITEM_PERSON);
     }

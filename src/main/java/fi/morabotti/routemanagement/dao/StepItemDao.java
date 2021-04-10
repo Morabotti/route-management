@@ -3,12 +3,17 @@ package fi.morabotti.routemanagement.dao;
 import fi.jubic.easyutils.transactional.TransactionProvider;
 import fi.jubic.easyutils.transactional.Transactional;
 import fi.morabotti.routemanagement.configuration.ApplicationConfiguration;
+import fi.morabotti.routemanagement.db.Keys;
 import fi.morabotti.routemanagement.db.tables.records.StepItemRecord;
+import fi.morabotti.routemanagement.model.Person;
+import fi.morabotti.routemanagement.model.Step;
 import fi.morabotti.routemanagement.model.StepItem;
 import fi.morabotti.routemanagement.view.StepItemQuery;
 import org.jooq.Condition;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import javax.inject.Inject;
@@ -20,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static fi.morabotti.routemanagement.db.tables.Person.PERSON;
 import static fi.morabotti.routemanagement.db.tables.Step.STEP;
 import static fi.morabotti.routemanagement.db.tables.StepItem.STEP_ITEM;
 
@@ -37,6 +43,20 @@ public class StepItemDao {
         this.transactionProvider = transactionProvider;
     }
 
+    public Transactional<List<StepItem>, DSLContext> fetchStepItems(StepItemQuery query) {
+        return Transactional.of(
+                context -> selectStepItems(context)
+                        .where(getConditions(query))
+                        .fetch()
+                        .stream()
+                        .collect(StepItem.mapper
+                                .withPerson(Person.mapper)
+                                .withStep(Step.mapper)
+                        ),
+                transactionProvider
+        );
+    }
+
     public Transactional<Long, DSLContext> create(
             Long personId,
             Long stepId
@@ -52,20 +72,17 @@ public class StepItemDao {
         );
     }
 
-    public Transactional<Long, DSLContext> create(
-            StepItem stepItem
+    public Transactional<Integer, DSLContext> update(
+            Long id,
+            Long personId,
+            Long stepId
     ) {
         return Transactional.of(
-                context -> context.insertInto(STEP_ITEM)
-                        .set(
-                                StepItem.mapper.write(
-                                        context.newRecord(STEP_ITEM),
-                                        stepItem
-                                )
-                        )
-                        .returning()
-                        .fetchOne()
-                        .get(STEP_ITEM.ID),
+                context -> context.update(STEP_ITEM)
+                        .set(STEP_ITEM.PERSON_ID, personId)
+                        .set(STEP_ITEM.STEP_ID, stepId)
+                        .where(STEP_ITEM.ID.eq(id))
+                        .execute(),
                 transactionProvider
         );
     }
@@ -140,5 +157,16 @@ public class StepItemDao {
                         .orElse(condition)
                 )
                 .get();
+    }
+
+    private SelectJoinStep<Record> selectStepItems(DSLContext context) {
+        return context.select(
+                STEP_ITEM.asterisk(),
+                STEP.asterisk(),
+                PERSON.asterisk()
+        )
+                .from(STEP_ITEM)
+                .leftJoin(STEP).onKey(Keys.FK_STEP_ITEM_STEP)
+                .leftJoin(PERSON).onKey(Keys.FK_STEP_ITEM_PERSON);
     }
 }
