@@ -1,4 +1,7 @@
+import { LocalStorageKey } from '@enums';
+
 import {
+  AuthUser,
   CreateLocation,
   CreatePerson,
   CreateRoute,
@@ -11,33 +14,45 @@ import {
   Vehicle
 } from '@types';
 
-const checkResponse = (res: Response): Promise<Response> => {
-  if (!res.ok) {
-    return res.text()
-      .then((text) => {
-        try {
-          const jsonError = JSON.parse(text);
-          if (jsonError.message) {
-            return jsonError.message;
-          }
-          return text;
-        }
-        catch (_) {
-          return text;
-        }
-      })
-      .then((message) => Promise.reject(new Error(`${message} (HTTP ${res.status.toString()})`)));
+const getHeaders = () => ({
+  'Content-Type': 'application/json',
+  'Authorization': localStorage.getItem(LocalStorageKey.TOKEN) || ''
+});
+
+export const checkResponse = (response: Response): Response => {
+  if (!response.ok) {
+    throw new Error(`${response.status.toString()}: ${response.statusText}`);
   }
-  return Promise.resolve(res);
+  return response;
 };
+
+export const checkSession = (token: string): Promise<AuthUser> => fetch(
+  `/api/auth/me`,
+  {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token
+    }
+  }
+)
+  .then(checkResponse)
+  .then((res) => res.json());
+
+export const revokeSession = (): Promise<Response> => fetch(
+  `/api/auth/logout`,
+  {
+    method: 'POST',
+    headers: getHeaders()
+  }
+)
+  .then(checkResponse);
 
 export const getVehicles = (): Promise<Vehicle[]> => fetch(
   `/api/asset/vehicle`,
   {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -48,9 +63,7 @@ export const createVehicle = (set: Vehicle): Promise<Vehicle> => fetch(
   {
     method: 'POST',
     body: JSON.stringify(set),
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -60,9 +73,7 @@ export const getVehicleById = (id: number): Promise<Vehicle> => fetch(
   `/api/asset/vehicle/${id}`,
   {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -73,9 +84,7 @@ export const updateVehicle = (set: Vehicle): Promise<Vehicle> => fetch(
   {
     method: 'PUT',
     body: JSON.stringify(set),
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -85,9 +94,7 @@ export const deleteVehicle = (id: number): Promise<Response> => fetch(
   `/api/asset/vehicle/${id}`,
   {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse);
@@ -96,9 +103,7 @@ export const getPersons = (): Promise<Person[]> => fetch(
   `/api/asset/person`,
   {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -109,9 +114,7 @@ export const createPerson = (set: CreatePerson): Promise<Person> => fetch(
   {
     method: 'POST',
     body: JSON.stringify(set),
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -121,9 +124,7 @@ export const getPersonById = (id: number): Promise<Person> => fetch(
   `/api/asset/person/${id}`,
   {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -134,9 +135,7 @@ export const updatePerson = (set: Person): Promise<Person> => fetch(
   {
     method: 'PUT',
     body: JSON.stringify(set),
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -146,9 +145,7 @@ export const deletePerson = (id: number): Promise<Response> => fetch(
   `/api/asset/person/${id}`,
   {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse);
@@ -157,9 +154,7 @@ export const getLocations = (): Promise<LocationType[]> => fetch(
   `/api/location`,
   {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -170,9 +165,7 @@ export const createLocation = (set: CreateLocation): Promise<LocationType> => fe
   {
     method: 'POST',
     body: JSON.stringify(set),
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -182,9 +175,7 @@ export const getLocationById = (id: number): Promise<LocationType> => fetch(
   `/api/location/${id}`,
   {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -195,9 +186,7 @@ export const updateLocation = (set: LocationType): Promise<LocationType> => fetc
   {
     method: 'PUT',
     body: JSON.stringify(set),
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -207,9 +196,7 @@ export const deleteLocation = (id: number): Promise<Response> => fetch(
   `/api/location/${id}`,
   {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse);
@@ -221,9 +208,7 @@ export const addLocationAsPrimary = (
   `/api/location/${locationId}/primary/${personId}`,
   {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -236,9 +221,7 @@ export const deleteLocationAsPrimary = (
   `/api/location/${locationId}/primary/${personId}`,
   {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse);
@@ -247,9 +230,7 @@ export const getRoutes = (): Promise<RouteType[]> => fetch(
   `/api/route`,
   {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -260,9 +241,7 @@ export const createRoute = (set: CreateRoute): Promise<RouteType> => fetch(
   {
     method: 'POST',
     body: JSON.stringify(set),
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -272,9 +251,7 @@ export const getRouteById = (id: number): Promise<RouteType> => fetch(
   `/api/route/${id}`,
   {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -285,9 +262,7 @@ export const updateRoute = (set: RouteType): Promise<RouteType> => fetch(
   {
     method: 'PUT',
     body: JSON.stringify(set),
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -297,9 +272,7 @@ export const deleteRoute = (id: number): Promise<Response> => fetch(
   `/api/route/${id}`,
   {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse);
@@ -312,9 +285,7 @@ export const createRouteStep = (
   {
     method: 'POST',
     body: JSON.stringify(set),
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -328,9 +299,7 @@ export const updateRouteStep = (
   {
     method: 'PUT',
     body: JSON.stringify(set),
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -343,9 +312,7 @@ export const deleteRouteStep = (
   `/api/route/${routeId}/step/${stepId}`,
   {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -358,9 +325,7 @@ export const addStepItem = (
   `/api/route/step/${stepId}/item/${personId}`,
   {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)
@@ -373,9 +338,7 @@ export const deleteStepItem = (
   `/api/step/${stepId}/item/${personId}`,
   {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    headers: getHeaders()
   }
 )
   .then(checkResponse)

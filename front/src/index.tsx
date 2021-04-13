@@ -1,5 +1,7 @@
 import * as ReactDOM from 'react-dom';
 
+import 'regenerator-runtime/runtime.js';
+
 import Application from '@components/Application';
 
 const mount = document.getElementById('mount');

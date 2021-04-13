@@ -1,6 +1,8 @@
 import { FC } from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { SnackbarContainer } from '@components/common';
+import { AuthProvider } from '@hooks';
 import MomentUtils from '@date-io/moment';
 import moment from 'moment';
 import theme from '@theme';
@@ -31,7 +33,11 @@ export const ApplicationProviders: FC<Props> = ({ children }: Props) => {
           utils={MomentUtils}
         >
           <SnackbarContainer>
-            {children}
+            <BrowserRouter>
+              <AuthProvider>
+                {children}
+              </AuthProvider>
+            </BrowserRouter>
           </SnackbarContainer>
         </MuiPickersUtilsProvider>
       </MuiThemeProvider>

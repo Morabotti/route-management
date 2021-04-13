@@ -1,3 +1,25 @@
+import { FC, LazyExoticComponent } from 'react';
+import { PreloadableComponent } from 'react-lazy-with-preload';
+import { RouteAuthType } from '@enums';
+
+export type RouteComponent = LazyExoticComponent<FC> | FC | PreloadableComponent<FC>;
+
+export interface Route {
+  path: string;
+  component: RouteComponent;
+  type: RouteAuthType;
+}
+
+export interface AuthUser {
+  token: string;
+  user: User;
+}
+
+export interface User {
+  id: number;
+  username: string;
+  deletedAt: string | null;
+}
 
 export interface Person {
   id: number;
