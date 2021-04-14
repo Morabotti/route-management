@@ -26,10 +26,14 @@ function mapEnvironmentVariables(list) {
   const fileEnv = dotenv.config({ path: basePath }).parsed || {};
 
   const envKeys = list.reduce((prev, next) => {
-    prev[`process.env.${next}`] = fileEnv[next] ? JSON.stringify(fileEnv[next]) : (process.env[next] || '')
+    prev[`process.env.${next}`] = fileEnv[next]
+      ? JSON.stringify(fileEnv[next])
+      : process.env[next]
+        ? JSON.stringify(process.env[next])
+        : '"null"'
     return prev
   }, {})
-
+  
   return envKeys;
 }
 
