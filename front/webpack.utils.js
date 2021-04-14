@@ -23,7 +23,7 @@ function resolveTsconfigPathsToAlias() {
 function mapEnvironmentVariables() {
   const currentPath = path.join(__dirname);
   const basePath = currentPath + '/.env';
-  const fileEnv = dotenv.config({ path: basePath }).parsed;
+  const fileEnv = dotenv.config({ path: basePath }).parsed || {};
 
   const envKeys = Object.keys(fileEnv).reduce((prev, next) => {
     prev[`process.env.${next}`] = JSON.stringify(fileEnv[next]);
