@@ -2,17 +2,29 @@ import lazy from 'react-lazy-with-preload';
 import { Route } from '@types';
 import { RouteAuthType } from '@enums';
 
-const DummyView = lazy(() => import('@components/common/DummyView'));
+// const DummyView = lazy(() => import('@components/common/DummyView'));
+const VehicleCrudView = lazy(() => import('@components/vehicles/VehicleCrudView'));
+const RouteCrudView = lazy(() => import('@components/routes/RouteCrudView'));
+const PersonCrudView = lazy(() => import('@components/persons/PersonCrudView'));
+const HomeView = lazy(() => import('@components/home/HomeView'));
 const LoginView = lazy(() => import('@components/auth/LoginView'));
 
 export const routeTree: Route[] = [{
   type: RouteAuthType.AUTH,
-  component: DummyView,
+  component: HomeView,
   path: '/rm'
 }, {
   type: RouteAuthType.AUTH,
-  component: DummyView,
-  path: '/rm/menu'
+  component: VehicleCrudView,
+  path: '/rm/vehicles/:view?/:id?'
+}, {
+  type: RouteAuthType.AUTH,
+  component: RouteCrudView,
+  path: '/rm/routes/:view?/:id?'
+}, {
+  type: RouteAuthType.AUTH,
+  component: PersonCrudView,
+  path: '/rm/persons/:view?/:id?'
 }, {
   type: RouteAuthType.PUBLIC,
   component: LoginView,

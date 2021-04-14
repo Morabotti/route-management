@@ -6,7 +6,7 @@
     <parent>
         <groupId>fi.jubic</groupId>
         <artifactId>snoozy-starter-jooq</artifactId>
-        <version>0.7.0</version>
+        <version>0.7.1</version>
     </parent>
 
     <groupId>fi.morabotti</groupId>
@@ -55,11 +55,6 @@
             <groupId>fi.jubic</groupId>
             <artifactId>easyschedule-inmemory</artifactId>
             <version>0.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.49</version>
         </dependency>
     </dependencies>
 

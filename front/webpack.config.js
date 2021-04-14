@@ -23,7 +23,7 @@ module.exports = {
       {
         exclude: /node_modules/,
         test: /\.[j|t]sx?$/,
-        loader: 'babel-loader',
+        loader: require.resolve('babel-loader'),
         options: {
           compact: true
         }

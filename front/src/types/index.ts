@@ -100,3 +100,7 @@ export interface Vehicle {
   licenseNumber: string;
   deletedAt: null | string;
 }
+
+export interface CreateVehicle {
+  licenseNumber: string;
+}

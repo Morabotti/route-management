@@ -6,6 +6,7 @@ import {
   CreatePerson,
   CreateRoute,
   CreateStep,
+  CreateVehicle,
   LocationType,
   Person,
   PrimaryLocation,
@@ -58,7 +59,7 @@ export const getVehicles = (): Promise<Vehicle[]> => fetch(
   .then(checkResponse)
   .then((res) => res.json());
 
-export const createVehicle = (set: Vehicle): Promise<Vehicle> => fetch(
+export const createVehicle = (set: CreateVehicle): Promise<Vehicle> => fetch(
   `/api/asset/vehicle`,
   {
     method: 'POST',

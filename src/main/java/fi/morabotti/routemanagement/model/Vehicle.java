@@ -29,6 +29,10 @@ public abstract class Vehicle {
     }
 
     public static class Builder extends EasyValue_Vehicle.Builder {
+        public Builder defaults(Builder builder) {
+            return builder
+                    .setId(0L);
+        }
     }
 
     public static final VehicleRecordMapper<VehicleRecord> mapper
