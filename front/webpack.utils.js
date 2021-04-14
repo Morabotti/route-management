@@ -20,15 +20,15 @@ function resolveTsconfigPathsToAlias() {
   return aliases
 }
 
-function mapEnvironmentVariables() {
+function mapEnvironmentVariables(list) {
   const currentPath = path.join(__dirname);
   const basePath = currentPath + '/.env';
   const fileEnv = dotenv.config({ path: basePath }).parsed || {};
 
-  const envKeys = Object.keys(fileEnv).reduce((prev, next) => {
-    prev[`process.env.${next}`] = JSON.stringify(fileEnv[next]);
-    return prev;
-  }, {});
+  const envKeys = list.reduce((prev, next) => {
+    prev[`process.env.${next}`] = fileEnv[next] ? JSON.stringify(fileEnv[next]) : (process.env[next] || '')
+    return prev
+  }, {})
 
   return envKeys;
 }

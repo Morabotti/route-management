@@ -60,7 +60,7 @@ module.exports = {
   },
   plugins: [
     new ContextReplacementPlugin(/moment[/\\]locale$/, /en|fi/),
-    new DefinePlugin(mapEnvironmentVariables()),
+    new DefinePlugin(mapEnvironmentVariables(['GOOGLE_MAPS_API_KEY'])),
     new HtmlWebpackPlugin({
       inject: true,
       hash: true,

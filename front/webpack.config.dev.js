@@ -65,7 +65,7 @@ module.exports = {
   },
   plugins: [
     new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en|fi/),
-    new webpack.DefinePlugin(mapEnvironmentVariables()),
+    new webpack.DefinePlugin(mapEnvironmentVariables(['GOOGLE_MAPS_API_KEY'])),
     new HtmlWebpackPlugin({
       inject: true,
       template: resolve('./src/index.html'),
