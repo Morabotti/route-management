@@ -3,7 +3,7 @@ const fs = require('fs');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const { resolveTsconfigPathsToAlias } = require('./webpack.utils.js')
+const { resolveTsconfigPathsToAlias, mapEnvironmentVariables } = require('./webpack.utils.js')
 
 const directory = fs.realpathSync(process.cwd());
 const resolve = (relativePath) => path.resolve(directory, relativePath);
@@ -65,6 +65,7 @@ module.exports = {
   },
   plugins: [
     new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en|fi/),
+    new webpack.DefinePlugin(mapEnvironmentVariables()),
     new HtmlWebpackPlugin({
       inject: true,
       template: resolve('./src/index.html'),

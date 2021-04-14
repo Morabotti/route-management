@@ -1,15 +1,16 @@
-import { Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { hot } from 'react-hot-loader';
 import { AuthLayer } from '@components/auth';
 import { publicRoutes, authRoutes } from '@routes';
 
 import {
-  ApplicationLayout,
   ApplicationProviders,
   PrimaryLoader,
   PageSuspense
 } from '@components/common';
+
+const ApplicationLayout = lazy(() => import('@components/common/ApplicationLayout'));
 
 const Application = () => (
   <ApplicationProviders>

@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { makeStyles, Paper } from '@material-ui/core';
+import { MainMap } from '@components/map';
 import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
@@ -25,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     position: 'fixed',
     right: theme.spacing(5),
     top: theme.spacing(5),
-    width: 'clamp(800px, 40vw, 1000px)',
+    width: 'clamp(800px, 40vw, 950px)',
     height: `calc(100% - ${theme.spacing(10)}px)`
   },
   paper: {
@@ -57,12 +58,15 @@ interface Props {
   children: React.ReactNode;
 }
 
-export const ApplicationLayout: FC<Props> = ({ children }: Props) => {
+const ApplicationLayout: FC<Props> = ({ children }: Props) => {
   const classes = useStyles();
 
   return (
     <main className={classes.main}>
       <div className={classes.background}>
+        <div className={classes.map}>
+          <MainMap />
+        </div>
         <div className={classes.tools}>
           <Paper
             className={classes.paper}
@@ -71,7 +75,6 @@ export const ApplicationLayout: FC<Props> = ({ children }: Props) => {
             <div className={classes.mockSize} />
           </Paper>
         </div>
-        <div className={classes.map} onClick={() => console.log('clicked')} />
         <div className={classes.menu}>
           <Paper
             className={clsx(classes.paper, classes.overflow)}
@@ -84,3 +87,5 @@ export const ApplicationLayout: FC<Props> = ({ children }: Props) => {
     </main>
   );
 };
+
+export default ApplicationLayout;

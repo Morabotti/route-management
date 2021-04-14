@@ -1,4 +1,4 @@
-const { ContextReplacementPlugin } = require('webpack')
+const { ContextReplacementPlugin, DefinePlugin } = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -60,6 +60,7 @@ module.exports = {
   },
   plugins: [
     new ContextReplacementPlugin(/moment[/\\]locale$/, /en|fi/),
+    new DefinePlugin(mapEnvironmentVariables()),
     new HtmlWebpackPlugin({
       inject: true,
       hash: true,

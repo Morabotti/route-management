@@ -11,8 +11,6 @@ interface Props {
 export const AuthLayer = memo(({ children }: Props) => {
   const { loading, auth, pathname } = useAuthLayer();
 
-  console.log(loading, auth, pathname);
-
   if (loading && auth === null) {
     return (
       <PrimaryLoader text='Loading...' />
