@@ -2,7 +2,7 @@ const { ContextReplacementPlugin, DefinePlugin } = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const { resolveTsconfigPathsToAlias } = require('./webpack.utils.js')
+const { resolveTsconfigPathsToAlias, mapEnvironmentVariables } = require('./webpack.utils.js')
 const path = require('path');
 
 module.exports = {
