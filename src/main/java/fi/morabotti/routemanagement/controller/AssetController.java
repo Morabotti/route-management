@@ -16,7 +16,6 @@ import javax.inject.Singleton;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
-import java.util.List;
 
 @Singleton
 public class AssetController {
