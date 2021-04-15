@@ -6,6 +6,8 @@ import fi.morabotti.routemanagement.domain.LocationDomain;
 import fi.morabotti.routemanagement.model.Location;
 import fi.morabotti.routemanagement.model.PrimaryLocation;
 import fi.morabotti.routemanagement.view.CreateLocationRequest;
+import fi.morabotti.routemanagement.view.PaginationQuery;
+import fi.morabotti.routemanagement.view.PaginationResponse;
 import fi.morabotti.routemanagement.view.PrimaryLocationQuery;
 
 import javax.inject.Inject;
@@ -13,7 +15,6 @@ import javax.inject.Singleton;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
-import java.util.List;
 
 @Singleton
 public class LocationController {
@@ -33,8 +34,13 @@ public class LocationController {
         this.locationDomain = locationDomain;
     }
 
-    public List<Location> getLocations() {
-        return locationDao.fetchLocations();
+    public PaginationResponse<Location> getLocations(
+            PaginationQuery paginationQuery
+    ) {
+        return PaginationResponse.create(
+                locationDao.fetchLocations(paginationQuery),
+                locationDao.fetchLocationsLength()
+        );
     }
 
     public Location getLocationById(Long id) {

@@ -4,6 +4,16 @@ import { RouteAuthType } from '@enums';
 
 export type RouteComponent = LazyExoticComponent<FC> | FC | PreloadableComponent<FC>;
 
+export interface PaginationResult<T> {
+  result: T[];
+  length: number;
+}
+
+export interface PaginationQuery {
+  limit: number;
+  offset: number;
+}
+
 export interface Route {
   path: string;
   component: RouteComponent;

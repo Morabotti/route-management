@@ -4,9 +4,12 @@ import fi.morabotti.routemanagement.controller.AssetController;
 import fi.morabotti.routemanagement.model.Person;
 import fi.morabotti.routemanagement.model.Vehicle;
 import fi.morabotti.routemanagement.view.CreatePersonRequest;
+import fi.morabotti.routemanagement.view.PaginationQuery;
+import fi.morabotti.routemanagement.view.PaginationResponse;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -17,7 +20,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 @Path("/asset")
 @Singleton
@@ -33,8 +35,10 @@ public class AssetResource {
 
     @GET
     @Path("/vehicle")
-    public List<Vehicle> getVehicles() {
-        return assetController.getVehicles();
+    public PaginationResponse<Vehicle> getVehicles(
+            @BeanParam PaginationQuery paginationQuery
+    ) {
+        return assetController.getVehicles(paginationQuery);
     }
 
     @POST
@@ -71,8 +75,10 @@ public class AssetResource {
 
     @GET
     @Path("/person")
-    public List<Person> getPersons() {
-        return assetController.getPersons();
+    public PaginationResponse<Person> getPersons(
+            @BeanParam PaginationQuery paginationQuery
+    ) {
+        return assetController.getPersons(paginationQuery);
     }
 
     @POST

@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { useCrudView, useNavigation } from '@hooks';
 import { CrudState } from '@enums';
 import { ApplicationContainer, CenterMessage } from '@components/common';
+import { VehicleList } from '@components/vehicles';
 import { Cancel } from 'mdi-material-ui';
 
 const VehicleCrudView: FC = () => {
@@ -15,9 +16,7 @@ const VehicleCrudView: FC = () => {
           title='Vehicles'
           onBack={onNavigation('/rm')}
         >
-          <div>
-            List
-          </div>
+          <VehicleList />
         </ApplicationContainer>
       );
     case CrudState.UPDATE:

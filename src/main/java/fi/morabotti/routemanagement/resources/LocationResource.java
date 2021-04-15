@@ -4,9 +4,12 @@ import fi.morabotti.routemanagement.controller.LocationController;
 import fi.morabotti.routemanagement.model.Location;
 import fi.morabotti.routemanagement.model.PrimaryLocation;
 import fi.morabotti.routemanagement.view.CreateLocationRequest;
+import fi.morabotti.routemanagement.view.PaginationQuery;
+import fi.morabotti.routemanagement.view.PaginationResponse;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -17,7 +20,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 @Path("/location")
 @Singleton
@@ -32,8 +34,10 @@ public class LocationResource {
     }
 
     @GET
-    public List<Location> getLocations() {
-        return locationController.getLocations();
+    public PaginationResponse<Location> getLocations(
+            @BeanParam PaginationQuery paginationQuery
+    ) {
+        return locationController.getLocations(paginationQuery);
     }
 
     @POST

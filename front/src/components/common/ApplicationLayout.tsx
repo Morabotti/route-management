@@ -48,9 +48,6 @@ const useStyles = makeStyles(theme => ({
   },
   mockSize: {
     height: '300px'
-  },
-  overflow: {
-    overflowY: 'auto'
   }
 }));
 
@@ -77,7 +74,7 @@ const ApplicationLayout: FC<Props> = ({ children }: Props) => {
         </div>
         <div className={classes.menu}>
           <Paper
-            className={clsx(classes.paper, classes.overflow)}
+            className={clsx(classes.paper)}
             variant='outlined'
           >
             {children}

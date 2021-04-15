@@ -7,6 +7,8 @@ import fi.morabotti.routemanagement.domain.AssetDomain;
 import fi.morabotti.routemanagement.model.Person;
 import fi.morabotti.routemanagement.model.Vehicle;
 import fi.morabotti.routemanagement.view.CreatePersonRequest;
+import fi.morabotti.routemanagement.view.PaginationQuery;
+import fi.morabotti.routemanagement.view.PaginationResponse;
 import fi.morabotti.routemanagement.view.PrimaryLocationQuery;
 
 import javax.inject.Inject;
@@ -37,8 +39,11 @@ public class AssetController {
         this.primaryLocationDao = primaryLocationDao;
     }
 
-    public List<Vehicle> getVehicles() {
-        return vehicleDao.fetchVehicles();
+    public PaginationResponse<Vehicle> getVehicles(PaginationQuery paginationQuery) {
+        return PaginationResponse.create(
+                vehicleDao.fetchVehicles(paginationQuery),
+                vehicleDao.fetchVehicleLength()
+        );
     }
 
     public Vehicle getVehicleById(Long id) {
@@ -64,8 +69,11 @@ public class AssetController {
                 .orElseThrow(InternalServerErrorException::new);
     }
 
-    public List<Person> getPersons() {
-        return personDao.fetchPersons();
+    public PaginationResponse<Person> getPersons(PaginationQuery paginationQuery) {
+        return PaginationResponse.create(
+                personDao.fetchPersons(paginationQuery),
+                personDao.fetchPersonsLength()
+        );
     }
 
     public Person getPersonById(Long id) {

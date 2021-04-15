@@ -8,6 +8,8 @@ import {
   CreateStep,
   CreateVehicle,
   LocationType,
+  PaginationQuery,
+  PaginationResult,
   Person,
   PrimaryLocation,
   RouteType,
@@ -25,6 +27,29 @@ export const checkResponse = (response: Response): Response => {
     throw new Error(`${response.status.toString()}: ${response.statusText}`);
   }
   return response;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const searchParams = (objects: any[]): string => {
+  const query = new URLSearchParams();
+
+  for (const object of objects) {
+    if (!object) {
+      continue;
+    }
+
+    for (const key in object) {
+      if (object[key] !== null
+        && object[key] !== undefined
+        && object[key] !== ''
+        && String(object[key]).trim() !== ''
+      ) {
+        query.set(key, String(object[key]));
+      }
+    }
+  }
+
+  return query.toString();
 };
 
 export const checkSession = (token: string): Promise<AuthUser> => fetch(
@@ -49,8 +74,10 @@ export const revokeSession = (): Promise<Response> => fetch(
 )
   .then(checkResponse);
 
-export const getVehicles = (): Promise<Vehicle[]> => fetch(
-  `/api/asset/vehicle`,
+export const getVehicles = (
+  pagination: PaginationQuery
+): Promise<PaginationResult<Vehicle>> => fetch(
+  `/api/asset/vehicle?${searchParams([pagination])}`,
   {
     method: 'GET',
     headers: getHeaders()
@@ -100,8 +127,10 @@ export const deleteVehicle = (id: number): Promise<Response> => fetch(
 )
   .then(checkResponse);
 
-export const getPersons = (): Promise<Person[]> => fetch(
-  `/api/asset/person`,
+export const getPersons = (
+  pagination: PaginationQuery
+): Promise<PaginationResult<Person>> => fetch(
+  `/api/asset/person?${searchParams([pagination])}`,
   {
     method: 'GET',
     headers: getHeaders()
@@ -151,8 +180,10 @@ export const deletePerson = (id: number): Promise<Response> => fetch(
 )
   .then(checkResponse);
 
-export const getLocations = (): Promise<LocationType[]> => fetch(
-  `/api/location`,
+export const getLocations = (
+  pagination: PaginationQuery
+): Promise<PaginationResult<LocationType>> => fetch(
+  `/api/location?${searchParams([pagination])}`,
   {
     method: 'GET',
     headers: getHeaders()
@@ -227,7 +258,7 @@ export const deleteLocationAsPrimary = (
 )
   .then(checkResponse);
 
-export const getRoutes = (): Promise<RouteType[]> => fetch(
+export const getRoutes = (): Promise<PaginationResult<RouteType>> => fetch(
   `/api/route`,
   {
     method: 'GET',

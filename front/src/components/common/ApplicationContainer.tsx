@@ -13,6 +13,9 @@ const useStyles = makeStyles(theme => ({
       padding: theme.spacing(1.5)
     }
   },
+  overflow: {
+    overflowY: 'auto'
+  },
   wrapper: {
     padding: theme.spacing(3),
     [theme.breakpoints.down('sm')]: {
@@ -65,7 +68,7 @@ export const ApplicationContainer: FC<Props> = ({
         </div>
       )}
       <div
-        className={clsx({
+        className={clsx(classes.overflow, {
           [classes.padding]: !disablePadding
         })}
       >

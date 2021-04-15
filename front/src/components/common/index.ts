@@ -5,3 +5,4 @@ export * from './DummyComponent';
 export * from './PageSuspense';
 export * from './ApplicationContainer';
 export * from './CenterMessage';
+export * from './ConfirmationDialog';

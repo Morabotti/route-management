@@ -4,6 +4,7 @@ import fi.jubic.easyutils.transactional.TransactionProvider;
 import fi.jubic.easyutils.transactional.Transactional;
 import fi.morabotti.routemanagement.configuration.ApplicationConfiguration;
 import fi.morabotti.routemanagement.model.Vehicle;
+import fi.morabotti.routemanagement.view.PaginationQuery;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
@@ -31,11 +32,21 @@ public class VehicleDao {
         this.transactionProvider = transactionProvider;
     }
 
-    public List<Vehicle> fetchVehicles() {
+    public Long fetchVehicleLength() {
+        return DSL.using(jooqConfiguration)
+                .selectCount()
+                .from(VEHICLE)
+                .where(VEHICLE.DELETED_AT.isNull())
+                .fetchOne(0, Long.class);
+    }
+
+    public List<Vehicle> fetchVehicles(PaginationQuery paginationQuery) {
         return DSL.using(jooqConfiguration)
                 .select(VEHICLE.asterisk())
                 .from(VEHICLE)
                 .where(VEHICLE.DELETED_AT.isNull())
+                .limit(paginationQuery.getLimit().orElse(20))
+                .offset(paginationQuery.getOffset().orElse(0))
                 .fetch()
                 .stream()
                 .collect(Vehicle.mapper);

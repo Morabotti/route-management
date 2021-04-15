@@ -7,6 +7,7 @@ import fi.morabotti.routemanagement.db.Keys;
 import fi.morabotti.routemanagement.model.Location;
 import fi.morabotti.routemanagement.model.Person;
 import fi.morabotti.routemanagement.model.PrimaryLocation;
+import fi.morabotti.routemanagement.view.PaginationQuery;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -38,9 +39,19 @@ public class PersonDao {
         this.transactionProvider = transactionProvider;
     }
 
-    public List<Person> fetchPersons() {
+    public Long fetchPersonsLength() {
+        return DSL.using(jooqConfiguration)
+                .selectCount()
+                .from(PERSON)
+                .where(PERSON.DELETED_AT.isNull())
+                .fetchOne(0, Long.class);
+    }
+
+    public List<Person> fetchPersons(PaginationQuery paginationQuery) {
         return selectPerson(DSL.using(jooqConfiguration))
                 .where(PERSON.DELETED_AT.isNull())
+                .limit(paginationQuery.getLimit().orElse(20))
+                .offset(paginationQuery.getOffset().orElse(0))
                 .fetch()
                 .stream()
                 .collect(
