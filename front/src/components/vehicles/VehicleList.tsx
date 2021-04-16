@@ -81,6 +81,7 @@ export const VehicleList: FC<Props> = ({
               disableElevation
               className={classes.button}
               onClick={onCreate}
+              disabled={vehicles.isLoading}
             >
               <Plus />
             </Button>
@@ -88,7 +89,14 @@ export const VehicleList: FC<Props> = ({
         </div>
       </div>
       <List>
-        {vehicles.data?.result.map(vehicle => (
+        {vehicles.isLoading ? [...Array(8)].map((e, i) => (
+          <CrudListItem
+            key={i}
+            primaryText='loading'
+            icon={CarSide}
+            fetching
+          />
+        )) : vehicles.data?.result.map(vehicle => (
           <CrudListItem
             key={vehicle.id}
             primaryText={vehicle.licenseNumber}

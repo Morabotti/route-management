@@ -6,3 +6,4 @@ export * from './useVehicleList';
 export * from './usePagination';
 export * from './useControls';
 export * from './useDebounce';
+export * from './useApplication';

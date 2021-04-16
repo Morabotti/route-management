@@ -2,9 +2,8 @@ import { FC } from 'react';
 import { SnackbarProvider } from 'notistack';
 import { makeStyles, createStyles } from '@material-ui/core';
 
-const useStyles = makeStyles(theme => createStyles({
+const useStyles = makeStyles(() => createStyles({
   root: {
-    marginTop: theme.spacing(8),
     zIndex: 2500
   }
 }));
@@ -23,7 +22,7 @@ export const SnackbarContainer: FC<Props> = ({
       maxSnack={3}
       anchorOrigin={{
         vertical: 'top',
-        horizontal: 'right'
+        horizontal: 'left'
       }}
       autoHideDuration={5000}
       classes={{ containerRoot: classes.root }}

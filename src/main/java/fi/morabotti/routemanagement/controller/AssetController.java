@@ -10,6 +10,7 @@ import fi.morabotti.routemanagement.view.CreatePersonRequest;
 import fi.morabotti.routemanagement.view.PaginationQuery;
 import fi.morabotti.routemanagement.view.PaginationResponse;
 import fi.morabotti.routemanagement.view.PrimaryLocationQuery;
+import fi.morabotti.routemanagement.view.SearchQuery;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -38,10 +39,19 @@ public class AssetController {
         this.primaryLocationDao = primaryLocationDao;
     }
 
-    public PaginationResponse<Vehicle> getVehicles(PaginationQuery paginationQuery) {
+    public Boolean isVehicleLicenseNumberTaken(String licenseNumber) {
+        return vehicleDao.getByLicenseNumber(licenseNumber)
+                .get()
+                .isPresent();
+    }
+
+    public PaginationResponse<Vehicle> getVehicles(
+            PaginationQuery paginationQuery,
+            SearchQuery searchQuery
+    ) {
         return PaginationResponse.create(
-                vehicleDao.fetchVehicles(paginationQuery),
-                vehicleDao.fetchVehicleLength()
+                vehicleDao.fetchVehicles(paginationQuery, searchQuery),
+                vehicleDao.fetchVehicleLength(searchQuery)
         );
     }
 
@@ -68,10 +78,13 @@ public class AssetController {
                 .orElseThrow(InternalServerErrorException::new);
     }
 
-    public PaginationResponse<Person> getPersons(PaginationQuery paginationQuery) {
+    public PaginationResponse<Person> getPersons(
+            PaginationQuery paginationQuery,
+            SearchQuery searchQuery
+    ) {
         return PaginationResponse.create(
-                personDao.fetchPersons(paginationQuery),
-                personDao.fetchPersonsLength()
+                personDao.fetchPersons(paginationQuery, searchQuery),
+                personDao.fetchPersonsLength(searchQuery)
         );
     }
 

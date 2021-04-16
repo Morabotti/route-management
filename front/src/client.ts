@@ -89,6 +89,18 @@ export const getVehicles = (
   .then(checkResponse)
   .then((res) => res.json());
 
+export const getIsVehicleLicenseNumberTaken = (
+  licenseNumber: string
+): Promise<boolean> => fetch(
+  `/api/asset/vehicle/taken/${licenseNumber}`,
+  {
+    method: 'GET',
+    headers: getHeaders()
+  }
+)
+  .then(checkResponse)
+  .then((res) => res.json());
+
 export const createVehicle = (set: CreateVehicle): Promise<Vehicle> => fetch(
   `/api/asset/vehicle`,
   {

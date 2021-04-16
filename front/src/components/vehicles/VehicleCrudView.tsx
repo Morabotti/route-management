@@ -4,6 +4,7 @@ import { CrudState } from '@enums';
 import { ApplicationContainer, CenterMessage } from '@components/common';
 import { VehicleList } from '@components/vehicles';
 import { Cancel } from 'mdi-material-ui';
+import { CreateNewVehicle } from './CreateNewVehicle';
 
 const VehicleCrudView: FC = () => {
   const { onNavigation } = useNavigation();
@@ -19,14 +20,9 @@ const VehicleCrudView: FC = () => {
       );
     case CrudState.CREATE:
       return (
-        <ApplicationContainer
-          title='Create New Vehicle'
+        <CreateNewVehicle
           onBack={onNavigation('/rm/vehicles')}
-        >
-          <div>
-            Create
-          </div>
-        </ApplicationContainer>
+        />
       );
     case CrudState.UPDATE:
       return (

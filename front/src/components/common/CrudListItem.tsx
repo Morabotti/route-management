@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { OverridableComponent } from '@material-ui/core/OverridableComponent';
 import { ChevronRight } from 'mdi-material-ui';
+import { Skeleton } from '@material-ui/lab';
 
 import {
   Avatar,
@@ -62,16 +63,36 @@ interface Props {
   onClick?: () => void;
   onMouseEnter?: () => void;
   primaryText: string;
+  secondaryText?: string;
   icon: OverridableComponent<SvgIconTypeMap<unknown, 'svg'>>;
+  fetching?: boolean;
 }
 
 export const CrudListItem: FC<Props> = ({
   primaryText,
+  secondaryText,
   icon: Icon,
   onClick,
-  onMouseEnter
+  onMouseEnter,
+  fetching
 }: Props) => {
   const classes = useStyles();
+
+  if (fetching) {
+    return (
+      <ListItem classes={{ root: classes.root }}>
+        <ListItemAvatar>
+          <Skeleton variant='circle' width={40} height={40} />
+        </ListItemAvatar>
+        <ListItemText
+          primary={<Skeleton variant='text' width='50%' height={24} />}
+          secondary={secondaryText
+            ? <Skeleton variant='text' width='30%' height={20} />
+            : undefined}
+        />
+      </ListItem>
+    );
+  }
 
   return (
     <ListItem

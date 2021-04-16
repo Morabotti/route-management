@@ -3,6 +3,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { hot } from 'react-hot-loader';
 import { AuthLayer } from '@components/auth';
 import { publicRoutes, authRoutes } from '@routes';
+import { ApplicationProvider } from '@hooks';
 
 import {
   ApplicationProviders,
@@ -18,17 +19,19 @@ const Application = () => (
       <Switch>
         <Route path='/rm'>
           <AuthLayer>
-            <ApplicationLayout>
-              <Switch>
-                <Suspense fallback={<PageSuspense />}>
-                  {authRoutes.map(({ path, component: Component }) => (
-                    <Route exact key={path} path={path}>
-                      <Component />
-                    </Route>
-                  ))}
-                </Suspense>
-              </Switch>
-            </ApplicationLayout>
+            <ApplicationProvider>
+              <ApplicationLayout>
+                <Switch>
+                  <Suspense fallback={<PageSuspense />}>
+                    {authRoutes.map(({ path, component: Component }) => (
+                      <Route exact key={path} path={path}>
+                        <Component />
+                      </Route>
+                    ))}
+                  </Suspense>
+                </Switch>
+              </ApplicationLayout>
+            </ApplicationProvider>
           </AuthLayer>
         </Route>
         <Redirect from='/' to='/login' exact />

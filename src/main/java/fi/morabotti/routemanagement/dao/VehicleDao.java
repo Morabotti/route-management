@@ -6,6 +6,8 @@ import fi.morabotti.routemanagement.configuration.ApplicationConfiguration;
 import fi.morabotti.routemanagement.model.Vehicle;
 import fi.morabotti.routemanagement.utils.LocalDateMapper;
 import fi.morabotti.routemanagement.view.PaginationQuery;
+import fi.morabotti.routemanagement.view.SearchQuery;
+import org.jooq.Condition;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
@@ -32,24 +34,40 @@ public class VehicleDao {
         this.transactionProvider = transactionProvider;
     }
 
-    public Long fetchVehicleLength() {
+    public Long fetchVehicleLength(SearchQuery searchQuery) {
         return DSL.using(jooqConfiguration)
                 .selectCount()
                 .from(VEHICLE)
-                .where(VEHICLE.DELETED_AT.isNull())
+                .where(getConditions(searchQuery))
                 .fetchOne(0, Long.class);
     }
 
-    public List<Vehicle> fetchVehicles(PaginationQuery paginationQuery) {
+    public List<Vehicle> fetchVehicles(
+            PaginationQuery paginationQuery,
+            SearchQuery searchQuery
+    ) {
         return DSL.using(jooqConfiguration)
                 .select(VEHICLE.asterisk())
                 .from(VEHICLE)
-                .where(VEHICLE.DELETED_AT.isNull())
+                .where(getConditions(searchQuery))
                 .limit(paginationQuery.getLimit().orElse(20))
                 .offset(paginationQuery.getOffset().orElse(0))
                 .fetch()
                 .stream()
                 .collect(Vehicle.mapper);
+    }
+
+    public Transactional<Optional<Vehicle>, DSLContext> getByLicenseNumber(String licenseNumber) {
+        return Transactional.of(
+                context -> context
+                        .select(VEHICLE.asterisk())
+                        .from(VEHICLE)
+                        .where(VEHICLE.LICENSE_NUMBER.eq(licenseNumber.toUpperCase()))
+                        .and(VEHICLE.DELETED_AT.isNull())
+                        .fetchOptional()
+                        .flatMap(Vehicle.mapper::mapOptional),
+                transactionProvider
+        );
     }
 
     public Transactional<Optional<Vehicle>, DSLContext> getById(Long id) {
@@ -64,7 +82,7 @@ public class VehicleDao {
                 transactionProvider
         );
     }
-
+    
     public Transactional<Long, DSLContext> create(Vehicle vehicle) {
         return Transactional.of(
                 context -> context.insertInto(VEHICLE)
@@ -106,5 +124,14 @@ public class VehicleDao {
                         .execute(),
                 transactionProvider
         ).flatMap(ignored -> getById(vehicle.getId()));
+    }
+
+    private Condition getConditions(SearchQuery searchQuery) {
+        return Optional.of(VEHICLE.DELETED_AT.isNull())
+                .map(condition -> searchQuery.getSearch()
+                        .map(search -> condition.and(VEHICLE.LICENSE_NUMBER.contains(search)))
+                        .orElse(condition)
+                )
+                .get();
     }
 }

@@ -9,6 +9,8 @@ import fi.morabotti.routemanagement.model.Person;
 import fi.morabotti.routemanagement.model.PrimaryLocation;
 import fi.morabotti.routemanagement.utils.LocalDateMapper;
 import fi.morabotti.routemanagement.view.PaginationQuery;
+import fi.morabotti.routemanagement.view.SearchQuery;
+import org.jooq.Condition;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -39,17 +41,22 @@ public class PersonDao {
         this.transactionProvider = transactionProvider;
     }
 
-    public Long fetchPersonsLength() {
+    public Long fetchPersonsLength(SearchQuery searchQuery) {
         return DSL.using(jooqConfiguration)
                 .selectCount()
                 .from(PERSON)
-                .where(PERSON.DELETED_AT.isNull())
+                .leftJoin(PRIMARY_LOCATION).onKey(Keys.FK_PRIMARY_LOCATION_PERSON)
+                .leftJoin(LOCATION).onKey(Keys.FK_PRIMARY_LOCATION_LOCATION)
+                .where(getConditions(searchQuery))
                 .fetchOne(0, Long.class);
     }
 
-    public List<Person> fetchPersons(PaginationQuery paginationQuery) {
+    public List<Person> fetchPersons(
+            PaginationQuery paginationQuery,
+            SearchQuery searchQuery
+    ) {
         return selectPerson(DSL.using(jooqConfiguration))
-                .where(PERSON.DELETED_AT.isNull())
+                .where(getConditions(searchQuery))
                 .limit(paginationQuery.getLimit().orElse(20))
                 .offset(paginationQuery.getOffset().orElse(0))
                 .fetch()
@@ -133,5 +140,18 @@ public class PersonDao {
                 .from(PERSON)
                 .leftJoin(PRIMARY_LOCATION).onKey(Keys.FK_PRIMARY_LOCATION_PERSON)
                 .leftJoin(LOCATION).onKey(Keys.FK_PRIMARY_LOCATION_LOCATION);
+    }
+
+    private Condition getConditions(SearchQuery searchQuery) {
+        return Optional.of(PERSON.DELETED_AT.isNull().and(LOCATION.DELETED_AT.isNull()))
+                .map(condition -> searchQuery.getSearch()
+                        .map(search -> condition.and(PERSON.NAME.contains(search))
+                                .or(LOCATION.ADDRESS.contains(search))
+                                .or(LOCATION.CITY.contains(search))
+                                .or(LOCATION.ZIP.contains(search))
+                        )
+                        .orElse(condition)
+                )
+                .get();
     }
 }

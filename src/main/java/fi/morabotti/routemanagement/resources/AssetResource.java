@@ -6,6 +6,7 @@ import fi.morabotti.routemanagement.model.Vehicle;
 import fi.morabotti.routemanagement.view.CreatePersonRequest;
 import fi.morabotti.routemanagement.view.PaginationQuery;
 import fi.morabotti.routemanagement.view.PaginationResponse;
+import fi.morabotti.routemanagement.view.SearchQuery;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -34,11 +35,20 @@ public class AssetResource {
     }
 
     @GET
+    @Path("/vehicle/taken/{licenseNumber}")
+    public Boolean isLicenseNumberTaken(
+            @PathParam("licenseNumber") String licenseNumber
+    ) {
+        return assetController.isVehicleLicenseNumberTaken(licenseNumber);
+    }
+
+    @GET
     @Path("/vehicle")
     public PaginationResponse<Vehicle> getVehicles(
-            @BeanParam PaginationQuery paginationQuery
+            @BeanParam PaginationQuery paginationQuery,
+            @BeanParam SearchQuery searchQuery
     ) {
-        return assetController.getVehicles(paginationQuery);
+        return assetController.getVehicles(paginationQuery, searchQuery);
     }
 
     @POST
@@ -76,9 +86,10 @@ public class AssetResource {
     @GET
     @Path("/person")
     public PaginationResponse<Person> getPersons(
-            @BeanParam PaginationQuery paginationQuery
+            @BeanParam PaginationQuery paginationQuery,
+            @BeanParam SearchQuery searchQuery
     ) {
-        return assetController.getPersons(paginationQuery);
+        return assetController.getPersons(paginationQuery, searchQuery);
     }
 
     @POST
