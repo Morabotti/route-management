@@ -9,3 +9,5 @@ export * from './ConfirmationDialog';
 export * from './CrudListItem';
 export * from './ListPaginationControls';
 export * from './Actions';
+export * from './DetailBlock';
+export * from './DetailBlockText';

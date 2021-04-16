@@ -1,13 +1,18 @@
 import { FC } from 'react';
 import { useCrudView, useNavigation } from '@hooks';
 import { CrudState } from '@enums';
-import { ApplicationContainer, CenterMessage } from '@components/common';
-import { VehicleList } from '@components/vehicles';
+import { CenterMessage } from '@components/common';
 import { Cancel } from 'mdi-material-ui';
-import { CreateNewVehicle } from './CreateNewVehicle';
+
+import {
+  VehicleList,
+  ViewVehicle,
+  CreateNewVehicle,
+  UpdateVehicle
+} from '@components/vehicles';
 
 const VehicleCrudView: FC = () => {
-  const { onNavigation } = useNavigation();
+  const { onNavigation, onRoutePreload } = useNavigation();
   const { id, view } = useCrudView();
 
   switch (view) {
@@ -26,37 +31,27 @@ const VehicleCrudView: FC = () => {
       );
     case CrudState.UPDATE:
       return (
-        <ApplicationContainer
-          title='Update Vehicle'
-          onBack={onNavigation('/rm/vehicles')}
-        >
-          <div>
-            Update {id}
-          </div>
-        </ApplicationContainer>
+        <UpdateVehicle
+          vehicleId={id}
+          onBack={onNavigation(`/rm/vehicles/view/${id}`)}
+        />
       );
     case CrudState.VIEW:
       return (
-        <ApplicationContainer
-          title='View Vehicle'
+        <ViewVehicle
+          vehicleId={id}
           onBack={onNavigation('/rm/vehicles')}
-        >
-          <div>
-            VIEW {id}
-          </div>
-        </ApplicationContainer>
+        />
       );
     default:
       return (
-        <ApplicationContainer
-          title='Vehicles'
-          onBack={onNavigation('/rm')}
-        >
-          <CenterMessage
-            icon={Cancel}
-            text='Not implemented'
-          />
-        </ApplicationContainer>
+        <CenterMessage
+          icon={Cancel}
+          text='Not implemented'
+          buttonText='Go back'
+          onClick={onNavigation('/rm')}
+          onMouseEnter={onRoutePreload('/rm')}
+        />
       );
   }
 };

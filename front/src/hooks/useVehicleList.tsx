@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePagination, useDebounce } from '@hooks';
 import { UseQueryResult, useQuery } from 'react-query';
 import { useHistory, useLocation } from 'react-router';
@@ -11,6 +11,7 @@ interface VehicleListContext {
   vehicles: UseQueryResult<PaginationResult<Vehicle>>;
   search: string;
   setSearch: (set: string) => void;
+  onResetFilters: () => void;
 }
 
 export const useVehicleList = (): VehicleListContext => {
@@ -40,9 +41,14 @@ export const useVehicleList = (): VehicleListContext => {
     replace(url);
   }, [debouncedSearch, replace]);
 
+  const onResetFilters = useCallback(() => {
+    setSearchState('');
+  }, []);
+
   return {
     vehicles,
     search: searchState,
-    setSearch: setSearchState
+    setSearch: setSearchState,
+    onResetFilters
   };
 };

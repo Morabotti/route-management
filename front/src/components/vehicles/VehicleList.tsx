@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { useNavigation, useVehicleList } from '@hooks';
-import { ApplicationContainer, CrudListItem, ListPaginationControls } from '@components/common';
+import { ApplicationContainer, CenterMessage, CrudListItem, ListPaginationControls } from '@components/common';
 import { Button, InputAdornment, List, makeStyles, TextField } from '@material-ui/core';
-import { CarSide, Magnify, Plus } from 'mdi-material-ui';
+import { CarOff, CarSide, Magnify, Plus } from 'mdi-material-ui';
 
 const useStyles = makeStyles(theme => ({
   padding: {
@@ -42,7 +42,7 @@ export const VehicleList: FC<Props> = ({
   onCreate
 }: Props) => {
   const classes = useStyles();
-  const { vehicles, search, setSearch } = useVehicleList();
+  const { vehicles, search, setSearch, onResetFilters } = useVehicleList();
   const { onNavigation } = useNavigation();
 
   return (
@@ -96,7 +96,14 @@ export const VehicleList: FC<Props> = ({
             icon={CarSide}
             fetching
           />
-        )) : vehicles.data?.result.map(vehicle => (
+        )) : vehicles.data?.length === 0 ? (
+          <CenterMessage
+            icon={CarOff}
+            text='No results found.'
+            buttonText='Reset filters'
+            onClick={onResetFilters}
+          />
+        ) : vehicles.data?.result.map(vehicle => (
           <CrudListItem
             key={vehicle.id}
             primaryText={vehicle.licenseNumber}

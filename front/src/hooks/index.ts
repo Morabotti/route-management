@@ -7,3 +7,4 @@ export * from './usePagination';
 export * from './useControls';
 export * from './useDebounce';
 export * from './useApplication';
+export * from './useVehicle';
