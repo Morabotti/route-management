@@ -8,6 +8,7 @@ import fi.morabotti.routemanagement.db.tables.records.StepItemRecord;
 import fi.morabotti.routemanagement.model.Person;
 import fi.morabotti.routemanagement.model.Step;
 import fi.morabotti.routemanagement.model.StepItem;
+import fi.morabotti.routemanagement.utils.LocalDateMapper;
 import fi.morabotti.routemanagement.view.StepItemQuery;
 import org.jooq.Condition;
 import org.jooq.Configuration;
@@ -19,7 +20,6 @@ import org.jooq.impl.DSL;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -121,7 +121,7 @@ public class StepItemDao {
                     }
                     else {
                         context.update(STEP_ITEM)
-                                .set(STEP_ITEM.DELETED_AT, Timestamp.from(Instant.now()))
+                                .set(STEP_ITEM.DELETED_AT, LocalDateMapper.ofInstant(Instant.now()))
                                 .where(getConditions(query))
                                 .execute();
                     }

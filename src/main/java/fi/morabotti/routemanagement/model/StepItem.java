@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.jubic.easymapper.annotations.EasyId;
 import fi.jubic.easyvalue.EasyValue;
 import fi.morabotti.routemanagement.db.tables.records.StepItemRecord;
+import fi.morabotti.routemanagement.utils.LocalDateMapper;
 
 import javax.annotation.Nullable;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 
 import static fi.morabotti.routemanagement.db.tables.StepItem.STEP_ITEM;
@@ -43,8 +43,8 @@ public abstract class StepItem {
             .setStepAccessor(STEP_ITEM.STEP_ID, Step::getId)
             .setDeletedAtAccessor(
                     STEP_ITEM.DELETED_AT,
-                    Timestamp::from,
-                    Timestamp::toInstant
+                    LocalDateMapper::ofInstant,
+                    LocalDateMapper::toLocalDate
             )
             .build();
 }

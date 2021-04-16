@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.jubic.easymapper.annotations.EasyId;
 import fi.jubic.easyvalue.EasyValue;
 import fi.morabotti.routemanagement.db.tables.records.RouteRecord;
+import fi.morabotti.routemanagement.utils.LocalDateMapper;
 
 import javax.annotation.Nullable;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 
@@ -44,15 +44,15 @@ public abstract class Route {
             .setIdAccessor(ROUTE.ID)
             .setStartTimeAccessor(
                     ROUTE.START_TIME,
-                    Timestamp::from,
-                    Timestamp::toInstant
+                    LocalDateMapper::ofInstant,
+                    LocalDateMapper::toLocalDate
             )
             .setVehicleAccessor(ROUTE.VEHICLE_ID, Vehicle::getId)
             .setDestinationAccessor(ROUTE.DESTINATION_ID, Location::getId)
             .setDeletedAtAccessor(
                     ROUTE.DELETED_AT,
-                    Timestamp::from,
-                    Timestamp::toInstant
+                    LocalDateMapper::ofInstant,
+                    LocalDateMapper::toLocalDate
             )
             .build();
 }

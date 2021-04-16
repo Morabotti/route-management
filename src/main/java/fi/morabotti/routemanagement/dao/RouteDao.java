@@ -10,6 +10,7 @@ import fi.morabotti.routemanagement.model.Route;
 import fi.morabotti.routemanagement.model.Step;
 import fi.morabotti.routemanagement.model.StepItem;
 import fi.morabotti.routemanagement.model.Vehicle;
+import fi.morabotti.routemanagement.utils.LocalDateMapper;
 import fi.morabotti.routemanagement.view.PaginationQuery;
 import fi.morabotti.routemanagement.view.PositionQuery;
 import org.jooq.Configuration;
@@ -20,7 +21,6 @@ import org.jooq.impl.DSL;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -142,7 +142,7 @@ public class RouteDao {
         return Transactional.of(
                 context -> {
                     context.update(ROUTE)
-                            .set(ROUTE.DELETED_AT, Timestamp.from(Instant.now()))
+                            .set(ROUTE.DELETED_AT, LocalDateMapper.ofInstant(Instant.now()))
                             .where(ROUTE.ID.eq(id))
                             .execute();
                     return null;

@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.jubic.easymapper.annotations.EasyId;
 import fi.jubic.easyvalue.EasyValue;
 import fi.morabotti.routemanagement.db.tables.records.VehicleRecord;
+import fi.morabotti.routemanagement.utils.LocalDateMapper;
 
 import javax.annotation.Nullable;
-import java.sql.Timestamp;
 import java.time.Instant;
 
 import static fi.morabotti.routemanagement.db.tables.Vehicle.VEHICLE;
@@ -41,8 +41,8 @@ public abstract class Vehicle {
             .setLicenseNumberAccessor(VEHICLE.LICENSE_NUMBER)
             .setDeletedAtAccessor(
                     VEHICLE.DELETED_AT,
-                    Timestamp::from,
-                    Timestamp::toInstant
+                    LocalDateMapper::ofInstant,
+                    LocalDateMapper::toLocalDate
             )
             .build();
 }

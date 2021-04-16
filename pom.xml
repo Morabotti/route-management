@@ -33,21 +33,6 @@
         </dependency>
         <dependency>
             <groupId>fi.jubic</groupId>
-            <artifactId>easymapper-jooq</artifactId>
-            <version>0.4.3</version>
-        </dependency>
-        <dependency>
-            <groupId>fi.jubic</groupId>
-            <artifactId>easymapper-generator-jooq</artifactId>
-            <version>0.4.3</version>
-        </dependency>
-        <dependency>
-            <groupId>fi.jubic</groupId>
-            <artifactId>easymapper-generator-core</artifactId>
-            <version>0.4.3</version>
-        </dependency>
-        <dependency>
-            <groupId>fi.jubic</groupId>
             <artifactId>easymapper-core</artifactId>
             <version>0.4.3</version>
         </dependency>

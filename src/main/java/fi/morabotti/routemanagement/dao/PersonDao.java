@@ -7,6 +7,7 @@ import fi.morabotti.routemanagement.db.Keys;
 import fi.morabotti.routemanagement.model.Location;
 import fi.morabotti.routemanagement.model.Person;
 import fi.morabotti.routemanagement.model.PrimaryLocation;
+import fi.morabotti.routemanagement.utils.LocalDateMapper;
 import fi.morabotti.routemanagement.view.PaginationQuery;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
@@ -16,7 +17,6 @@ import org.jooq.impl.DSL;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -101,7 +101,7 @@ public class PersonDao {
         return Transactional.of(
                 context -> {
                     context.update(PERSON)
-                            .set(PERSON.DELETED_AT, Timestamp.from(Instant.now()))
+                            .set(PERSON.DELETED_AT, LocalDateMapper.ofInstant(Instant.now()))
                             .where(PERSON.ID.eq(id))
                             .execute();
                     return null;

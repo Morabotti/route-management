@@ -4,6 +4,7 @@ import fi.jubic.easyutils.transactional.TransactionProvider;
 import fi.jubic.easyutils.transactional.Transactional;
 import fi.morabotti.routemanagement.configuration.ApplicationConfiguration;
 import fi.morabotti.routemanagement.model.Vehicle;
+import fi.morabotti.routemanagement.utils.LocalDateMapper;
 import fi.morabotti.routemanagement.view.PaginationQuery;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
@@ -11,7 +12,6 @@ import org.jooq.impl.DSL;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -85,7 +85,7 @@ public class VehicleDao {
         return Transactional.of(
                 context -> {
                     context.update(VEHICLE)
-                            .set(VEHICLE.DELETED_AT, Timestamp.from(Instant.now()))
+                            .set(VEHICLE.DELETED_AT, LocalDateMapper.ofInstant(Instant.now()))
                             .where(VEHICLE.ID.eq(id))
                             .execute();
                     return null;
