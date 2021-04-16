@@ -34,11 +34,11 @@ export const MainMap: FC = memo(() => {
       }}
       onLoad={onLoad}
       onUnmount={onUnmount}
-      onDragEnd={() => console.log(map)}
+      onClick={() => console.log(map)}
       options={{
         disableDefaultUI: true,
         disableDoubleClickZoom: true,
-        zoom: 13,
+        zoom: 17,
         center: {
           lat: 63.1092301,
           lng: 21.6019174

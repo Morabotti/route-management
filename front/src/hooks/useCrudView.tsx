@@ -15,6 +15,7 @@ export const useCrudView = (): CrudViewContext => {
       case undefined: return CrudState.LIST;
       case 'update': return CrudState.UPDATE;
       case 'delete': return CrudState.DELETE;
+      case 'create': return CrudState.CREATE;
       case 'view': return CrudState.VIEW;
       default: return CrudState.LIST;
     }

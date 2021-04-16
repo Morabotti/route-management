@@ -26,8 +26,8 @@ const useStyles = makeStyles(theme => createStyles({
     },
     '&:hover > $hover': {
       color: '#000',
-      width: '138%',
-      height: '138%'
+      width: '148%',
+      height: '148%'
     }
   },
   icon: {
@@ -38,8 +38,8 @@ const useStyles = makeStyles(theme => createStyles({
     position: 'absolute',
     left: '50%',
     top: '50%',
-    width: '130%',
-    height: '130%',
+    width: '138%',
+    height: '138%',
     transform: 'translate(-50%, -50%)',
     opacity: 0.1,
     transition: '300ms ease-in-out',

@@ -8,6 +8,9 @@ import fi.morabotti.routemanagement.model.Route;
 import fi.morabotti.routemanagement.model.Step;
 import fi.morabotti.routemanagement.view.CreateRouteRequest;
 import fi.morabotti.routemanagement.view.CreateStepRequest;
+import fi.morabotti.routemanagement.view.PaginationQuery;
+import fi.morabotti.routemanagement.view.PaginationResponse;
+import fi.morabotti.routemanagement.view.PositionQuery;
 import fi.morabotti.routemanagement.view.StepItemQuery;
 
 import javax.inject.Inject;
@@ -38,8 +41,15 @@ public class RouteController {
         this.routeDomain = routeDomain;
     }
 
-    public List<Route> getRoutes() {
-        return routeDao.fetchRoutes();
+    public List<Route> getRoutes(PositionQuery positionQuery) {
+        return routeDao.fetchRoutes(positionQuery);
+    }
+
+    public PaginationResponse<Route> getRoutes(PaginationQuery paginationQuery) {
+        return PaginationResponse.create(
+                routeDao.fetchRoutes(paginationQuery),
+                routeDao.fetchRouteLength()
+        );
     }
 
     public Route getRouteById(Long id) {

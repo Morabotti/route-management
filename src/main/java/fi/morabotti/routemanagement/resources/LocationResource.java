@@ -6,6 +6,7 @@ import fi.morabotti.routemanagement.model.PrimaryLocation;
 import fi.morabotti.routemanagement.view.CreateLocationRequest;
 import fi.morabotti.routemanagement.view.PaginationQuery;
 import fi.morabotti.routemanagement.view.PaginationResponse;
+import fi.morabotti.routemanagement.view.PositionQuery;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -20,6 +21,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Path("/location")
 @Singleton
@@ -34,7 +36,15 @@ public class LocationResource {
     }
 
     @GET
-    public PaginationResponse<Location> getLocations(
+    @Path("/map")
+    public List<Location> getLocationsWithPosition(
+            @BeanParam PositionQuery positionQuery
+    ) {
+        return locationController.getLocations(positionQuery);
+    }
+
+    @GET
+    public PaginationResponse<Location> getLocationsWithPagination(
             @BeanParam PaginationQuery paginationQuery
     ) {
         return locationController.getLocations(paginationQuery);

@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     position: 'fixed',
     right: theme.spacing(5),
     top: theme.spacing(5),
-    width: 'clamp(800px, 40vw, 950px)',
+    width: 'clamp(600px, 40vw, 750px)',
     height: `calc(100% - ${theme.spacing(10)}px)`
   },
   paper: {

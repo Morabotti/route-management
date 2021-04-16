@@ -10,11 +10,13 @@ import {
   LocationType,
   PaginationQuery,
   PaginationResult,
+  PositionQuery,
   Person,
   PrimaryLocation,
   RouteType,
   Step,
-  Vehicle
+  Vehicle,
+  SearchQuery
 } from '@types';
 
 const getHeaders = () => ({
@@ -75,9 +77,10 @@ export const revokeSession = (): Promise<Response> => fetch(
   .then(checkResponse);
 
 export const getVehicles = (
-  pagination: PaginationQuery
+  pagination: PaginationQuery,
+  search: SearchQuery
 ): Promise<PaginationResult<Vehicle>> => fetch(
-  `/api/asset/vehicle?${searchParams([pagination])}`,
+  `/api/asset/vehicle?${searchParams([pagination, search])}`,
   {
     method: 'GET',
     headers: getHeaders()
@@ -180,6 +183,18 @@ export const deletePerson = (id: number): Promise<Response> => fetch(
 )
   .then(checkResponse);
 
+export const getLocationsWithPosition = (
+  position: PositionQuery
+): Promise<LocationType[]> => fetch(
+  `/api/location/map?${searchParams([position])}`,
+  {
+    method: 'GET',
+    headers: getHeaders()
+  }
+)
+  .then(checkResponse)
+  .then((res) => res.json());
+
 export const getLocations = (
   pagination: PaginationQuery
 ): Promise<PaginationResult<LocationType>> => fetch(
@@ -260,6 +275,18 @@ export const deleteLocationAsPrimary = (
 
 export const getRoutes = (): Promise<PaginationResult<RouteType>> => fetch(
   `/api/route`,
+  {
+    method: 'GET',
+    headers: getHeaders()
+  }
+)
+  .then(checkResponse)
+  .then((res) => res.json());
+
+export const getRoutesWithPosition = (
+  position: PositionQuery
+): Promise<RouteType[]> => fetch(
+  `/api/route/map?${searchParams([position])}`,
   {
     method: 'GET',
     headers: getHeaders()

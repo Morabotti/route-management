@@ -1,11 +1,13 @@
 import { FC } from 'react';
-import { Divider, IconButton, makeStyles, Typography as T } from '@material-ui/core';
+import { colors, Divider, IconButton, makeStyles, Typography as T } from '@material-ui/core';
 import { ChevronLeft } from 'mdi-material-ui';
 import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
   fullHeight: {
-    height: '100%'
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column'
   },
   padding: {
     padding: theme.spacing(3),
@@ -14,10 +16,20 @@ const useStyles = makeStyles(theme => ({
     }
   },
   overflow: {
-    overflowY: 'auto'
+    overflowY: 'auto',
+    overflowX: 'hidden',
+    flexGrow: 1
   },
   wrapper: {
     padding: theme.spacing(3),
+    backgroundColor: colors.grey[100],
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(1.5)
+    }
+  },
+  wrapperBottom: {
+    padding: theme.spacing(2, 3),
+    backgroundColor: colors.grey[100],
     [theme.breakpoints.down('sm')]: {
       padding: theme.spacing(1.5)
     }
@@ -29,7 +41,28 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     left: theme.spacing(3),
     top: '50%',
-    transform: 'translate(0, -50%)'
+    transform: 'translate(0, -50%)',
+    [theme.breakpoints.down('sm')]: {
+      left: theme.spacing(1.5)
+    }
+  },
+  scrollbar: {
+    '&::-webkit-scrollbar': {
+      width: theme.spacing(0.5),
+      height: theme.spacing(0.5)
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: theme.palette.grey[400],
+      borderRadius: '10px'
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: theme.palette.grey[500]
+    },
+    '&::-webkit-scrollbar-track': {
+      background: '#ffffff',
+      borderRadius: theme.spacing(1),
+      boxShadow: 'inset 7px 10px 12px #f0f0f0'
+    }
   }
 }));
 
@@ -68,7 +101,7 @@ export const ApplicationContainer: FC<Props> = ({
         </div>
       )}
       <div
-        className={clsx(classes.overflow, {
+        className={clsx(classes.overflow, classes.scrollbar, {
           [classes.padding]: !disablePadding
         })}
       >
@@ -77,7 +110,7 @@ export const ApplicationContainer: FC<Props> = ({
       {actions && (
         <div>
           <Divider />
-          <div className={classes.wrapper}>
+          <div className={classes.wrapperBottom}>
             {actions}
           </div>
         </div>

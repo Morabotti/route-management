@@ -8,6 +8,7 @@ import fi.morabotti.routemanagement.model.Location;
 import fi.morabotti.routemanagement.model.Person;
 import fi.morabotti.routemanagement.model.PrimaryLocation;
 import fi.morabotti.routemanagement.view.PaginationQuery;
+import fi.morabotti.routemanagement.view.PositionQuery;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -46,6 +47,20 @@ public class LocationDao {
                 .from(LOCATION)
                 .where(LOCATION.DELETED_AT.isNull())
                 .fetchOne(0, Long.class);
+    }
+
+    public List<Location> fetchLocations(PositionQuery positionQuery) {
+        return selectLocation(DSL.using(jooqConfiguration))
+                .where(LOCATION.DELETED_AT.isNull())
+                .fetch()
+                .stream()
+                .collect(
+                        Location.mapper.collectingManyWithPrimaryPersons(
+                                PrimaryLocation.mapper.withPerson(
+                                        Person.mapper
+                                )
+                        )
+                );
     }
 
     public List<Location> fetchLocations(PaginationQuery paginationQuery) {

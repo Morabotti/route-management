@@ -2,37 +2,29 @@ import { FC } from 'react';
 import { useCrudView, useNavigation } from '@hooks';
 import { CrudState } from '@enums';
 import { ApplicationContainer, CenterMessage } from '@components/common';
-import { VehicleList } from '@components/vehicles';
 import { Cancel } from 'mdi-material-ui';
 
-const VehicleCrudView: FC = () => {
+const LocationCrudView: FC = () => {
   const { onNavigation } = useNavigation();
   const { id, view } = useCrudView();
 
   switch (view) {
     case CrudState.LIST:
       return (
-        <VehicleList
-          onBack={onNavigation('/rm')}
-          onCreate={onNavigation('/rm/vehicles/create')}
-        />
-      );
-    case CrudState.CREATE:
-      return (
         <ApplicationContainer
-          title='Create New Vehicle'
-          onBack={onNavigation('/rm/vehicles')}
+          title='Locations'
+          onBack={onNavigation('/rm')}
         >
           <div>
-            Create
+            List
           </div>
         </ApplicationContainer>
       );
     case CrudState.UPDATE:
       return (
         <ApplicationContainer
-          title='Update Vehicle'
-          onBack={onNavigation('/rm/vehicles')}
+          title='Update Location'
+          onBack={onNavigation('/rm/locations')}
         >
           <div>
             Update {id}
@@ -42,8 +34,8 @@ const VehicleCrudView: FC = () => {
     case CrudState.VIEW:
       return (
         <ApplicationContainer
-          title='View Vehicle'
-          onBack={onNavigation('/rm/vehicles')}
+          title='View Location'
+          onBack={onNavigation('/rm/locations')}
         >
           <div>
             VIEW {id}
@@ -53,7 +45,7 @@ const VehicleCrudView: FC = () => {
     default:
       return (
         <ApplicationContainer
-          title='Vehicles'
+          title='Locations'
           onBack={onNavigation('/rm')}
         >
           <CenterMessage
@@ -65,4 +57,4 @@ const VehicleCrudView: FC = () => {
   }
 };
 
-export default VehicleCrudView;
+export default LocationCrudView;

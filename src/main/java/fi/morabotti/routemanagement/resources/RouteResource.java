@@ -5,9 +5,13 @@ import fi.morabotti.routemanagement.model.Route;
 import fi.morabotti.routemanagement.model.Step;
 import fi.morabotti.routemanagement.view.CreateRouteRequest;
 import fi.morabotti.routemanagement.view.CreateStepRequest;
+import fi.morabotti.routemanagement.view.PaginationQuery;
+import fi.morabotti.routemanagement.view.PaginationResponse;
+import fi.morabotti.routemanagement.view.PositionQuery;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -33,8 +37,18 @@ public class RouteResource {
     }
 
     @GET
-    public List<Route> getRoutes() {
-        return routeController.getRoutes();
+    @Path("/map")
+    public List<Route> getRoutesWithPosition(
+            @BeanParam PositionQuery positionQuery
+    ) {
+        return routeController.getRoutes(positionQuery);
+    }
+
+    @GET
+    public PaginationResponse<Route> getRoutesWithPagination(
+            @BeanParam PaginationQuery paginationQuery
+    ) {
+        return routeController.getRoutes(paginationQuery);
     }
 
     @POST

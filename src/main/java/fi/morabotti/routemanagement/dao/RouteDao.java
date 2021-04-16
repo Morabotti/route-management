@@ -10,6 +10,8 @@ import fi.morabotti.routemanagement.model.Route;
 import fi.morabotti.routemanagement.model.Step;
 import fi.morabotti.routemanagement.model.StepItem;
 import fi.morabotti.routemanagement.model.Vehicle;
+import fi.morabotti.routemanagement.view.PaginationQuery;
+import fi.morabotti.routemanagement.view.PositionQuery;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -47,9 +49,38 @@ public class RouteDao {
         this.transactionProvider = transactionProvider;
     }
 
-    public List<Route> fetchRoutes() {
+    public Long fetchRouteLength() {
+        return DSL.using(jooqConfiguration)
+                .selectCount()
+                .from(ROUTE)
+                .where(ROUTE.DELETED_AT.isNull())
+                .fetchOne(0, Long.class);
+    }
+
+    public List<Route> fetchRoutes(PositionQuery positionQuery) {
         return selectRoute(DSL.using(jooqConfiguration))
                 .where(ROUTE.DELETED_AT.isNull())
+                .fetch()
+                .stream()
+                .collect(Route.mapper
+                        .withDestination(Location.mapper)
+                        .withVehicle(Vehicle.mapper)
+                        .collectingManyWithSteps(
+                                Step.mapper.withLocation(Location.mapper.alias(stepLocation))
+                                        .collectingManyWithStepItems(
+                                                StepItem.mapper.withPerson(
+                                                        Person.mapper
+                                                )
+                                        )
+                        )
+                );
+    }
+
+    public List<Route> fetchRoutes(PaginationQuery paginationQuery) {
+        return selectRoute(DSL.using(jooqConfiguration))
+                .where(ROUTE.DELETED_AT.isNull())
+                .limit(paginationQuery.getLimit().orElse(20))
+                .offset(paginationQuery.getOffset().orElse(0))
                 .fetch()
                 .stream()
                 .collect(Route.mapper

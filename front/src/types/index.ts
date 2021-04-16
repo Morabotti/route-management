@@ -9,9 +9,19 @@ export interface PaginationResult<T> {
   length: number;
 }
 
+export interface SearchQuery {
+  search?: string;
+}
+
 export interface PaginationQuery {
   limit: number;
   offset: number;
+}
+
+export interface PositionQuery {
+  lat?: number;
+  lng?: number;
+  zoom?: number;
 }
 
 export interface Route {
