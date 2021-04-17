@@ -143,9 +143,10 @@ export const deleteVehicle = (id: number): Promise<Response> => fetch(
   .then(checkResponse);
 
 export const getPersons = (
-  pagination: PaginationQuery
+  pagination: PaginationQuery,
+  search: SearchQuery
 ): Promise<PaginationResult<Person>> => fetch(
-  `/api/asset/person?${searchParams([pagination])}`,
+  `/api/asset/person?${searchParams([pagination, search])}`,
   {
     method: 'GET',
     headers: getHeaders()

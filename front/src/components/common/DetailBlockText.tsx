@@ -1,22 +1,16 @@
 import { FC } from 'react';
 import clsx from 'clsx';
-import { makeStyles, Typography as T } from '@material-ui/core';
-import { Skeleton } from '@material-ui/lab';
+import { makeStyles } from '@material-ui/core';
+import { DetailBlockTitle } from '@components/common';
 
 const useStyles = makeStyles(theme => ({
   margin: {
     marginBottom: theme.spacing(4)
   },
-  text: {
-    fontWeight: theme.typography.fontWeightBold
-  },
   spacing: {
     '&>div:not(:last-child)': {
       marginBottom: theme.spacing(2)
     }
-  },
-  titleWrapper: {
-    marginBottom: theme.spacing(1)
   }
 }));
 
@@ -41,17 +35,7 @@ export const DetailBlock: FC<Props> = ({
         [classes.margin]: marginBottom
       })}
     >
-      <div className={classes.titleWrapper}>
-        {loading ? (
-          <Skeleton variant='text' width={title.length * 8} height={24} />
-        ) : (
-          <T
-            variant='body1'
-            color='textSecondary'
-            className={classes.text}
-          >{title}</T>
-        )}
-      </div>
+      <DetailBlockTitle text={title} loading={loading} />
       <div className={classes.spacing}>
         {children}
       </div>

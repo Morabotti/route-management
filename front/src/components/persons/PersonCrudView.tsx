@@ -1,58 +1,57 @@
 import { FC } from 'react';
 import { useCrudView, useNavigation } from '@hooks';
 import { CrudState } from '@enums';
-import { ApplicationContainer, CenterMessage } from '@components/common';
+import { CenterMessage } from '@components/common';
 import { Cancel } from 'mdi-material-ui';
 
+import {
+  PersonList,
+  ViewPerson,
+  CreateNewPerson,
+  UpdatePerson
+} from '@components/persons';
+
 const PersonCrudView: FC = () => {
-  const { onNavigation } = useNavigation();
+  const { onNavigation, onRoutePreload } = useNavigation();
   const { id, view } = useCrudView();
 
   switch (view) {
     case CrudState.LIST:
       return (
-        <ApplicationContainer
-          title='Persons'
+        <PersonList
           onBack={onNavigation('/rm')}
-        >
-          <div>
-            List
-          </div>
-        </ApplicationContainer>
+          onCreate={onNavigation('/rm/persons/create')}
+        />
+      );
+    case CrudState.CREATE:
+      return (
+        <CreateNewPerson
+          onBack={onNavigation('/rm/persons')}
+        />
       );
     case CrudState.UPDATE:
       return (
-        <ApplicationContainer
-          title='Update Person'
-          onBack={onNavigation('/rm/persons')}
-        >
-          <div>
-            Update {id}
-          </div>
-        </ApplicationContainer>
+        <UpdatePerson
+          personId={id}
+          onBack={onNavigation(`/rm/persons/view/${id}`)}
+        />
       );
     case CrudState.VIEW:
       return (
-        <ApplicationContainer
-          title='View Person'
+        <ViewPerson
+          personId={id}
           onBack={onNavigation('/rm/persons')}
-        >
-          <div>
-            VIEW {id}
-          </div>
-        </ApplicationContainer>
+        />
       );
     default:
       return (
-        <ApplicationContainer
-          title='Persons'
-          onBack={onNavigation('/rm')}
-        >
-          <CenterMessage
-            icon={Cancel}
-            text='Not implemented'
-          />
-        </ApplicationContainer>
+        <CenterMessage
+          icon={Cancel}
+          text='Not implemented'
+          buttonText='Go back'
+          onClick={onNavigation('/rm')}
+          onMouseEnter={onRoutePreload('/rm')}
+        />
       );
   }
 };

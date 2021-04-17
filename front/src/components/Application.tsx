@@ -4,6 +4,7 @@ import { hot } from 'react-hot-loader';
 import { AuthLayer } from '@components/auth';
 import { publicRoutes, authRoutes } from '@routes';
 import { ApplicationProvider } from '@hooks';
+// import { ReactQueryDevtools } from 'react-query/devtools';
 
 import {
   ApplicationProviders,
@@ -46,6 +47,7 @@ const Application = () => (
         </Route>
       </Switch>
     </Suspense>
+    {/* <ReactQueryDevtools initialIsOpen={false} /> */}
   </ApplicationProviders>
 );
 

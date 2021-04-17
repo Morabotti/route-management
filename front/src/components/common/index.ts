@@ -11,3 +11,4 @@ export * from './ListPaginationControls';
 export * from './Actions';
 export * from './DetailBlock';
 export * from './DetailBlockText';
+export * from './DetailBlockTitle';

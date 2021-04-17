@@ -112,7 +112,10 @@ export const CrudListItem: FC<Props> = ({
           <Icon className={classes.icon} />
         </Avatar>
       </ListItemAvatar>
-      <ListItemText primary={primaryText} />
+      <ListItemText
+        primary={primaryText}
+        secondary={secondaryText}
+      />
       <ListItemSecondaryAction className={classes.animation}>
         <IconButton onClick={onClick}>
           <ChevronRight />

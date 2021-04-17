@@ -1,65 +1,65 @@
 import { useCallback, useState } from 'react';
 import { UseQueryResult, useQuery, useQueryClient, useMutation } from 'react-query';
 import { useHistory } from 'react-router';
-import { Vehicle } from '@types';
-import { deleteVehicle, getVehicleById } from '@client';
+import { Person } from '@types';
+import { deletePerson, getPersonById } from '@client';
 import { Client, NotificationType } from '@enums';
 import { useApplication } from '@hooks';
 
-interface VehicleContext {
+interface PersonContext {
   deleting: boolean;
   loading: boolean;
-  vehicle: UseQueryResult<Vehicle | null>;
+  person: UseQueryResult<Person | null>;
   onUpdate: () => void;
   onDelete: () => void;
   onToggleDeleting: (set: boolean) => () => void;
 }
 
-export const useVehicle = (id: number | null): VehicleContext => {
+export const usePerson = (id: number | null): PersonContext => {
   const { push } = useHistory();
   const queryClient = useQueryClient();
   const { loading, setLoading, createNotification } = useApplication();
   const [deleting, setDeleting] = useState(false);
 
-  const vehicle = useQuery(
-    [Client.GET_VEHICLE_BY_ID, id],
-    () => id === null ? null : getVehicleById(id)
+  const person = useQuery(
+    [Client.GET_PERSON_BY_ID, id],
+    () => id === null ? null : getPersonById(id)
   );
 
-  const { mutateAsync: deleteAsync } = useMutation(deleteVehicle, {
+  const { mutateAsync: deleteAsync } = useMutation(deletePerson, {
     onSuccess: (res: Response, id: number) => {
-      queryClient.invalidateQueries(Client.GET_VEHICLES);
-      queryClient.invalidateQueries([Client.GET_VEHICLE_BY_ID, id]);
+      queryClient.invalidateQueries(Client.GET_PERSONS);
+      queryClient.invalidateQueries([Client.GET_PERSON_BY_ID, id], { stale: false });
     }
   });
 
   const onDelete = useCallback(async () => {
-    if (!vehicle.data) {
+    if (!person.data) {
       return;
     }
 
     setLoading(true);
     try {
-      await deleteAsync(vehicle.data.id);
-      createNotification('Successfully deleted vehicle', NotificationType.INFO);
+      await deleteAsync(person.data.id);
+      createNotification('Successfully deleted person', NotificationType.INFO);
       setLoading(false);
       setDeleting(false);
-      push(`/rm/vehicles`);
+      push(`/rm/persons`);
     }
     catch (e) {
-      createNotification('Failed to delete vehicle', NotificationType.ERROR);
+      createNotification('Failed to delete peson', NotificationType.ERROR);
       setLoading(false);
       setDeleting(false);
     }
-  }, [vehicle.data, push, createNotification, setLoading, deleteAsync]);
+  }, [person.data, push, createNotification, setLoading, deleteAsync]);
 
   const onUpdate = useCallback(() => {
-    if (!vehicle.data) {
+    if (!person.data) {
       return;
     }
 
-    push(`/rm/vehicles/update/${vehicle.data.id}`);
-  }, [vehicle.data, push]);
+    push(`/rm/persons/update/${person.data.id}`);
+  }, [person.data, push]);
 
   const onToggleDeleting = useCallback((set: boolean) => () => {
     setDeleting(set);
@@ -68,7 +68,7 @@ export const useVehicle = (id: number | null): VehicleContext => {
   return {
     loading,
     deleting,
-    vehicle,
+    person,
     onToggleDeleting,
     onUpdate,
     onDelete

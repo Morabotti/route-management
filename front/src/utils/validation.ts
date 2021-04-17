@@ -7,3 +7,9 @@ export const createVehicleSchema = yup.object({
     .matches(/^[A-Za-z0-9|-]*$/, 'Please enter valid license number')
     .required('License number is required')
 });
+
+export const createPersonSchema = yup.object({
+  name: yup.string()
+    .max(254, 'Name is too long')
+    .required('Name is required')
+});
