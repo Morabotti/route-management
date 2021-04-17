@@ -6,6 +6,7 @@ const useStyles = makeStyles(theme => createStyles({
   actions: {
     display: 'flex',
     justifyContent: 'flex-end',
+    width: '100%',
     alignItems: 'center',
     '& > button:not(:last-child), & > span:not(:last-child)': {
       marginRight: theme.spacing(2)

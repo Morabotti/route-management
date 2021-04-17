@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { colors, Divider, IconButton, makeStyles, Typography as T } from '@material-ui/core';
 import { ChevronLeft } from 'mdi-material-ui';
+import { customVariables } from '@theme';
 import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
@@ -21,21 +22,34 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1
   },
   wrapper: {
-    padding: theme.spacing(3),
+    padding: theme.spacing(0, 3),
     backgroundColor: colors.grey[100],
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
+    justifyContent: 'center',
     [theme.breakpoints.down('sm')]: {
-      padding: theme.spacing(1.5)
+      padding: theme.spacing(1.5, 0)
     }
   },
   wrapperBottom: {
-    padding: theme.spacing(2, 3),
+    padding: theme.spacing(0, 3),
     backgroundColor: colors.grey[100],
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
     [theme.breakpoints.down('sm')]: {
-      padding: theme.spacing(1.5)
+      padding: theme.spacing(0, 1.5)
     }
   },
-  titleBackButton: {
-    position: 'relative'
+  titleSection: {
+    position: 'relative',
+    height: customVariables.navigationSize
+  },
+  bottomSection: {
+    height: customVariables.navigationSize + 1
   },
   backButtonWrapper: {
     position: 'absolute',
@@ -63,6 +77,9 @@ const useStyles = makeStyles(theme => ({
       borderRadius: theme.spacing(1),
       boxShadow: 'inset 7px 10px 12px #f0f0f0'
     }
+  },
+  nowrap: {
+    whiteSpace: 'nowrap'
   }
 }));
 
@@ -86,7 +103,7 @@ export const ApplicationContainer: FC<Props> = ({
   return (
     <div className={classes.fullHeight}>
       {title && (
-        <div className={classes.titleBackButton}>
+        <div className={classes.titleSection}>
           {onBack && (
             <div className={classes.backButtonWrapper}>
               <IconButton onClick={onBack}>
@@ -95,7 +112,11 @@ export const ApplicationContainer: FC<Props> = ({
             </div>
           )}
           <div className={classes.wrapper}>
-            <T variant='h4' align='center'>{title}</T>
+            <T
+              variant='h4'
+              align='center'
+              className={classes.nowrap}
+            >{title}</T>
           </div>
           <Divider />
         </div>
@@ -108,7 +129,7 @@ export const ApplicationContainer: FC<Props> = ({
         {children}
       </div>
       {actions && (
-        <div>
+        <div className={classes.bottomSection}>
           <Divider />
           <div className={classes.wrapperBottom}>
             {actions}

@@ -1,7 +1,11 @@
-import { FC } from 'react';
+import { FC, useCallback, useState } from 'react';
 import { makeStyles, Paper } from '@material-ui/core';
 import { MainMap } from '@components/map';
+import { ApplicationNavigation } from '@components/common';
+import { customVariables } from '@theme';
 import clsx from 'clsx';
+import { useHistory } from 'react-router';
+import { useNavigation } from '@hooks';
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -24,14 +28,34 @@ const useStyles = makeStyles(theme => ({
   },
   menu: {
     position: 'fixed',
-    right: theme.spacing(5),
-    top: theme.spacing(5),
-    width: 'clamp(600px, 40vw, 750px)',
-    height: `calc(100% - ${theme.spacing(10)}px)`
+    right: 0,
+    top: 0,
+    width: `calc(clamp(550px, 30vw, 750px) + ${customVariables.navigationSize}px)`,
+    height: `100%`,
+    display: 'flex',
+    transition: '300ms width ease-in-out'
+  },
+  minmized: {
+    width: customVariables.navigationSize
+  },
+  navigation: {
+    width: '100px',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    borderRight: `1px solid ${theme.palette.divider}`
+  },
+  content: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    flexGrow: 1
   },
   paper: {
     zIndex: theme.zIndex.appBar,
-    height: '100%'
+    height: '100%',
+    width: '100%',
+    display: 'flex'
   },
   map: {
     width: '100%',
@@ -57,6 +81,18 @@ interface Props {
 
 const ApplicationLayout: FC<Props> = ({ children }: Props) => {
   const classes = useStyles();
+  const [expanded, setExpanded] = useState(true);
+  const { push } = useHistory();
+  const { onRoutePreload } = useNavigation();
+
+  const toggleExpand = useCallback(() => {
+    setExpanded(prev => !prev);
+  }, []);
+
+  const onNavigation = useCallback((to: string) => (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    push(to);
+  }, [push]);
 
   return (
     <main className={classes.main}>
@@ -72,12 +108,24 @@ const ApplicationLayout: FC<Props> = ({ children }: Props) => {
             <div className={classes.mockSize} />
           </Paper>
         </div>
-        <div className={classes.menu}>
+        <div
+          className={clsx(classes.menu, {
+            [classes.minmized]: !expanded
+          })}
+        >
           <Paper
-            className={clsx(classes.paper)}
+            className={classes.paper}
             variant='outlined'
           >
-            {children}
+            <ApplicationNavigation
+              expanded={expanded}
+              onToggleExpand={toggleExpand}
+              onNavigation={onNavigation}
+              onRoutePreload={onRoutePreload}
+            />
+            <div className={classes.content}>
+              {children}
+            </div>
           </Paper>
         </div>
       </div>

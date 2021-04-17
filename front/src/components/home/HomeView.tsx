@@ -1,9 +1,16 @@
-import { FC } from 'react';
-import { ApplicationContainer } from '@components/common';
+import { FC, useState } from 'react';
+import { ApplicationContainer, CenterMessage } from '@components/common';
 import { HomeNavigationButton } from '@components/home';
 import { Grid } from '@material-ui/core';
-import { Routes, Car, AccountMultiple, MapMarkerRadius } from 'mdi-material-ui';
 import { useNavigation } from '@hooks';
+
+import {
+  Routes,
+  Car,
+  AccountMultiple,
+  MapMarkerRadius,
+  PostOutline
+} from 'mdi-material-ui';
 
 const routes = [{
   icon: Routes,
@@ -25,21 +32,31 @@ const routes = [{
 
 const HomeView: FC = () => {
   const { onNavigation, onRoutePreload } = useNavigation();
+  const [legacy, setLegacy] = useState(false);
 
   return (
     <ApplicationContainer title='Route Management'>
-      <Grid container spacing={3}>
-        {routes.map(route => (
-          <Grid item xs={6} key={route.path}>
-            <HomeNavigationButton
-              icon={route.icon}
-              text={route.text}
-              onClick={onNavigation(route.path)}
-              onMouseEnter={onRoutePreload(route.path)}
-            />
-          </Grid>
-        ))}
-      </Grid>
+      {legacy ? (
+        <Grid container spacing={3}>
+          {routes.map(route => (
+            <Grid item xs={6} key={route.path}>
+              <HomeNavigationButton
+                icon={route.icon}
+                text={route.text}
+                onClick={onNavigation(route.path)}
+                onMouseEnter={onRoutePreload(route.path)}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      ) : (
+        <CenterMessage
+          icon={PostOutline}
+          text='New home page not implemented'
+          buttonText='Show legacy'
+          onClick={() => setLegacy(true)}
+        />
+      )}
     </ApplicationContainer>
   );
 };
