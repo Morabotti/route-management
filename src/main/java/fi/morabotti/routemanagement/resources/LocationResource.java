@@ -7,6 +7,7 @@ import fi.morabotti.routemanagement.view.CreateLocationRequest;
 import fi.morabotti.routemanagement.view.PaginationQuery;
 import fi.morabotti.routemanagement.view.PaginationResponse;
 import fi.morabotti.routemanagement.view.PositionQuery;
+import fi.morabotti.routemanagement.view.SearchQuery;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -45,9 +46,10 @@ public class LocationResource {
 
     @GET
     public PaginationResponse<Location> getLocationsWithPagination(
-            @BeanParam PaginationQuery paginationQuery
+            @BeanParam PaginationQuery paginationQuery,
+            @BeanParam SearchQuery searchQuery
     ) {
-        return locationController.getLocations(paginationQuery);
+        return locationController.getLocations(paginationQuery, searchQuery);
     }
 
     @POST

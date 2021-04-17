@@ -10,6 +10,8 @@ import fi.morabotti.routemanagement.model.PrimaryLocation;
 import fi.morabotti.routemanagement.utils.LocalDateMapper;
 import fi.morabotti.routemanagement.view.PaginationQuery;
 import fi.morabotti.routemanagement.view.PositionQuery;
+import fi.morabotti.routemanagement.view.SearchQuery;
+import org.jooq.Condition;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -41,11 +43,11 @@ public class LocationDao {
         this.transactionProvider = transactionProvider;
     }
 
-    public Long fetchLocationsLength() {
+    public Long fetchLocationsLength(SearchQuery searchQuery) {
         return DSL.using(jooqConfiguration)
                 .selectCount()
                 .from(LOCATION)
-                .where(LOCATION.DELETED_AT.isNull())
+                .where(getConditions(searchQuery))
                 .fetchOne(0, Long.class);
     }
 
@@ -63,9 +65,9 @@ public class LocationDao {
                 );
     }
 
-    public List<Location> fetchLocations(PaginationQuery paginationQuery) {
+    public List<Location> fetchLocations(PaginationQuery paginationQuery, SearchQuery searchQuery) {
         return selectLocation(DSL.using(jooqConfiguration))
-                .where(LOCATION.DELETED_AT.isNull())
+                .where(getConditions(searchQuery))
                 .limit(paginationQuery.getLimit().orElse(20))
                 .offset(paginationQuery.getOffset().orElse(0))
                 .fetch()
@@ -149,5 +151,17 @@ public class LocationDao {
                 .from(LOCATION)
                 .leftJoin(PRIMARY_LOCATION).onKey(Keys.FK_PRIMARY_LOCATION_LOCATION)
                 .leftJoin(PERSON).onKey(Keys.FK_PRIMARY_LOCATION_PERSON);
+    }
+
+    private Condition getConditions(SearchQuery searchQuery) {
+        return Optional.of(LOCATION.DELETED_AT.isNull().and(LOCATION.DELETED_AT.isNull()))
+                .map(condition -> searchQuery.getSearch()
+                        .map(search -> condition.and(LOCATION.ADDRESS.contains(search))
+                                .or(LOCATION.CITY.contains(search))
+                                .or(LOCATION.ZIP.contains(search))
+                        )
+                        .orElse(condition)
+                )
+                .get();
     }
 }

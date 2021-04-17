@@ -1,15 +1,23 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { UseQueryResult, useQuery, useQueryClient, useMutation } from 'react-query';
 import { useHistory } from 'react-router';
-import { Person } from '@types';
-import { getPersonById, updatePerson } from '@client';
+import { LocationType, Person } from '@types';
+import { getLocations, getPersonById, updatePerson } from '@client';
 import { Client, NotificationType } from '@enums';
 import { useApplication } from '@hooks';
+import { useDebounce } from '@hooks/common/useDebounce';
 
 interface UpdatePersonContext {
   loading: boolean;
   person: UseQueryResult<Person | null>;
+  options: LocationType[];
+  locationSearch: LocationType | null;
+  locationSearchOpen: boolean;
+  locationSearchLoading: boolean;
   onSubmit: (values: Person) => void;
+  onToggleOpen: (set: boolean) => () => void;
+  setLocationSearch: (set: LocationType | null) => void;
+  setInputSearch: (set: string) => void;
 }
 
 export const useUpdatePerson = (id: number | null): UpdatePersonContext => {
@@ -17,9 +25,20 @@ export const useUpdatePerson = (id: number | null): UpdatePersonContext => {
   const { push } = useHistory();
   const { loading, setLoading, createNotification } = useApplication();
 
+  const [ inputSearch, setInputSearch ] = useState('');
+  const [ locationSearchOpen, setLocationSearchOpen ] = useState(false);
+  const [ locationSearch, setLocationSearch ] = useState<LocationType | null>(null);
+
+  const debouncedSearch = useDebounce(inputSearch, 500);
+
   const person = useQuery(
     [Client.GET_PERSON_BY_ID, id],
     () => id === null ? null : getPersonById(id)
+  );
+
+  const locations = useQuery(
+    [Client.GET_LOCATIONS, { limit: 20, offset: 0 }, { search: debouncedSearch }],
+    () => getLocations({ limit: 20, offset: 0 }, { search: debouncedSearch })
   );
 
   const { mutateAsync } = useMutation(updatePerson, {
@@ -43,9 +62,20 @@ export const useUpdatePerson = (id: number | null): UpdatePersonContext => {
     }
   }, [setLoading, createNotification, mutateAsync, push]);
 
+  const onToggleOpen = useCallback((set: boolean) => () => {
+    setLocationSearchOpen(set);
+  }, []);
+
   return {
     loading,
     person,
-    onSubmit
+    options: locations.data?.result || [],
+    locationSearch,
+    locationSearchLoading: locations.isFetching,
+    locationSearchOpen,
+    onSubmit,
+    onToggleOpen,
+    setInputSearch,
+    setLocationSearch
   };
 };

@@ -209,9 +209,10 @@ export const getLocationsWithPosition = (
   .then((res) => res.json());
 
 export const getLocations = (
-  pagination: PaginationQuery
+  pagination: PaginationQuery,
+  search: SearchQuery
 ): Promise<PaginationResult<LocationType>> => fetch(
-  `/api/location?${searchParams([pagination])}`,
+  `/api/location?${searchParams([pagination, search])}`,
   {
     method: 'GET',
     headers: getHeaders()

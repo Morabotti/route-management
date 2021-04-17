@@ -1,11 +1,24 @@
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import { useFormik } from 'formik';
-import { Actions, ApplicationContainer } from '@components/common';
-import { Button, Grid, makeStyles, TextField } from '@material-ui/core';
-import { DEFAULT_PERSON } from '@utils/default-objects';
+import { DEFAULT_PERSON, DEFAULT_PRIMARY_LOCATION } from '@utils/default-objects';
 import { createPersonSchema } from '@utils/validation';
 import { useUpdatePerson } from '@hooks';
-import { Person } from '@types';
+import { LocationType, Person } from '@types';
+import { Plus } from 'mdi-material-ui';
+
+import {
+  Actions,
+  ApplicationContainer,
+  AsyncAutoCompleteTextField,
+  FormLocationBlock
+} from '@components/common';
+
+import {
+  Button,
+  Grid,
+  makeStyles,
+  TextField
+} from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   helper: {
@@ -14,6 +27,23 @@ const useStyles = makeStyles(theme => ({
   },
   field: {
     marginBottom: theme.spacing(1)
+  },
+  locations: {
+    '& > div:not(:last-child)': {
+      marginBottom: theme.spacing(2)
+    }
+  },
+  button: {
+    marginLeft: theme.spacing(2),
+    borderRadius: 0,
+    height: '100%',
+    backgroundColor: theme.palette.primary.light,
+    '&:hover, &:focus': {
+      backgroundColor: theme.palette.primary.main
+    }
+  },
+  wrapper: {
+    display: 'flex'
   }
 }));
 
@@ -27,13 +57,56 @@ export const UpdatePerson: FC<Props> = ({
   personId
 }: Props) => {
   const classes = useStyles();
-  const { loading, person, onSubmit } = useUpdatePerson(personId);
+
+  const {
+    loading,
+    options,
+    person,
+    locationSearch,
+    locationSearchLoading,
+    locationSearchOpen,
+    setInputSearch,
+    setLocationSearch,
+    onSubmit,
+    onToggleOpen
+  } = useUpdatePerson(personId);
 
   const formik = useFormik<Person>({
     initialValues: person.data || DEFAULT_PERSON,
     validationSchema: createPersonSchema,
     onSubmit
   });
+
+  const onAddLocation = useCallback(() => {
+    if (!locationSearch) {
+      return;
+    }
+
+    formik.setValues(prev => ({
+      ...prev,
+      primaryLocations: prev.primaryLocations
+        .find(i => i.location?.id === locationSearch.id) !== undefined
+        ? prev.primaryLocations
+        : [...prev.primaryLocations, {
+          ...DEFAULT_PRIMARY_LOCATION,
+          location: locationSearch
+        }]
+    }), false);
+
+    setLocationSearch(null);
+    setInputSearch('');
+  }, [formik, locationSearch, setLocationSearch, setInputSearch]);
+
+  const onDeleteLocation = useCallback((set: LocationType | null) => () => {
+    if (set === null) {
+      return;
+    }
+
+    formik.setValues(prev => ({
+      ...prev,
+      primaryLocations: prev.primaryLocations.filter(i => i.location?.id !== set.id)
+    }), false);
+  }, [formik]);
 
   return (
     <ApplicationContainer
@@ -63,7 +136,6 @@ export const UpdatePerson: FC<Props> = ({
             form='form-update-vehicle'
             color='primary'
             type='submit'
-            autoFocus
             disableElevation
             variant='contained'
             disabled={loading}
@@ -94,6 +166,44 @@ export const UpdatePerson: FC<Props> = ({
                 className: classes.helper
               }}
             />
+          </Grid>
+          <Grid item xs={12}>
+            <div className={classes.wrapper}>
+              <AsyncAutoCompleteTextField<LocationType>
+                options={options}
+                label='Add primary locations'
+                value={locationSearch}
+                open={locationSearchOpen}
+                loading={locationSearchLoading}
+                onToggleOpen={onToggleOpen}
+                onSave={onAddLocation}
+                setValue={setLocationSearch}
+                setInputValue={setInputSearch}
+                getOptionLabel={location => `${location.address}, ${location.city}`}
+                getOptionSelected={(location, value) => location.id === value.id}
+              />
+              <div>
+                <Button
+                  variant='contained'
+                  color='primary'
+                  disableElevation
+                  className={classes.button}
+                  onClick={onAddLocation}
+                  disabled={locationSearchLoading}
+                >
+                  <Plus />
+                </Button>
+              </div>
+            </div>
+          </Grid>
+          <Grid item xs={12} className={classes.locations}>
+            {formik.values.primaryLocations.map((primary, index) => (
+              <FormLocationBlock
+                key={index}
+                location={primary.location}
+                onDelete={onDeleteLocation(primary?.location)}
+              />
+            ))}
           </Grid>
         </Grid>
       </form>

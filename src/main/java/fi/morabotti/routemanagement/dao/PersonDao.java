@@ -41,14 +41,14 @@ public class PersonDao {
         this.transactionProvider = transactionProvider;
     }
 
+    // Super hacky. Needs better solution.
     public Long fetchPersonsLength(SearchQuery searchQuery) {
-        return DSL.using(jooqConfiguration)
-                .selectCount()
-                .from(PERSON)
-                .leftJoin(PRIMARY_LOCATION).onKey(Keys.FK_PRIMARY_LOCATION_PERSON)
-                .leftJoin(LOCATION).onKey(Keys.FK_PRIMARY_LOCATION_LOCATION)
+        return (long)selectPerson(DSL.using(jooqConfiguration))
                 .where(getConditions(searchQuery))
-                .fetchOne(0, Long.class);
+                .fetch()
+                .stream()
+                .collect(Person.mapper.collectingManyWithPrimaryLocations(PrimaryLocation.mapper))
+                .size();
     }
 
     public List<Person> fetchPersons(

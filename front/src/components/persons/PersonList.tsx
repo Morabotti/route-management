@@ -29,7 +29,6 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.primary.main
     }
   }
-
 }));
 
 interface Props {

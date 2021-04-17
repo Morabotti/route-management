@@ -31,7 +31,8 @@
   <vehicle id="1" license_number="ABC-123" />
 
   <primary_location id="1" person_id="1" location_id="1" />
-  <primary_location id="2" person_id="2" location_id="2" />
+  <primary_location id="2" person_id="1" location_id="3" />
+  <primary_location id="3" person_id="2" location_id="2" />
 
   <route id="1" vehicle_id="1" destination_id="3" />
 

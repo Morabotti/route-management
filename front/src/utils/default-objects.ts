@@ -1,4 +1,4 @@
-import { CreatePerson, CreateVehicle, Person, Vehicle } from '@types';
+import { CreatePerson, CreateVehicle, Person, PrimaryLocation, Vehicle } from '@types';
 
 export const CREATE_VEHICLE: CreateVehicle = {
   licenseNumber: ''
@@ -20,4 +20,10 @@ export const DEFAULT_PERSON: Person = {
   name: '',
   primaryLocations: [],
   deletedAt: null
+};
+
+export const DEFAULT_PRIMARY_LOCATION: PrimaryLocation = {
+  id: 0,
+  location: null,
+  person: null
 };

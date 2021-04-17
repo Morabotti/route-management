@@ -10,6 +10,7 @@ import fi.morabotti.routemanagement.view.PaginationQuery;
 import fi.morabotti.routemanagement.view.PaginationResponse;
 import fi.morabotti.routemanagement.view.PositionQuery;
 import fi.morabotti.routemanagement.view.PrimaryLocationQuery;
+import fi.morabotti.routemanagement.view.SearchQuery;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -40,10 +41,13 @@ public class LocationController {
         return locationDao.fetchLocations(positionQuery);
     }
 
-    public PaginationResponse<Location> getLocations(PaginationQuery paginationQuery) {
+    public PaginationResponse<Location> getLocations(
+            PaginationQuery paginationQuery,
+            SearchQuery searchQuery
+    ) {
         return PaginationResponse.create(
-                locationDao.fetchLocations(paginationQuery),
-                locationDao.fetchLocationsLength()
+                locationDao.fetchLocations(paginationQuery, searchQuery),
+                locationDao.fetchLocationsLength(searchQuery)
         );
     }
 
