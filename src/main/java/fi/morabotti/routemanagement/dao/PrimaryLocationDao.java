@@ -74,7 +74,19 @@ public class PrimaryLocationDao {
         );
     }
 
-    public Transactional<Long, DSLContext> batchCreateWithLocations(
+    public Transactional<Void, DSLContext> batchDelete(List<Long> ids) {
+        return Transactional.of(
+                context -> {
+                    context.deleteFrom(PRIMARY_LOCATION)
+                            .where(PRIMARY_LOCATION.ID.in(ids))
+                            .execute();
+                    return null;
+                },
+                transactionProvider
+        );
+    }
+
+    public Transactional<Void, DSLContext> batchCreateWithLocations(
             List<Long> locationIds,
             Long personId
     ) {
@@ -97,7 +109,7 @@ public class PrimaryLocationDao {
         );
     }
 
-    public Transactional<Long, DSLContext> batchCreateWithPersons(
+    public Transactional<Void, DSLContext> batchCreateWithPersons(
             List<Long> personIds,
             Long locationId
     ) {

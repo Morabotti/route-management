@@ -5,10 +5,7 @@ import { useFormik } from 'formik';
 import { Vehicle } from '@types';
 import { DEFAULT_VEHICLE } from '@utils/default-objects';
 import { createVehicleSchema } from '@utils/validation';
-import { useApplication } from '@hooks';
-import { getVehicleById, updateVehicle } from '@client';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { Client, NotificationType } from '@enums';
+import { useUpdateVehicle } from '@hooks';
 
 const useStyles = makeStyles(theme => ({
   helper: {
@@ -30,37 +27,12 @@ export const UpdateVehicle: FC<Props> = ({
   vehicleId
 }: Props) => {
   const classes = useStyles();
-  const queryClient = useQueryClient();
-  const { loading, setLoading, createNotification } = useApplication();
-
-  const vehicle = useQuery(
-    [Client.GET_VEHICLE_BY_ID, vehicleId],
-    () => vehicleId === null ? null : getVehicleById(vehicleId)
-  );
-
-  const { mutateAsync } = useMutation(updateVehicle, {
-    onSuccess: (data: Vehicle) => {
-      queryClient.invalidateQueries(Client.GET_VEHICLES);
-      queryClient.setQueryData([Client.GET_VEHICLE_BY_ID, data.id], data);
-    }
-  });
+  const { loading, onSubmit, vehicle } = useUpdateVehicle(vehicleId);
 
   const formik = useFormik<Vehicle>({
     initialValues: vehicle.data || DEFAULT_VEHICLE,
     validationSchema: createVehicleSchema,
-    onSubmit: async (values: Vehicle) => {
-      setLoading(true);
-      try {
-        await mutateAsync(values);
-        createNotification('Successfully updated vehicle', NotificationType.INFO);
-        setLoading(false);
-        onBack();
-      }
-      catch (e) {
-        createNotification('Failed to update vehicle', NotificationType.ERROR);
-        setLoading(false);
-      }
-    }
+    onSubmit
   });
 
   return (

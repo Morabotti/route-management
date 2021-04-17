@@ -1,14 +1,11 @@
 import { FC } from 'react';
 import { useFormik } from 'formik';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { Actions, ApplicationContainer } from '@components/common';
 import { Button, Grid, makeStyles, TextField } from '@material-ui/core';
-import { Person } from '@types';
 import { DEFAULT_PERSON } from '@utils/default-objects';
 import { createPersonSchema } from '@utils/validation';
-import { useApplication } from '@hooks';
-import { getPersonById, updatePerson } from '@client';
-import { Client, NotificationType } from '@enums';
+import { useUpdatePerson } from '@hooks';
+import { Person } from '@types';
 
 const useStyles = makeStyles(theme => ({
   helper: {
@@ -30,37 +27,12 @@ export const UpdatePerson: FC<Props> = ({
   personId
 }: Props) => {
   const classes = useStyles();
-  const queryClient = useQueryClient();
-  const { loading, setLoading, createNotification } = useApplication();
-
-  const person = useQuery(
-    [Client.GET_PERSON_BY_ID, personId],
-    () => personId === null ? null : getPersonById(personId)
-  );
-
-  const { mutateAsync } = useMutation(updatePerson, {
-    onSuccess: (data: Person) => {
-      queryClient.invalidateQueries(Client.GET_PERSONS);
-      queryClient.setQueryData([Client.GET_PERSON_BY_ID, data.id], data);
-    }
-  });
+  const { loading, person, onSubmit } = useUpdatePerson(personId);
 
   const formik = useFormik<Person>({
     initialValues: person.data || DEFAULT_PERSON,
     validationSchema: createPersonSchema,
-    onSubmit: async (values: Person) => {
-      setLoading(true);
-      try {
-        await mutateAsync(values);
-        createNotification('Successfully updated person', NotificationType.INFO);
-        setLoading(false);
-        onBack();
-      }
-      catch (e) {
-        createNotification('Failed to update person', NotificationType.ERROR);
-        setLoading(false);
-      }
-    }
+    onSubmit
   });
 
   return (

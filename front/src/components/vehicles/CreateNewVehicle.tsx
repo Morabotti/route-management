@@ -2,14 +2,10 @@ import { FC } from 'react';
 import { Actions, ApplicationContainer } from '@components/common';
 import { Button, Grid, makeStyles, TextField } from '@material-ui/core';
 import { useFormik } from 'formik';
-import { CreateVehicle, Vehicle } from '@types';
+import { CreateVehicle } from '@types';
 import { CREATE_VEHICLE } from '@utils/default-objects';
 import { createVehicleSchema } from '@utils/validation';
-import { useApplication } from '@hooks';
-import { createVehicle } from '@client';
-import { useMutation, useQueryClient } from 'react-query';
-import { Client, NotificationType } from '@enums';
-import { useHistory } from 'react-router';
+import { useCreateVehicle } from '@hooks';
 
 const useStyles = makeStyles(theme => ({
   helper: {
@@ -29,32 +25,12 @@ export const CreateNewVehicle: FC<Props> = ({
   onBack
 }: Props) => {
   const classes = useStyles();
-  const { push } = useHistory();
-  const queryClient = useQueryClient();
-  const { loading, setLoading, createNotification } = useApplication();
-  const { mutateAsync } = useMutation(createVehicle, {
-    onSuccess: (data: Vehicle) => {
-      queryClient.invalidateQueries(Client.GET_VEHICLES);
-      queryClient.setQueryData([Client.GET_VEHICLE_BY_ID, data.id], data);
-    }
-  });
+  const { loading, onSubmit } = useCreateVehicle();
 
   const formik = useFormik<CreateVehicle>({
     initialValues: CREATE_VEHICLE,
     validationSchema: createVehicleSchema,
-    onSubmit: async (values: CreateVehicle) => {
-      setLoading(true);
-      try {
-        const vehicle = await mutateAsync(values);
-        createNotification('Successfully created new vehicle', NotificationType.INFO);
-        setLoading(false);
-        push(`/rm/vehicles/view/${vehicle.id}`);
-      }
-      catch (e) {
-        createNotification('Failed to created new vehicle', NotificationType.ERROR);
-        setLoading(false);
-      }
-    }
+    onSubmit
   });
 
   return (

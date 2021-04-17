@@ -5,6 +5,7 @@ import fi.morabotti.routemanagement.dao.PrimaryLocationDao;
 import fi.morabotti.routemanagement.dao.VehicleDao;
 import fi.morabotti.routemanagement.domain.AssetDomain;
 import fi.morabotti.routemanagement.model.Person;
+import fi.morabotti.routemanagement.model.PrimaryLocation;
 import fi.morabotti.routemanagement.model.Vehicle;
 import fi.morabotti.routemanagement.view.CreatePersonRequest;
 import fi.morabotti.routemanagement.view.PaginationQuery;
@@ -17,6 +18,9 @@ import javax.inject.Singleton;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Singleton
 public class AssetController {
@@ -96,7 +100,7 @@ public class AssetController {
 
     public Person createPerson(CreatePersonRequest request) {
         return personDao.create(assetDomain.createPerson(request))
-                .peek(personId -> primaryLocationDao.batchCreateWithLocations(
+                .peekMap(personId -> primaryLocationDao.batchCreateWithLocations(
                         assetDomain.mapLocationIds(request),
                         personId
                 ))
@@ -117,7 +121,26 @@ public class AssetController {
 
     public Person updatePerson(Long id, Person person) {
         return personDao.update(id, person)
-                        .get()
-                        .orElseThrow(InternalServerErrorException::new);
+                .map(Optional::get)
+                .peekMap(existing -> primaryLocationDao.batchCreateWithLocations(
+                        person.getPrimaryLocations().stream()
+                                .filter(location -> location.getId().equals(0L))
+                                .filter(p -> Objects.nonNull(p.getLocation()))
+                                .map(p -> p.getLocation().getId())
+                                .collect(Collectors.toList()),
+                        id)
+                )
+                .peekMap(existing -> primaryLocationDao.batchDelete(
+                        existing.getPrimaryLocations().stream()
+                                .filter(i -> person.getPrimaryLocations()
+                                        .stream()
+                                        .noneMatch(x -> x.getId().equals(i.getId()))
+                                )
+                                .map(PrimaryLocation::getId)
+                                .collect(Collectors.toList())
+                ))
+                .flatMap(ignored -> personDao.getById(id))
+                .get()
+                .orElseThrow(InternalServerErrorException::new);
     }
 }

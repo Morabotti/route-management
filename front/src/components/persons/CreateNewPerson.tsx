@@ -2,14 +2,10 @@ import { FC } from 'react';
 import { Actions, ApplicationContainer } from '@components/common';
 import { Button, Grid, makeStyles, TextField } from '@material-ui/core';
 import { useFormik } from 'formik';
-import { CreatePerson, Person } from '@types';
+import { CreatePerson } from '@types';
 import { CREATE_PERSON } from '@utils/default-objects';
 import { createPersonSchema } from '@utils/validation';
-import { useApplication } from '@hooks';
-import { createPerson } from '@client';
-import { useMutation, useQueryClient } from 'react-query';
-import { Client, NotificationType } from '@enums';
-import { useHistory } from 'react-router';
+import { useCreatePerson } from '@hooks';
 
 const useStyles = makeStyles(theme => ({
   helper: {
@@ -29,32 +25,12 @@ export const CreateNewPerson: FC<Props> = ({
   onBack
 }: Props) => {
   const classes = useStyles();
-  const { push } = useHistory();
-  const queryClient = useQueryClient();
-  const { loading, setLoading, createNotification } = useApplication();
-  const { mutateAsync } = useMutation(createPerson, {
-    onSuccess: (data: Person) => {
-      queryClient.invalidateQueries(Client.GET_PERSONS);
-      queryClient.setQueryData([Client.GET_PERSON_BY_ID, data.id], data);
-    }
-  });
+  const { loading, onSubmit } = useCreatePerson();
 
   const formik = useFormik<CreatePerson>({
     initialValues: CREATE_PERSON,
     validationSchema: createPersonSchema,
-    onSubmit: async (values: CreatePerson) => {
-      setLoading(true);
-      try {
-        const person = await mutateAsync(values);
-        createNotification('Successfully created new person', NotificationType.INFO);
-        setLoading(false);
-        push(`/rm/persons/view/${person.id}`);
-      }
-      catch (e) {
-        createNotification('Failed to created new person', NotificationType.ERROR);
-        setLoading(false);
-      }
-    }
+    onSubmit
   });
 
   return (
