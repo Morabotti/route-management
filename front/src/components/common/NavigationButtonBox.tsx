@@ -42,6 +42,15 @@ const useStyles = makeStyles(theme => createStyles({
     '&:hover $icon': {
       color: theme.palette.primary.main
     }
+  },
+  disabled: {
+    cursor: 'default',
+    '& $icon': {
+      color: theme.palette.text.disabled
+    },
+    '&:hover $icon': {
+      color: theme.palette.text.disabled
+    }
   }
 }));
 
@@ -50,7 +59,9 @@ interface Props {
   iconClassNames?: string;
   title: string;
   divider?: boolean;
+  placement?: 'left' | 'right';
   active?: boolean;
+  disabled?: boolean;
   onClick: () => void;
 }
 
@@ -60,18 +71,21 @@ export const NavigationButtonBox: FC<Props> = ({
   divider,
   title,
   active,
-  onClick
+  onClick,
+  disabled = false,
+  placement = 'left'
 }: Props) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
 
   return (
     <>
-      <Tooltip title={title} placement='left'>
+      <Tooltip title={title} placement={placement}>
         <button
           onClick={onClick}
           className={clsx(commonClasses.baseButton, classes.button, {
-            [classes.active]: active
+            [classes.active]: active,
+            [classes.disabled]: disabled
           })}
         >
           <div className={classes.paper}>

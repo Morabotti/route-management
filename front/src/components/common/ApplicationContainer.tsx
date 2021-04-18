@@ -60,6 +60,15 @@ const useStyles = makeStyles(theme => ({
       left: theme.spacing(1.5)
     }
   },
+  headerActionsWrapper: {
+    position: 'absolute',
+    right: theme.spacing(3),
+    top: '50%',
+    transform: 'translate(0, -50%)',
+    [theme.breakpoints.down('sm')]: {
+      right: theme.spacing(1.5)
+    }
+  },
   scrollbar: {
     '&::-webkit-scrollbar': {
       width: theme.spacing(0.5),
@@ -87,6 +96,7 @@ interface Props {
   children: React.ReactNode;
   disablePadding?: boolean;
   actions?: React.ReactNode;
+  headerActions?: React.ReactNode;
   title?: string;
   onBack?: () => void;
 }
@@ -96,6 +106,7 @@ export const ApplicationContainer: FC<Props> = ({
   disablePadding = false,
   title,
   actions,
+  headerActions,
   onBack
 }: Props) => {
   const classes = useStyles();
@@ -118,6 +129,11 @@ export const ApplicationContainer: FC<Props> = ({
               className={classes.nowrap}
             >{title}</T>
           </div>
+          {headerActions && (
+            <div className={classes.headerActionsWrapper}>
+              {headerActions}
+            </div>
+          )}
           <Divider />
         </div>
       )}

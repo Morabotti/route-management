@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { useQuery, useQueryClient, useMutation, Query } from 'react-query';
 import { useHistory } from 'react-router';
 import { LocationType } from '@types';
 import { getLocationById, updateLocation } from '@client';
@@ -29,13 +29,24 @@ export const useUpdateLocation = (id: number | null): UpdateLocationContext => {
       queryClient.invalidateQueries(Client.GET_LOCATIONS);
       queryClient.invalidateQueries(Client.GET_LOCATIONS_WITH_POSITION);
       queryClient.setQueryData([Client.GET_LOCATION_BY_ID, data.id], data);
+      queryClient.invalidateQueries({
+        predicate: (query: Query) => query.queryKey[0] === Client.GET_PERSON_BY_ID
+          && data.primaryPersons.map(i => i.person?.id)
+            .filter(i => i !== undefined && i !== null)
+            .includes(query.queryKey[1] as number)
+      });
     }
   });
 
   const onSubmit = useCallback(async (values: LocationType) => {
     setLoading(true);
     try {
-      await mutateAsync(values);
+      await mutateAsync({
+        ...values,
+        latitude: Number(values.latitude),
+        longitude: Number(values.longitude)
+      });
+
       createNotification('Successfully updated location', NotificationType.INFO);
       setLoading(false);
       push(`/rm/locations/view/${values.id}`);

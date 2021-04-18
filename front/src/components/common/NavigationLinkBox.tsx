@@ -56,6 +56,7 @@ interface Props {
   title: string;
   divider?: boolean;
   active?: boolean;
+  placement?: 'left' | 'right';
   onClick: () => void;
   onMouseEnter: () => void;
 }
@@ -67,13 +68,14 @@ export const NavigationLinkBox: FC<Props> = ({
   divider,
   active,
   onClick,
-  onMouseEnter
+  onMouseEnter,
+  placement = 'left'
 }: Props) => {
   const classes = useStyles();
 
   return (
     <>
-      <Tooltip title={title} placement='left'>
+      <Tooltip title={title} placement={placement}>
         <Link
           to={to}
           onMouseEnter={onMouseEnter}

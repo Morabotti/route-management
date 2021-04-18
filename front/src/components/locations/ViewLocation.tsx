@@ -1,14 +1,18 @@
 import { FC } from 'react';
-import { Button } from '@material-ui/core';
-import { useCurrentLocation } from '@hooks';
+import { Button, IconButton, List } from '@material-ui/core';
+import { useCurrentLocation, useNavigation } from '@hooks';
 import { useCommonStyles } from '@theme';
+import { Account, AccountOff, MapMarkerRight } from 'mdi-material-ui';
 
 import {
   Actions,
   ApplicationContainer,
+  CenterMessage,
   ConfirmationDialog,
+  CrudListItem,
   DetailBlock,
-  DetailBlockText
+  DetailBlockText,
+  DetailBlockTitle
 } from '@components/common';
 
 interface Props {
@@ -21,6 +25,7 @@ export const ViewLocation: FC<Props> = ({
   onBack
 }: Props) => {
   const commonClasses = useCommonStyles();
+  const { onNavigation, onRoutePreload } = useNavigation();
 
   const {
     loading,
@@ -28,7 +33,8 @@ export const ViewLocation: FC<Props> = ({
     deleting,
     onDelete,
     onToggleDeleting,
-    onUpdate
+    onUpdate,
+    onMove
   } = useCurrentLocation(locationId);
 
   return (
@@ -36,6 +42,12 @@ export const ViewLocation: FC<Props> = ({
       <ApplicationContainer
         title='Location Details'
         onBack={onBack}
+        disablePadding
+        headerActions={
+          <IconButton onClick={onMove}>
+            <MapMarkerRight />
+          </IconButton>
+        }
         actions={
           <Actions>
             <Button
@@ -70,10 +82,11 @@ export const ViewLocation: FC<Props> = ({
           </Actions>
         }
       >
-        <div>
+        <div className={commonClasses.containerPadding}>
           <DetailBlock
             title='General information'
             loading={location.isLoading}
+            marginBottom
           >
             <DetailBlockText
               title='Address'
@@ -96,7 +109,36 @@ export const ViewLocation: FC<Props> = ({
               loading={location.isLoading}
             />
           </DetailBlock>
+          <DetailBlockTitle
+            text='Primary persons'
+            loading={location.isLoading}
+          />
         </div>
+        <List>
+          {location.isLoading ? [...Array(2)].map((e, i) => (
+            <CrudListItem
+              key={i}
+              primaryText='loading'
+              icon={Account}
+              fetching
+            />
+          )) : location.data?.primaryPersons.length === 0 ? (
+            <CenterMessage
+              icon={AccountOff}
+              text='No primary persons.'
+            />
+          ) : location.data?.primaryPersons.map(p => {
+            return (
+              <CrudListItem
+                key={p.id}
+                primaryText={p.person?.name || ''}
+                icon={Account}
+                onMouseEnter={onRoutePreload('/rm/persons')}
+                onClick={onNavigation(`/rm/persons/view/${p.person?.id}`)}
+              />
+            );
+          })}
+        </List>
       </ApplicationContainer>
       <ConfirmationDialog
         loading={loading}

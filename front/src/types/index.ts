@@ -24,6 +24,12 @@ export interface PositionQuery {
   zoom?: number;
 }
 
+export interface Position {
+  lat: number;
+  lng: number;
+  zoom: number;
+}
+
 export interface Route {
   path: string;
   component: RouteComponent;

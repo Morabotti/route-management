@@ -52,17 +52,17 @@ const routes = [{
   text: 'Routes',
   path: '/rm/routes'
 }, {
-  icon: Car,
-  text: 'Vehicles',
-  path: '/rm/vehicles'
+  icon: MapMarkerRadius,
+  text: 'Locations',
+  path: '/rm/locations'
 }, {
   icon: AccountMultiple,
   text: 'Persons',
   path: '/rm/persons'
 }, {
-  icon: MapMarkerRadius,
-  text: 'Locations',
-  path: '/rm/locations'
+  icon: Car,
+  text: 'Vehicles',
+  path: '/rm/vehicles'
 }];
 
 interface Props {

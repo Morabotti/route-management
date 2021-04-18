@@ -50,5 +50,11 @@ export const useCommonStyles = makeStyles(theme => createStyles({
     '&:hover, &:focus': {
       backgroundColor: theme.palette.error.dark
     }
+  },
+  containerPadding: {
+    padding: theme.spacing(3, 3, 0),
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(1.5, 1.5, 0)
+    }
   }
 }), { index: 1 });

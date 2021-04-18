@@ -187,8 +187,8 @@ export const updatePerson = (set: Person): Promise<Person> => fetch(
   .then(checkResponse)
   .then((res) => res.json());
 
-export const deletePerson = (id: number): Promise<Response> => fetch(
-  `/api/asset/person/${id}`,
+export const deletePerson = (person: Person): Promise<Response> => fetch(
+  `/api/asset/person/${person.id}`,
   {
     method: 'DELETE',
     headers: getHeaders()
@@ -253,8 +253,8 @@ export const updateLocation = (set: LocationType): Promise<LocationType> => fetc
   .then(checkResponse)
   .then((res) => res.json());
 
-export const deleteLocation = (id: number): Promise<Response> => fetch(
-  `/api/location/${id}`,
+export const deleteLocation = (location: LocationType): Promise<Response> => fetch(
+  `/api/location/${location.id}`,
   {
     method: 'DELETE',
     headers: getHeaders()

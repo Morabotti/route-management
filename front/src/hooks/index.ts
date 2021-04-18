@@ -1,5 +1,7 @@
 export * from './common/useDebounce';
 
+export * from './map/useMap';
+
 export * from './useAuth';
 export * from './useAuthLayer';
 export * from './useNavigation';

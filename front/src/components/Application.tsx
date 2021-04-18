@@ -3,7 +3,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { hot } from 'react-hot-loader';
 import { AuthLayer } from '@components/auth';
 import { publicRoutes, authRoutes } from '@routes';
-import { ApplicationProvider } from '@hooks';
+import { ApplicationProvider, MapProvider } from '@hooks';
 // import { ReactQueryDevtools } from 'react-query/devtools';
 
 import {
@@ -21,17 +21,19 @@ const Application = () => (
         <Route path='/rm'>
           <AuthLayer>
             <ApplicationProvider>
-              <ApplicationLayout>
-                <Switch>
-                  <Suspense fallback={<PageSuspense />}>
-                    {authRoutes.map(({ path, component: Component }) => (
-                      <Route exact key={path} path={path}>
-                        <Component />
-                      </Route>
-                    ))}
-                  </Suspense>
-                </Switch>
-              </ApplicationLayout>
+              <MapProvider>
+                <ApplicationLayout>
+                  <Switch>
+                    <Suspense fallback={<PageSuspense />}>
+                      {authRoutes.map(({ path, component: Component }) => (
+                        <Route exact key={path} path={path}>
+                          <Component />
+                        </Route>
+                      ))}
+                    </Suspense>
+                  </Switch>
+                </ApplicationLayout>
+              </MapProvider>
             </ApplicationProvider>
           </AuthLayer>
         </Route>

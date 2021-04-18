@@ -1,6 +1,6 @@
 import { FC, useCallback, useState } from 'react';
 import { makeStyles, Paper } from '@material-ui/core';
-import { MainMap } from '@components/map';
+import { MainMap, MapTools } from '@components/map';
 import { ApplicationNavigation } from '@components/common';
 import { customVariables } from '@theme';
 import clsx from 'clsx';
@@ -65,13 +65,10 @@ const useStyles = makeStyles(theme => ({
     position: 'fixed',
     left: '0',
     top: '50%',
-    width: '50px',
+    width: customVariables.navigationSize,
     height: `auto`,
     overflow: 'hidden',
     transform: 'translate(0,-50%)'
-  },
-  mockSize: {
-    height: '300px'
   }
 }));
 
@@ -104,8 +101,9 @@ const ApplicationLayout: FC<Props> = ({ children }: Props) => {
           <Paper
             className={classes.paper}
             variant='outlined'
+            square
           >
-            <div className={classes.mockSize} />
+            <MapTools />
           </Paper>
         </div>
         <div

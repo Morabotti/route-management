@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Button, List, makeStyles } from '@material-ui/core';
+import { Button, List } from '@material-ui/core';
 import { MapMarker, MapMarkerRadius } from 'mdi-material-ui';
 import { useNavigation, usePerson } from '@hooks';
 import { useCommonStyles } from '@theme';
@@ -15,15 +15,6 @@ import {
   DetailBlockTitle
 } from '@components/common';
 
-const useStyles = makeStyles(theme => ({
-  padding: {
-    padding: theme.spacing(3, 3, 0),
-    [theme.breakpoints.down('sm')]: {
-      padding: theme.spacing(1.5, 1.5, 0)
-    }
-  }
-}));
-
 interface Props {
   personId: number | null;
   onBack: () => void;
@@ -33,7 +24,6 @@ export const ViewPerson: FC<Props> = ({
   personId,
   onBack
 }: Props) => {
-  const classes = useStyles();
   const commonClasses = useCommonStyles();
   const { onNavigation, onRoutePreload } = useNavigation();
 
@@ -86,7 +76,7 @@ export const ViewPerson: FC<Props> = ({
           </Actions>
         }
       >
-        <div className={classes.padding}>
+        <div className={commonClasses.containerPadding}>
           <DetailBlock
             title='General information'
             loading={person.isLoading}
@@ -99,7 +89,7 @@ export const ViewPerson: FC<Props> = ({
             />
           </DetailBlock>
           <DetailBlockTitle
-            text='Location information'
+            text='Primary locations'
             loading={person.isLoading}
           />
         </div>

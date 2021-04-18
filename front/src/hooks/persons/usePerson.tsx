@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { UseQueryResult, useQuery, useQueryClient, useMutation } from 'react-query';
+import { UseQueryResult, useQuery, useQueryClient, useMutation, Query } from 'react-query';
 import { useHistory } from 'react-router';
 import { Person } from '@types';
 import { deletePerson, getPersonById } from '@client';
@@ -27,9 +27,15 @@ export const usePerson = (id: number | null): PersonContext => {
   );
 
   const { mutateAsync: deleteAsync } = useMutation(deletePerson, {
-    onSuccess: (res: Response, id: number) => {
+    onSuccess: (res: Response, person: Person) => {
       queryClient.invalidateQueries(Client.GET_PERSONS);
-      queryClient.invalidateQueries([Client.GET_PERSON_BY_ID, id], { stale: false });
+      queryClient.invalidateQueries([Client.GET_PERSON_BY_ID, person.id], { stale: false });
+      queryClient.invalidateQueries({
+        predicate: (query: Query) => query.queryKey[0] === Client.GET_LOCATION_BY_ID
+          && person.primaryLocations.map(i => i.location?.id)
+            .filter(i => i !== undefined && i !== null)
+            .includes(query.queryKey[1] as number)
+      });
     }
   });
 
@@ -40,7 +46,7 @@ export const usePerson = (id: number | null): PersonContext => {
 
     setLoading(true);
     try {
-      await deleteAsync(person.data.id);
+      await deleteAsync(person.data);
       createNotification('Successfully deleted person', NotificationType.INFO);
       setLoading(false);
       setDeleting(false);

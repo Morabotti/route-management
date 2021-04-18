@@ -1,2 +1,10 @@
-export const MAP_OFFSET_X = 360;
-export const MAP_OFFSET_Y = 0;
+import { MapTool } from '@enums';
+
+export const getCursorByTool = (tool: MapTool): undefined | string => {
+  switch (tool) {
+    case MapTool.CURSOR:
+      return undefined;
+    case MapTool.LOCATION_TOOL:
+      return 'pointer';
+  }
+};

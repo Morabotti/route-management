@@ -1,10 +1,10 @@
-import { useCallback, useState } from 'react';
-import { UseQueryResult, useQuery, useQueryClient, useMutation } from 'react-query';
+import { useCallback, useEffect, useState } from 'react';
+import { UseQueryResult, useQuery, useQueryClient, useMutation, Query } from 'react-query';
 import { useHistory } from 'react-router';
 import { LocationType } from '@types';
 import { deleteLocation, getLocationById } from '@client';
 import { Client, NotificationType } from '@enums';
-import { useApplication } from '@hooks';
+import { useApplication, useMap } from '@hooks';
 
 interface LocationContext {
   deleting: boolean;
@@ -12,6 +12,7 @@ interface LocationContext {
   location: UseQueryResult<LocationType | null>;
   onUpdate: () => void;
   onDelete: () => void;
+  onMove: () => void;
   onToggleDeleting: (set: boolean) => () => void;
 }
 
@@ -20,6 +21,7 @@ export const useCurrentLocation = (id: number | null): LocationContext => {
   const queryClient = useQueryClient();
   const { loading, setLoading, createNotification } = useApplication();
   const [deleting, setDeleting] = useState(false);
+  const { onLocationChange } = useMap();
 
   const location = useQuery(
     [Client.GET_LOCATION_BY_ID, id],
@@ -27,9 +29,15 @@ export const useCurrentLocation = (id: number | null): LocationContext => {
   );
 
   const { mutateAsync: deleteAsync } = useMutation(deleteLocation, {
-    onSuccess: (res: Response, id: number) => {
+    onSuccess: (res: Response, data: LocationType) => {
       queryClient.invalidateQueries(Client.GET_VEHICLES);
-      queryClient.invalidateQueries([Client.GET_VEHICLE_BY_ID, id], { stale: false });
+      queryClient.invalidateQueries([Client.GET_VEHICLE_BY_ID, data.id], { stale: false });
+      queryClient.invalidateQueries({
+        predicate: (query: Query) => query.queryKey[0] === Client.GET_PERSON_BY_ID
+          && data.primaryPersons.map(i => i.person?.id)
+            .filter(i => i !== undefined && i !== null)
+            .includes(query.queryKey[1] as number)
+      });
     }
   });
 
@@ -40,7 +48,7 @@ export const useCurrentLocation = (id: number | null): LocationContext => {
 
     setLoading(true);
     try {
-      await deleteAsync(location.data.id);
+      await deleteAsync(location.data);
       createNotification('Successfully deleted location', NotificationType.INFO);
       setLoading(false);
       setDeleting(false);
@@ -65,12 +73,25 @@ export const useCurrentLocation = (id: number | null): LocationContext => {
     setDeleting(set);
   }, []);
 
+  const onMove = useCallback(() => {
+    if (location.data) {
+      onLocationChange({
+        lat: location.data.latitude,
+        lng: location.data.longitude,
+        zoom: 15
+      });
+    }
+  }, [location.data, onLocationChange]);
+
+  useEffect(onMove, [onMove]);
+
   return {
     loading,
     deleting,
     location,
     onToggleDeleting,
     onUpdate,
-    onDelete
+    onDelete,
+    onMove
   };
 };

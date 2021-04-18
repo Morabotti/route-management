@@ -41,3 +41,8 @@ export enum NotificationType {
   INFO = 'info',
   DEFAULT = 'default'
 }
+
+export enum MapTool {
+  CURSOR = 'cursor',
+  LOCATION_TOOL = 'location-tool'
+}

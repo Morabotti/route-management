@@ -1,7 +1,8 @@
-import { FC, useState, useCallback, Fragment, memo } from 'react';
-import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
-import { MAP_OFFSET_X, MAP_OFFSET_Y } from '@utils/map-utils';
+import { FC, Fragment, memo } from 'react';
+import { GoogleMap, Marker } from '@react-google-maps/api';
 import { makeStyles } from '@material-ui/core';
+import { getCursorByTool } from '@utils/map-utils';
+import { useMap } from '@hooks';
 
 const useStyles = makeStyles(() => ({
   hidecopyright: {
@@ -17,28 +18,16 @@ const useStyles = makeStyles(() => ({
 export const MainMap: FC = memo(() => {
   const classes = useStyles();
 
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY || ''
-  });
-
-  const [map, setMap] = useState<null | google.maps.Map>(null);
-
-  const onLoad = useCallback((loaded: google.maps.Map) => {
-    const bounds = new window.google.maps.LatLngBounds({
-      lat: 63.1092301,
-      lng: 21.6019174
-    });
-
-    loaded.panBy(MAP_OFFSET_X, MAP_OFFSET_Y);
-    loaded.setCenter(bounds.getCenter());
-
-    setMap(loaded);
-  }, []);
-
-  const onUnmount = useCallback(() => {
-    setMap(null);
-  }, []);
+  const {
+    isLoaded,
+    onLoad,
+    onUnload,
+    center,
+    zoom,
+    tool,
+    handleZoomChange,
+    handleCenterChange
+  } = useMap();
 
   return isLoaded ? (
     <GoogleMap
@@ -47,17 +36,18 @@ export const MainMap: FC = memo(() => {
         height: '100%'
       }}
       onLoad={onLoad}
-      onUnmount={onUnmount}
-      onClick={() => console.log(map)}
+      onUnmount={onUnload}
+      zoom={zoom}
+      center={center || undefined}
+      onZoomChanged={handleZoomChange}
+      onCenterChanged={handleCenterChange}
       mapContainerClassName={classes.hidecopyright}
       options={{
         disableDefaultUI: true,
         disableDoubleClickZoom: true,
-        zoom: 17,
-        center: {
-          lat: 63.1092301,
-          lng: 21.6019174
-        },
+        maxZoom: 20,
+        minZoom: 6,
+        draggableCursor: getCursorByTool(tool),
         styles: [{
           featureType: 'poi',
           elementType: 'labels',
