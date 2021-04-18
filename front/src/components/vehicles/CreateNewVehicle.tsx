@@ -1,10 +1,6 @@
 import { FC } from 'react';
 import { Actions, ApplicationContainer } from '@components/common';
 import { Button, Grid, TextField } from '@material-ui/core';
-import { useFormik } from 'formik';
-import { CreateVehicle } from '@types';
-import { CREATE_VEHICLE } from '@utils/default-objects';
-import { createVehicleSchema } from '@utils/validation';
 import { useCreateVehicle } from '@hooks';
 import { useCommonStyles } from '@theme';
 
@@ -16,13 +12,7 @@ export const CreateNewVehicle: FC<Props> = ({
   onBack
 }: Props) => {
   const commonClasses = useCommonStyles();
-  const { loading, onSubmit } = useCreateVehicle();
-
-  const formik = useFormik<CreateVehicle>({
-    initialValues: CREATE_VEHICLE,
-    validationSchema: createVehicleSchema,
-    onSubmit
-  });
+  const { loading, formik } = useCreateVehicle();
 
   return (
     <ApplicationContainer

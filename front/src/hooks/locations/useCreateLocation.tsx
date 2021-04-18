@@ -5,10 +5,13 @@ import { CreateLocation, LocationType } from '@types';
 import { createLocation } from '@client';
 import { Client, NotificationType } from '@enums';
 import { useApplication } from '@hooks';
+import { FormikProps, useFormik } from 'formik';
+import { CREATE_LOCATION } from '@utils/default-objects';
+import { createLocationSchema } from '@utils/validation';
 
 interface CreateLocationContext {
   loading: boolean;
-  onSubmit: (values: CreateLocation) => void;
+  formik: FormikProps<CreateLocation>;
 }
 
 export const useCreateLocation = (): CreateLocationContext => {
@@ -42,8 +45,14 @@ export const useCreateLocation = (): CreateLocationContext => {
     }
   }, [setLoading, createNotification, mutateAsync, push]);
 
+  const formik = useFormik<CreateLocation>({
+    initialValues: CREATE_LOCATION,
+    validationSchema: createLocationSchema,
+    onSubmit
+  });
+
   return {
     loading,
-    onSubmit
+    formik
   };
 };

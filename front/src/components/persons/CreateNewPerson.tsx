@@ -1,11 +1,8 @@
-import { FC, useCallback } from 'react';
-import { useFormik } from 'formik';
-import { CreatePerson, LocationType } from '@types';
-import { CREATE_PERSON } from '@utils/default-objects';
-import { createPersonSchema } from '@utils/validation';
+import { FC } from 'react';
+import { LocationType } from '@types';
 import { useCreatePerson } from '@hooks';
-import { Plus } from 'mdi-material-ui';
 import { useCommonStyles } from '@theme';
+import { Plus } from 'mdi-material-ui';
 
 import {
   Actions,
@@ -44,44 +41,17 @@ export const CreateNewPerson: FC<Props> = ({
 
   const {
     loading,
+    formik,
     locationSearch,
     options,
     locationSearchOpen,
     locationSearchLoading,
     setLocationSearch,
     setInputSearch,
-    onSubmit,
+    onAddLocation,
+    onDeleteLocation,
     onToggleOpen
   } = useCreatePerson();
-
-  const formik = useFormik<CreatePerson>({
-    initialValues: CREATE_PERSON,
-    validationSchema: createPersonSchema,
-    onSubmit
-  });
-
-  const onAddLocation = useCallback(() => {
-    if (!locationSearch) {
-      return;
-    }
-
-    formik.setValues(prev => ({
-      ...prev,
-      primaryLocations: prev.primaryLocations.includes(locationSearch)
-        ? prev.primaryLocations
-        : [...prev.primaryLocations, locationSearch]
-    }), false);
-
-    setLocationSearch(null);
-    setInputSearch('');
-  }, [formik, locationSearch, setLocationSearch, setInputSearch]);
-
-  const onDeleteLocation = useCallback((set: LocationType) => () => {
-    formik.setValues(prev => ({
-      ...prev,
-      primaryLocations: prev.primaryLocations.filter(i => i.id !== set.id)
-    }), false);
-  }, [formik]);
 
   return (
     <ApplicationContainer

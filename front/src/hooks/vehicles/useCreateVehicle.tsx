@@ -1,14 +1,17 @@
 import { useCallback } from 'react';
 import { useQueryClient, useMutation } from 'react-query';
 import { useHistory } from 'react-router';
+import { FormikProps, useFormik } from 'formik';
 import { CreateVehicle, Vehicle } from '@types';
 import { createVehicle } from '@client';
 import { Client, NotificationType } from '@enums';
+import { createVehicleSchema } from '@utils/validation';
+import { CREATE_VEHICLE } from '@utils/default-objects';
 import { useApplication } from '@hooks';
 
 interface CreateVehicleContext {
   loading: boolean;
-  onSubmit: (values: CreateVehicle) => void;
+  formik: FormikProps<CreateVehicle>;
 }
 
 export const useCreateVehicle = (): CreateVehicleContext => {
@@ -37,8 +40,14 @@ export const useCreateVehicle = (): CreateVehicleContext => {
     }
   }, [setLoading, createNotification, mutateAsync, push]);
 
+  const formik = useFormik<CreateVehicle>({
+    initialValues: CREATE_VEHICLE,
+    validationSchema: createVehicleSchema,
+    onSubmit
+  });
+
   return {
     loading,
-    onSubmit
+    formik
   };
 };

@@ -1,10 +1,6 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import { Actions, ApplicationContainer } from '@components/common';
 import { Button, Grid, TextField } from '@material-ui/core';
-import { useFormik } from 'formik';
-import { Vehicle } from '@types';
-import { DEFAULT_VEHICLE } from '@utils/default-objects';
-import { createVehicleSchema } from '@utils/validation';
 import { useUpdateVehicle } from '@hooks';
 import { useCommonStyles } from '@theme';
 
@@ -18,19 +14,7 @@ export const UpdateVehicle: FC<Props> = ({
   vehicleId
 }: Props) => {
   const commonClasses = useCommonStyles();
-  const { loading, onSubmit, vehicle } = useUpdateVehicle(vehicleId);
-
-  const formik = useFormik<Vehicle>({
-    initialValues: vehicle.data || DEFAULT_VEHICLE,
-    validationSchema: createVehicleSchema,
-    onSubmit
-  });
-
-  useEffect(() => {
-    if (vehicle.data && vehicle.data.id !== formik.values.id) {
-      formik.setValues(vehicle.data, false);
-    }
-  }, [vehicle.data, formik]);
+  const { loading, formik } = useUpdateVehicle(vehicleId);
 
   return (
     <ApplicationContainer

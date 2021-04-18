@@ -1,10 +1,6 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import { Actions, ApplicationContainer } from '@components/common';
 import { Button, Grid, TextField } from '@material-ui/core';
-import { useFormik } from 'formik';
-import { LocationType } from '@types';
-import { DEFAULT_LOCATION } from '@utils/default-objects';
-import { createLocationSchema } from '@utils/validation';
 import { useUpdateLocation } from '@hooks';
 import { useCommonStyles } from '@theme';
 
@@ -18,19 +14,7 @@ export const UpdateLocation: FC<Props> = ({
   locationId
 }: Props) => {
   const commonClasses = useCommonStyles();
-  const { loading, onSubmit, location } = useUpdateLocation(locationId);
-
-  const formik = useFormik<LocationType>({
-    initialValues: location.data || DEFAULT_LOCATION,
-    validationSchema: createLocationSchema,
-    onSubmit
-  });
-
-  useEffect(() => {
-    if (location.data && location.data.id !== formik.values.id) {
-      formik.setValues(location.data, false);
-    }
-  }, [location.data, formik]);
+  const { loading, formik } = useUpdateLocation(locationId);
 
   return (
     <ApplicationContainer

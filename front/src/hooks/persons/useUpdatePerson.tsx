@@ -1,30 +1,32 @@
-import { useCallback, useState } from 'react';
-import { UseQueryResult, useQuery, useQueryClient, useMutation, Query } from 'react-query';
+import { useCallback, useEffect, useState } from 'react';
+import { useQuery, useQueryClient, useMutation, Query } from 'react-query';
 import { useHistory } from 'react-router';
 import { LocationType, Person } from '@types';
 import { getLocations, getPersonById, updatePerson } from '@client';
 import { Client, NotificationType } from '@enums';
-import { useApplication } from '@hooks';
-import { useDebounce } from '@hooks/common/useDebounce';
+import { useApplication, useDebounce } from '@hooks';
+import { useFormik, FormikProps } from 'formik';
+import { DEFAULT_PERSON, DEFAULT_PRIMARY_LOCATION } from '@utils/default-objects';
+import { createPersonSchema } from '@utils/validation';
 
 interface UpdatePersonContext {
   loading: boolean;
-  person: UseQueryResult<Person | null>;
+  formik: FormikProps<Person>;
   options: LocationType[];
   locationSearch: LocationType | null;
   locationSearchOpen: boolean;
   locationSearchLoading: boolean;
-  onSubmit: (values: Person) => void;
-  onToggleOpen: (set: boolean) => () => void;
   setLocationSearch: (set: LocationType | null) => void;
   setInputSearch: (set: string) => void;
+  onToggleOpen: (set: boolean) => () => void;
+  onAddLocation: () => void;
+  onDeleteLocation: (set: LocationType | null) => () => void;
 }
 
 export const useUpdatePerson = (id: number | null): UpdatePersonContext => {
   const queryClient = useQueryClient();
   const { push } = useHistory();
   const { loading, setLoading, createNotification } = useApplication();
-
   const [ inputSearch, setInputSearch ] = useState('');
   const [ locationSearchOpen, setLocationSearchOpen ] = useState(false);
   const [ locationSearch, setLocationSearch ] = useState<LocationType | null>(null);
@@ -72,16 +74,60 @@ export const useUpdatePerson = (id: number | null): UpdatePersonContext => {
     setLocationSearchOpen(set);
   }, []);
 
+  const formik = useFormik<Person>({
+    initialValues: person.data || DEFAULT_PERSON,
+    validationSchema: createPersonSchema,
+    onSubmit
+  });
+
+  const onAddLocation = useCallback(() => {
+    if (!locationSearch) {
+      return;
+    }
+
+    formik.setValues(prev => ({
+      ...prev,
+      primaryLocations: prev.primaryLocations
+        .find(i => i.location?.id === locationSearch.id) !== undefined
+        ? prev.primaryLocations
+        : [...prev.primaryLocations, {
+          ...DEFAULT_PRIMARY_LOCATION,
+          location: locationSearch
+        }]
+    }), false);
+
+    setLocationSearch(null);
+    setInputSearch('');
+  }, [formik, locationSearch, setLocationSearch, setInputSearch]);
+
+  const onDeleteLocation = useCallback((set: LocationType | null) => () => {
+    if (set === null) {
+      return;
+    }
+
+    formik.setValues(prev => ({
+      ...prev,
+      primaryLocations: prev.primaryLocations.filter(i => i.location?.id !== set.id)
+    }), false);
+  }, [formik]);
+
+  useEffect(() => {
+    if (person.data && person.data.id !== formik.values.id) {
+      formik.setValues(person.data, false);
+    }
+  }, [person.data, formik]);
+
   return {
     loading,
-    person,
     options: locations.data?.result || [],
+    formik,
     locationSearch,
     locationSearchLoading: locations.isFetching,
     locationSearchOpen,
-    onSubmit,
-    onToggleOpen,
     setInputSearch,
-    setLocationSearch
+    setLocationSearch,
+    onToggleOpen,
+    onAddLocation,
+    onDeleteLocation
   };
 };

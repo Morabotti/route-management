@@ -1,15 +1,17 @@
-import { useCallback } from 'react';
-import { UseQueryResult, useQuery, useQueryClient, useMutation } from 'react-query';
+import { useCallback, useEffect } from 'react';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { useHistory } from 'react-router';
 import { LocationType } from '@types';
 import { getLocationById, updateLocation } from '@client';
 import { Client, NotificationType } from '@enums';
 import { useApplication } from '@hooks';
+import { useFormik, FormikProps } from 'formik';
+import { DEFAULT_LOCATION } from '@utils/default-objects';
+import { createLocationSchema } from '@utils/validation';
 
 interface UpdateLocationContext {
   loading: boolean;
-  location: UseQueryResult<LocationType | null>;
-  onSubmit: (values: LocationType) => void;
+  formik: FormikProps<LocationType>;
 }
 
 export const useUpdateLocation = (id: number | null): UpdateLocationContext => {
@@ -44,9 +46,20 @@ export const useUpdateLocation = (id: number | null): UpdateLocationContext => {
     }
   }, [setLoading, createNotification, mutateAsync, push]);
 
+  const formik = useFormik<LocationType>({
+    initialValues: location.data || DEFAULT_LOCATION,
+    validationSchema: createLocationSchema,
+    onSubmit
+  });
+
+  useEffect(() => {
+    if (location.data && location.data.id !== formik.values.id) {
+      formik.setValues(location.data, false);
+    }
+  }, [location.data, formik]);
+
   return {
     loading,
-    location,
-    onSubmit
+    formik
   };
 };

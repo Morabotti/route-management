@@ -1,15 +1,17 @@
-import { useCallback } from 'react';
-import { UseQueryResult, useQuery, useQueryClient, useMutation } from 'react-query';
+import { useCallback, useEffect } from 'react';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { useHistory } from 'react-router';
 import { Vehicle } from '@types';
 import { getVehicleById, updateVehicle } from '@client';
 import { Client, NotificationType } from '@enums';
 import { useApplication } from '@hooks';
+import { FormikProps, useFormik } from 'formik';
+import { createVehicleSchema } from '@utils/validation';
+import { DEFAULT_VEHICLE } from '@utils/default-objects';
 
 interface UpdateVehicleContext {
   loading: boolean;
-  vehicle: UseQueryResult<Vehicle | null>;
-  onSubmit: (values: Vehicle) => void;
+  formik: FormikProps<Vehicle>;
 }
 
 export const useUpdateVehicle = (id: number | null): UpdateVehicleContext => {
@@ -43,9 +45,20 @@ export const useUpdateVehicle = (id: number | null): UpdateVehicleContext => {
     }
   }, [setLoading, createNotification, mutateAsync, push]);
 
+  const formik = useFormik<Vehicle>({
+    initialValues: vehicle.data || DEFAULT_VEHICLE,
+    validationSchema: createVehicleSchema,
+    onSubmit
+  });
+
+  useEffect(() => {
+    if (vehicle.data && vehicle.data.id !== formik.values.id) {
+      formik.setValues(vehicle.data, false);
+    }
+  }, [vehicle.data, formik]);
+
   return {
     loading,
-    vehicle,
-    onSubmit
+    formik
   };
 };

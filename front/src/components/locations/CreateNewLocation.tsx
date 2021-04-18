@@ -1,10 +1,6 @@
 import { FC } from 'react';
 import { Actions, ApplicationContainer } from '@components/common';
 import { Button, Grid, TextField } from '@material-ui/core';
-import { useFormik } from 'formik';
-import { CreateLocation } from '@types';
-import { CREATE_LOCATION } from '@utils/default-objects';
-import { createLocationSchema } from '@utils/validation';
 import { useCreateLocation } from '@hooks';
 import { useCommonStyles } from '@theme';
 
@@ -16,13 +12,7 @@ export const CreateNewLocation: FC<Props> = ({
   onBack
 }: Props) => {
   const commonClasses = useCommonStyles();
-  const { loading, onSubmit } = useCreateLocation();
-
-  const formik = useFormik<CreateLocation>({
-    initialValues: CREATE_LOCATION,
-    validationSchema: createLocationSchema,
-    onSubmit
-  });
+  const { loading, formik } = useCreateLocation();
 
   return (
     <ApplicationContainer

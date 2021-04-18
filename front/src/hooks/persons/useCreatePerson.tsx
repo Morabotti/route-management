@@ -5,24 +5,28 @@ import { CreatePerson, LocationType, Person } from '@types';
 import { createPerson, getLocations } from '@client';
 import { Client, NotificationType } from '@enums';
 import { useApplication, useDebounce } from '@hooks';
+import { FormikProps, useFormik } from 'formik';
+import { CREATE_PERSON } from '@utils/default-objects';
+import { createPersonSchema } from '@utils/validation';
 
 interface CreatePersonContext {
   loading: boolean;
+  formik: FormikProps<CreatePerson>;
   locationSearch: LocationType | null;
   options: LocationType[];
   locationSearchOpen: boolean;
   locationSearchLoading: boolean;
-  onSubmit: (values: CreatePerson) => void;
-  onToggleOpen: (set: boolean) => () => void;
   setLocationSearch: (set: LocationType | null) => void;
   setInputSearch: (set: string) => void;
+  onToggleOpen: (set: boolean) => () => void;
+  onAddLocation: () => void;
+  onDeleteLocation: (set: LocationType) => () => void;
 }
 
 export const useCreatePerson = (): CreatePersonContext => {
   const queryClient = useQueryClient();
   const { push } = useHistory();
   const { loading, setLoading, createNotification } = useApplication();
-
   const [ inputSearch, setInputSearch ] = useState('');
   const [ locationSearchOpen, setLocationSearchOpen ] = useState(false);
   const [ locationSearch, setLocationSearch ] = useState<LocationType | null>(null);
@@ -59,15 +63,46 @@ export const useCreatePerson = (): CreatePersonContext => {
     setLocationSearchOpen(set);
   }, []);
 
+  const formik = useFormik<CreatePerson>({
+    initialValues: CREATE_PERSON,
+    validationSchema: createPersonSchema,
+    onSubmit
+  });
+
+  const onAddLocation = useCallback(() => {
+    if (!locationSearch) {
+      return;
+    }
+
+    formik.setValues(prev => ({
+      ...prev,
+      primaryLocations: prev.primaryLocations.includes(locationSearch)
+        ? prev.primaryLocations
+        : [...prev.primaryLocations, locationSearch]
+    }), false);
+
+    setLocationSearch(null);
+    setInputSearch('');
+  }, [formik, locationSearch, setLocationSearch, setInputSearch]);
+
+  const onDeleteLocation = useCallback((set: LocationType) => () => {
+    formik.setValues(prev => ({
+      ...prev,
+      primaryLocations: prev.primaryLocations.filter(i => i.id !== set.id)
+    }), false);
+  }, [formik]);
+
   return {
     loading,
     options: locations.data?.result || [],
+    formik,
     locationSearch,
     locationSearchOpen,
     locationSearchLoading: locations.isFetching,
     setLocationSearch: setLocationSearch,
     setInputSearch,
-    onSubmit,
-    onToggleOpen
+    onAddLocation,
+    onToggleOpen,
+    onDeleteLocation
   };
 };

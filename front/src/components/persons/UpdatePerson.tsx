@@ -1,9 +1,6 @@
-import { FC, useCallback, useEffect } from 'react';
-import { useFormik } from 'formik';
-import { DEFAULT_PERSON, DEFAULT_PRIMARY_LOCATION } from '@utils/default-objects';
-import { createPersonSchema } from '@utils/validation';
+import { FC } from 'react';
 import { useUpdatePerson } from '@hooks';
-import { LocationType, Person } from '@types';
+import { LocationType } from '@types';
 import { useCommonStyles } from '@theme';
 import { Plus } from 'mdi-material-ui';
 
@@ -47,58 +44,16 @@ export const UpdatePerson: FC<Props> = ({
   const {
     loading,
     options,
-    person,
+    formik,
     locationSearch,
     locationSearchLoading,
     locationSearchOpen,
     setInputSearch,
     setLocationSearch,
-    onSubmit,
-    onToggleOpen
+    onToggleOpen,
+    onAddLocation,
+    onDeleteLocation
   } = useUpdatePerson(personId);
-
-  const formik = useFormik<Person>({
-    initialValues: person.data || DEFAULT_PERSON,
-    validationSchema: createPersonSchema,
-    onSubmit
-  });
-
-  useEffect(() => {
-    if (person.data && person.data.id !== formik.values.id) {
-      formik.setValues(person.data, false);
-    }
-  }, [person.data, formik]);
-
-  const onAddLocation = useCallback(() => {
-    if (!locationSearch) {
-      return;
-    }
-
-    formik.setValues(prev => ({
-      ...prev,
-      primaryLocations: prev.primaryLocations
-        .find(i => i.location?.id === locationSearch.id) !== undefined
-        ? prev.primaryLocations
-        : [...prev.primaryLocations, {
-          ...DEFAULT_PRIMARY_LOCATION,
-          location: locationSearch
-        }]
-    }), false);
-
-    setLocationSearch(null);
-    setInputSearch('');
-  }, [formik, locationSearch, setLocationSearch, setInputSearch]);
-
-  const onDeleteLocation = useCallback((set: LocationType | null) => () => {
-    if (set === null) {
-      return;
-    }
-
-    formik.setValues(prev => ({
-      ...prev,
-      primaryLocations: prev.primaryLocations.filter(i => i.location?.id !== set.id)
-    }), false);
-  }, [formik]);
 
   return (
     <ApplicationContainer
