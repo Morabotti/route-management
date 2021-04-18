@@ -54,7 +54,7 @@ export const CreateNewVehicle: FC<Props> = ({
       }
     >
       <form onSubmit={formik.handleSubmit} id='form-create-vehicle'>
-        <Grid container spacing={3}>
+        <Grid container spacing={2}>
           <Grid item xs={12}>
             <TextField
               fullWidth

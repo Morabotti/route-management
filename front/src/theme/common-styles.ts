@@ -42,7 +42,7 @@ export const useCommonStyles = makeStyles(theme => createStyles({
     bottom: -19
   },
   formFieldAbsoluteBase: {
-    marginBottom: theme.spacing(1)
+    marginBottom: theme.spacing(1.5)
   },
   deleteButton: {
     color: '#fff',

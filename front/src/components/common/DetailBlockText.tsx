@@ -9,7 +9,7 @@ const useStyles = makeStyles(theme => ({
   },
   spacing: {
     '&>div:not(:last-child)': {
-      marginBottom: theme.spacing(2)
+      marginBottom: theme.spacing(1)
     }
   }
 }));

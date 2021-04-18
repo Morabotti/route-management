@@ -1,4 +1,4 @@
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 import { useFormik } from 'formik';
 import { DEFAULT_PERSON, DEFAULT_PRIMARY_LOCATION } from '@utils/default-objects';
 import { createPersonSchema } from '@utils/validation';
@@ -62,6 +62,12 @@ export const UpdatePerson: FC<Props> = ({
     validationSchema: createPersonSchema,
     onSubmit
   });
+
+  useEffect(() => {
+    if (person.data && person.data.id !== formik.values.id) {
+      formik.setValues(person.data, false);
+    }
+  }, [person.data, formik]);
 
   const onAddLocation = useCallback(() => {
     if (!locationSearch) {
@@ -132,7 +138,7 @@ export const UpdatePerson: FC<Props> = ({
       }
     >
       <form onSubmit={formik.handleSubmit} id='form-update-person'>
-        <Grid container spacing={3}>
+        <Grid container spacing={2}>
           <Grid item xs={12}>
             <TextField
               fullWidth

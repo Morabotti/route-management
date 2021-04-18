@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { Actions, ApplicationContainer } from '@components/common';
 import { Button, Grid, TextField } from '@material-ui/core';
 import { useFormik } from 'formik';
@@ -25,6 +25,12 @@ export const UpdateVehicle: FC<Props> = ({
     validationSchema: createVehicleSchema,
     onSubmit
   });
+
+  useEffect(() => {
+    if (vehicle.data && vehicle.data.id !== formik.values.id) {
+      formik.setValues(vehicle.data, false);
+    }
+  }, [vehicle.data, formik]);
 
   return (
     <ApplicationContainer
@@ -65,7 +71,7 @@ export const UpdateVehicle: FC<Props> = ({
       }
     >
       <form onSubmit={formik.handleSubmit} id='form-update-vehicle'>
-        <Grid container spacing={3}>
+        <Grid container spacing={2}>
           <Grid item xs={12}>
             <TextField
               fullWidth

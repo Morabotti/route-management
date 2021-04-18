@@ -1,6 +1,6 @@
 import { FC, Fragment } from 'react';
 import { LocationType } from '@types';
-import { Cancel } from 'mdi-material-ui';
+import { Close } from 'mdi-material-ui';
 
 import {
   colors,
@@ -56,7 +56,7 @@ export const FormLocationBlock: FC<Props> = ({
       </div>
       <div className={classes.delete}>
         <IconButton onClick={onDelete}>
-          <Cancel />
+          <Close />
         </IconButton>
       </div>
     </Paper>

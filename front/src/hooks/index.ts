@@ -13,6 +13,11 @@ export * from './vehicles/useVehicle';
 export * from './vehicles/useCreateVehicle';
 export * from './vehicles/useUpdateVehicle';
 
+export * from './locations/useLocationList';
+export * from './locations/useCurrentLocation';
+export * from './locations/useCreateLocation';
+export * from './locations/useUpdateLocation';
+
 export * from './persons/usePersonList';
 export * from './persons/usePerson';
 export * from './persons/useUpdatePerson';
