@@ -1,21 +1,12 @@
 import { FC } from 'react';
 import { Actions, ApplicationContainer } from '@components/common';
-import { Button, Grid, makeStyles, TextField } from '@material-ui/core';
+import { Button, Grid, TextField } from '@material-ui/core';
 import { useFormik } from 'formik';
 import { Vehicle } from '@types';
 import { DEFAULT_VEHICLE } from '@utils/default-objects';
 import { createVehicleSchema } from '@utils/validation';
 import { useUpdateVehicle } from '@hooks';
-
-const useStyles = makeStyles(theme => ({
-  helper: {
-    position: 'absolute',
-    bottom: -19
-  },
-  field: {
-    marginBottom: theme.spacing(1)
-  }
-}));
+import { useCommonStyles } from '@theme';
 
 interface Props {
   onBack: () => void;
@@ -26,7 +17,7 @@ export const UpdateVehicle: FC<Props> = ({
   onBack,
   vehicleId
 }: Props) => {
-  const classes = useStyles();
+  const commonClasses = useCommonStyles();
   const { loading, onSubmit, vehicle } = useUpdateVehicle(vehicleId);
 
   const formik = useFormik<Vehicle>({
@@ -88,10 +79,10 @@ export const UpdateVehicle: FC<Props> = ({
               onChange={formik.handleChange}
               error={formik.touched.licenseNumber && Boolean(formik.errors.licenseNumber)}
               helperText={formik.touched.licenseNumber && formik.errors.licenseNumber}
-              className={classes.field}
+              className={commonClasses.formFieldAbsoluteBase}
               disabled={loading}
               FormHelperTextProps={{
-                className: classes.helper
+                className: commonClasses.formFieldAbsoluteHelper
               }}
             />
           </Grid>

@@ -1,8 +1,15 @@
 import { FC } from 'react';
 import { useNavigation, useVehicleList } from '@hooks';
-import { ApplicationContainer, CenterMessage, CrudListItem, ListPaginationControls } from '@components/common';
 import { Button, InputAdornment, List, makeStyles, TextField } from '@material-ui/core';
 import { CarOff, CarSide, Magnify, Plus } from 'mdi-material-ui';
+import { useCommonStyles } from '@theme';
+
+import {
+  ApplicationContainer,
+  CenterMessage,
+  CrudListItem,
+  ListPaginationControls
+} from '@components/common';
 
 const useStyles = makeStyles(theme => ({
   padding: {
@@ -11,25 +18,12 @@ const useStyles = makeStyles(theme => ({
       padding: theme.spacing(2, 1.5, 1)
     }
   },
-  icon: {
-    color: 'rgba(0, 0, 0, 0.54)'
-  },
   fieldWrapper: {
     display: 'flex'
   },
   field: {
     flexGrow: 1
-  },
-  button: {
-    marginLeft: theme.spacing(2),
-    borderRadius: 0,
-    height: '100%',
-    backgroundColor: theme.palette.primary.light,
-    '&:hover, &:focus': {
-      backgroundColor: theme.palette.primary.main
-    }
   }
-
 }));
 
 interface Props {
@@ -42,6 +36,7 @@ export const VehicleList: FC<Props> = ({
   onCreate
 }: Props) => {
   const classes = useStyles();
+  const commonClasses = useCommonStyles();
   const { vehicles, search, setSearch, onResetFilters } = useVehicleList();
   const { onNavigation } = useNavigation();
 
@@ -69,7 +64,7 @@ export const VehicleList: FC<Props> = ({
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>
-                  <Magnify className={classes.icon} />
+                  <Magnify className={commonClasses.fieldIconColor} />
                 </InputAdornment>
               )
             }}
@@ -79,7 +74,7 @@ export const VehicleList: FC<Props> = ({
               variant='contained'
               color='primary'
               disableElevation
-              className={classes.button}
+              className={commonClasses.fieldActionButton}
               onClick={onCreate}
               disabled={vehicles.isLoading}
             >

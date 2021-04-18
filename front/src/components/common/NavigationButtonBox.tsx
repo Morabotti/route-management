@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { OverridableComponent } from '@material-ui/core/OverridableComponent';
-import { customVariables } from '@theme';
+import { customVariables, useCommonStyles } from '@theme';
 import clsx from 'clsx';
 
 import {
@@ -14,25 +14,6 @@ import {
 const useStyles = makeStyles(theme => createStyles({
   button: {
     height: customVariables.navigationSize,
-    textDecoration: 'none',
-    width: '100%',
-    overflow: 'hidden',
-    border: 'none',
-    margin: 0,
-    padding: 0,
-    background: 'transparent',
-    color: 'inherit',
-    font: 'inherit',
-    lineHeight: 'normal',
-    textAlign: 'inherit',
-    outline: 'none',
-    '-webkit-font-smoothing': 'inherit',
-    '-moz-osx-font-smoothing': 'inherit',
-    '-webkit-appearance': 'none',
-    '&::-moz-focus-inner': {
-      border: 0,
-      padding: 0
-    },
     '&:hover $icon': {
       color: theme.palette.primary.light
     }
@@ -51,10 +32,16 @@ const useStyles = makeStyles(theme => createStyles({
   icon: {
     width: customVariables.navigationIconSize,
     height: customVariables.navigationIconSize,
-    transition: 'color 150ms ease-in-out, transform 300ms ease-in-out'
+    transition: 'color 150ms ease-in-out, transform 300ms ease-in-out',
+    color: 'rgba(0, 0, 0, 0.67)'
   },
   active: {
-    color: theme.palette.primary.main
+    '& $icon': {
+      color: theme.palette.primary.main
+    },
+    '&:hover $icon': {
+      color: theme.palette.primary.main
+    }
   }
 }));
 
@@ -76,13 +63,14 @@ export const NavigationButtonBox: FC<Props> = ({
   onClick
 }: Props) => {
   const classes = useStyles();
+  const commonClasses = useCommonStyles();
 
   return (
     <>
       <Tooltip title={title} placement='left'>
         <button
           onClick={onClick}
-          className={clsx(classes.button, {
+          className={clsx(commonClasses.baseButton, classes.button, {
             [classes.active]: active
           })}
         >

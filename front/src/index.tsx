@@ -1,6 +1,7 @@
 import * as ReactDOM from 'react-dom';
 
 import 'regenerator-runtime/runtime.js';
+import 'fontsource-roboto/latin.css';
 
 import Application from '@components/Application';
 

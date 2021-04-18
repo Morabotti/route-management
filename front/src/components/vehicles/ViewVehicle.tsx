@@ -1,6 +1,7 @@
 import { FC } from 'react';
-import { Button, makeStyles } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import { useVehicle } from '@hooks';
+import { useCommonStyles } from '@theme';
 
 import {
   Actions,
@@ -9,16 +10,6 @@ import {
   DetailBlock,
   DetailBlockText
 } from '@components/common';
-
-const useStyles = makeStyles(theme => ({
-  delete: {
-    color: '#fff',
-    backgroundColor: theme.palette.error.main,
-    '&:hover, &:focus': {
-      backgroundColor: theme.palette.error.dark
-    }
-  }
-}));
 
 interface Props {
   vehicleId: number | null;
@@ -29,7 +20,7 @@ export const ViewVehicle: FC<Props> = ({
   vehicleId,
   onBack
 }: Props) => {
-  const classes = useStyles();
+  const commonClasses = useCommonStyles();
 
   const {
     loading,
@@ -60,7 +51,7 @@ export const ViewVehicle: FC<Props> = ({
               onClick={onToggleDeleting(true)}
               color='inherit'
               disableElevation
-              className={classes.delete}
+              className={commonClasses.deleteButton}
               variant='contained'
               disabled={loading || vehicle.isLoading}
             >

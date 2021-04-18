@@ -3,6 +3,9 @@ import palette from './palette';
 
 const theme = createMuiTheme({
   palette,
+  typography: {
+    fontFamily: 'Roboto, Helvetica, Arial, sans-serif'
+  },
   zIndex: {
     appBar: 1200,
     drawer: 1100,
@@ -12,5 +15,6 @@ const theme = createMuiTheme({
 });
 
 export { customVariables } from './custom-variables';
+export { useCommonStyles } from './common-styles';
 
 export default theme;

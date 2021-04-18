@@ -4,6 +4,7 @@ import { DEFAULT_PERSON, DEFAULT_PRIMARY_LOCATION } from '@utils/default-objects
 import { createPersonSchema } from '@utils/validation';
 import { useUpdatePerson } from '@hooks';
 import { LocationType, Person } from '@types';
+import { useCommonStyles } from '@theme';
 import { Plus } from 'mdi-material-ui';
 
 import {
@@ -21,25 +22,9 @@ import {
 } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
-  helper: {
-    position: 'absolute',
-    bottom: -19
-  },
-  field: {
-    marginBottom: theme.spacing(1)
-  },
   locations: {
     '& > div:not(:last-child)': {
       marginBottom: theme.spacing(2)
-    }
-  },
-  button: {
-    marginLeft: theme.spacing(2),
-    borderRadius: 0,
-    height: '100%',
-    backgroundColor: theme.palette.primary.light,
-    '&:hover, &:focus': {
-      backgroundColor: theme.palette.primary.main
     }
   },
   wrapper: {
@@ -57,6 +42,7 @@ export const UpdatePerson: FC<Props> = ({
   personId
 }: Props) => {
   const classes = useStyles();
+  const commonClasses = useCommonStyles();
 
   const {
     loading,
@@ -133,7 +119,7 @@ export const UpdatePerson: FC<Props> = ({
             Reset
           </Button>
           <Button
-            form='form-update-vehicle'
+            form='form-update-person'
             color='primary'
             type='submit'
             disableElevation
@@ -145,7 +131,7 @@ export const UpdatePerson: FC<Props> = ({
         </Actions>
       }
     >
-      <form onSubmit={formik.handleSubmit} id='form-update-vehicle'>
+      <form onSubmit={formik.handleSubmit} id='form-update-person'>
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <TextField
@@ -160,10 +146,10 @@ export const UpdatePerson: FC<Props> = ({
               onChange={formik.handleChange}
               error={formik.touched.name && Boolean(formik.errors.name)}
               helperText={formik.touched.name && formik.errors.name}
-              className={classes.field}
+              className={commonClasses.formFieldAbsoluteBase}
               disabled={loading}
               FormHelperTextProps={{
-                className: classes.helper
+                className: commonClasses.formFieldAbsoluteHelper
               }}
             />
           </Grid>
@@ -187,7 +173,7 @@ export const UpdatePerson: FC<Props> = ({
                   variant='contained'
                   color='primary'
                   disableElevation
-                  className={classes.button}
+                  className={commonClasses.fieldActionButton}
                   onClick={onAddLocation}
                   disabled={locationSearchLoading}
                 >

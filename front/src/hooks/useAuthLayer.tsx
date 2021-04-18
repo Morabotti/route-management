@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { AuthUser } from '@types';
 import { useAuth } from '@hooks';
 import { useLocation } from 'react-router-dom';
@@ -8,12 +8,27 @@ import { checkSession } from '@client';
 interface AuthContext {
   loading: boolean;
   auth: null | AuthUser;
-  pathname: string;
+  queries: string;
 }
 
 export const useAuthLayer = (): AuthContext => {
   const { loading, auth, stopLoading, setAuth, revokeAuth } = useAuth();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
+
+  const queries = useMemo(() => {
+    const params = new URLSearchParams(search).toString();
+    const newParams = new URLSearchParams();
+
+    if (pathname !== '/rm') {
+      newParams.set('redirect', pathname);
+    }
+
+    if (params !== '') {
+      newParams.set('params', params);
+    }
+
+    return newParams.toString();
+  }, [search, pathname]);
 
   const getStatus = useCallback(async () => {
     const token = localStorage.getItem(LocalStorageKey.TOKEN);
@@ -24,14 +39,14 @@ export const useAuthLayer = (): AuthContext => {
           setAuth(client);
         }
         catch (e) {
-          revokeAuth();
+          revokeAuth(queries);
         }
       }
       else {
         stopLoading();
       }
     }
-  }, [loading, auth, stopLoading, revokeAuth, setAuth]);
+  }, [loading, auth, stopLoading, revokeAuth, setAuth, queries]);
 
   useEffect(() => {
     getStatus();
@@ -40,6 +55,6 @@ export const useAuthLayer = (): AuthContext => {
   return {
     loading,
     auth,
-    pathname
+    queries
   };
 };

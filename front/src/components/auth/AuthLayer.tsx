@@ -9,7 +9,7 @@ interface Props {
 }
 
 export const AuthLayer = memo(({ children }: Props) => {
-  const { loading, auth, pathname } = useAuthLayer();
+  const { loading, auth, queries } = useAuthLayer();
 
   if (loading && auth === null) {
     return (
@@ -19,9 +19,7 @@ export const AuthLayer = memo(({ children }: Props) => {
 
   if (!loading && auth === null) {
     return (
-      <Redirect
-        to={`/login${pathname !== '/rm' ? `?redirect=${pathname}` : ''}`}
-      />
+      <Redirect to={queries !== '' ? `/login?${queries}` : '/login'} />
     );
   }
 

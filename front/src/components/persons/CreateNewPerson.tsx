@@ -5,6 +5,7 @@ import { CREATE_PERSON } from '@utils/default-objects';
 import { createPersonSchema } from '@utils/validation';
 import { useCreatePerson } from '@hooks';
 import { Plus } from 'mdi-material-ui';
+import { useCommonStyles } from '@theme';
 
 import {
   Actions,
@@ -21,24 +22,8 @@ import {
 } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
-  helper: {
-    position: 'absolute',
-    bottom: -19
-  },
-  field: {
-    marginBottom: theme.spacing(1)
-  },
   wrapper: {
     display: 'flex'
-  },
-  button: {
-    marginLeft: theme.spacing(2),
-    borderRadius: 0,
-    height: '100%',
-    backgroundColor: theme.palette.primary.light,
-    '&:hover, &:focus': {
-      backgroundColor: theme.palette.primary.main
-    }
   },
   locations: {
     '& > div:not(:last-child)': {
@@ -55,6 +40,7 @@ export const CreateNewPerson: FC<Props> = ({
   onBack
 }: Props) => {
   const classes = useStyles();
+  const commonClasses = useCommonStyles();
 
   const {
     loading,
@@ -141,10 +127,10 @@ export const CreateNewPerson: FC<Props> = ({
               onChange={formik.handleChange}
               error={formik.touched.name && Boolean(formik.errors.name)}
               helperText={formik.touched.name && formik.errors.name}
-              className={classes.field}
+              className={commonClasses.formFieldAbsoluteBase}
               disabled={loading}
               FormHelperTextProps={{
-                className: classes.helper
+                className: commonClasses.formFieldAbsoluteHelper
               }}
             />
           </Grid>
@@ -168,7 +154,7 @@ export const CreateNewPerson: FC<Props> = ({
                   variant='contained'
                   color='primary'
                   disableElevation
-                  className={classes.button}
+                  className={commonClasses.fieldActionButton}
                   onClick={onAddLocation}
                   disabled={locationSearchLoading}
                 >

@@ -7,7 +7,7 @@ interface AuthContext {
   loading: boolean;
   auth: null | AuthUser;
   setAuth: (user: AuthUser) => void;
-  revokeAuth: () => void;
+  revokeAuth: (queries?: string) => void;
   stopLoading: () => void;
 }
 
@@ -34,10 +34,10 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
     setLoading(false);
   }, [setStateAuth, setLoading]);
 
-  const revokeAuth = useCallback(() => {
+  const revokeAuth = useCallback((queries?: string) => {
     localStorage.removeItem(LocalStorageKey.TOKEN);
     setStateAuth(null);
-    push('/login');
+    push(queries ? `/login?${queries}` : '/login');
     setLoading(false);
   }, [setStateAuth, push, setLoading]);
 

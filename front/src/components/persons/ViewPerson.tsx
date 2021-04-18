@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { Button, List, makeStyles } from '@material-ui/core';
 import { MapMarker, MapMarkerRadius } from 'mdi-material-ui';
 import { useNavigation, usePerson } from '@hooks';
+import { useCommonStyles } from '@theme';
 
 import {
   Actions,
@@ -15,13 +16,6 @@ import {
 } from '@components/common';
 
 const useStyles = makeStyles(theme => ({
-  delete: {
-    color: '#fff',
-    backgroundColor: theme.palette.error.main,
-    '&:hover, &:focus': {
-      backgroundColor: theme.palette.error.dark
-    }
-  },
   padding: {
     padding: theme.spacing(3, 3, 0),
     [theme.breakpoints.down('sm')]: {
@@ -40,6 +34,7 @@ export const ViewPerson: FC<Props> = ({
   onBack
 }: Props) => {
   const classes = useStyles();
+  const commonClasses = useCommonStyles();
   const { onNavigation, onRoutePreload } = useNavigation();
 
   const {
@@ -72,7 +67,7 @@ export const ViewPerson: FC<Props> = ({
               onClick={onToggleDeleting(true)}
               color='inherit'
               disableElevation
-              className={classes.delete}
+              className={commonClasses.deleteButton}
               variant='contained'
               disabled={loading || person.isLoading}
             >

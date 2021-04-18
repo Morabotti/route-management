@@ -1,8 +1,22 @@
 import { FC, useState, useCallback, Fragment, memo } from 'react';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import { MAP_OFFSET_X, MAP_OFFSET_Y } from '@utils/map-utils';
+import { makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles(() => ({
+  hidecopyright: {
+    '& .gmnoprint a, .gmnoprint span, .gm-style-cc': {
+      display: 'none !important'
+    },
+    '& .gmnoprint div': {
+      background: 'none !important'
+    }
+  }
+}));
 
 export const MainMap: FC = memo(() => {
+  const classes = useStyles();
+
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY || ''
@@ -35,6 +49,7 @@ export const MainMap: FC = memo(() => {
       onLoad={onLoad}
       onUnmount={onUnmount}
       onClick={() => console.log(map)}
+      mapContainerClassName={classes.hidecopyright}
       options={{
         disableDefaultUI: true,
         disableDoubleClickZoom: true,

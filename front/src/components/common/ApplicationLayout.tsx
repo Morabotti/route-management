@@ -116,6 +116,7 @@ const ApplicationLayout: FC<Props> = ({ children }: Props) => {
           <Paper
             className={classes.paper}
             variant='outlined'
+            square
           >
             <ApplicationNavigation
               expanded={expanded}

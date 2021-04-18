@@ -3,6 +3,7 @@ import { useNavigation, usePersonList } from '@hooks';
 import { ApplicationContainer, CenterMessage, CrudListItem, ListPaginationControls } from '@components/common';
 import { Button, InputAdornment, List, makeStyles, TextField } from '@material-ui/core';
 import { Account, AccountOff, Magnify, Plus } from 'mdi-material-ui';
+import { useCommonStyles } from '@theme';
 
 const useStyles = makeStyles(theme => ({
   padding: {
@@ -11,23 +12,11 @@ const useStyles = makeStyles(theme => ({
       padding: theme.spacing(2, 1.5, 1)
     }
   },
-  icon: {
-    color: 'rgba(0, 0, 0, 0.54)'
-  },
   fieldWrapper: {
     display: 'flex'
   },
   field: {
     flexGrow: 1
-  },
-  button: {
-    marginLeft: theme.spacing(2),
-    borderRadius: 0,
-    height: '100%',
-    backgroundColor: theme.palette.primary.light,
-    '&:hover, &:focus': {
-      backgroundColor: theme.palette.primary.main
-    }
   }
 }));
 
@@ -41,6 +30,7 @@ export const PersonList: FC<Props> = ({
   onCreate
 }: Props) => {
   const classes = useStyles();
+  const commonClasses = useCommonStyles();
   const { persons, search, setSearch, onResetFilters } = usePersonList();
   const { onNavigation } = useNavigation();
 
@@ -68,7 +58,7 @@ export const PersonList: FC<Props> = ({
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>
-                  <Magnify className={classes.icon} />
+                  <Magnify className={commonClasses.fieldIconColor} />
                 </InputAdornment>
               )
             }}
@@ -78,7 +68,7 @@ export const PersonList: FC<Props> = ({
               variant='contained'
               color='primary'
               disableElevation
-              className={classes.button}
+              className={commonClasses.fieldActionButton}
               onClick={onCreate}
               disabled={persons.isLoading}
             >

@@ -37,10 +37,13 @@ const useStyles = makeStyles(theme => createStyles({
   icon: {
     width: customVariables.navigationIconSize,
     height: customVariables.navigationIconSize,
-    transition: 'color 150ms ease-in-out'
+    transition: 'color 150ms ease-in-out',
+    color: 'rgba(0, 0, 0, 0.67)'
   },
   active: {
-    color: theme.palette.primary.main,
+    '& $icon': {
+      color: theme.palette.primary.main
+    },
     '&:hover $icon': {
       color: theme.palette.primary.main
     }
