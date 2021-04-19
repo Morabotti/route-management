@@ -22,14 +22,14 @@ export const useVehicle = (id: number | null): VehicleContext => {
   const [deleting, setDeleting] = useState(false);
 
   const vehicle = useQuery(
-    [Client.GET_VEHICLE_BY_ID, id],
+    [Client.GetVehicleById, id],
     () => id === null ? null : getVehicleById(id)
   );
 
   const { mutateAsync: deleteAsync } = useMutation(deleteVehicle, {
     onSuccess: (res: Response, id: number) => {
-      queryClient.invalidateQueries(Client.GET_VEHICLES);
-      queryClient.invalidateQueries([Client.GET_VEHICLE_BY_ID, id], { stale: false });
+      queryClient.invalidateQueries(Client.GetVehicles);
+      queryClient.invalidateQueries([Client.GetVehicleById, id], { stale: false });
     }
   });
 
@@ -41,13 +41,13 @@ export const useVehicle = (id: number | null): VehicleContext => {
     setLoading(true);
     try {
       await deleteAsync(vehicle.data.id);
-      createNotification('Successfully deleted vehicle', NotificationType.INFO);
+      createNotification('Successfully deleted vehicle', NotificationType.Info);
       setLoading(false);
       setDeleting(false);
       push(`/rm/vehicles`);
     }
     catch (e) {
-      createNotification('Failed to delete vehicle', NotificationType.ERROR);
+      createNotification('Failed to delete vehicle', NotificationType.Error);
       setLoading(false);
       setDeleting(false);
     }

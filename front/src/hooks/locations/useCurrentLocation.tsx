@@ -24,16 +24,17 @@ export const useCurrentLocation = (id: number | null): LocationContext => {
   const { onLocationChange } = useMap();
 
   const location = useQuery(
-    [Client.GET_LOCATION_BY_ID, id],
+    [Client.GetLocationById, id],
     () => id === null ? null : getLocationById(id)
   );
 
   const { mutateAsync: deleteAsync } = useMutation(deleteLocation, {
     onSuccess: (res: Response, data: LocationType) => {
-      queryClient.invalidateQueries(Client.GET_VEHICLES);
-      queryClient.invalidateQueries([Client.GET_VEHICLE_BY_ID, data.id], { stale: false });
+      queryClient.invalidateQueries(Client.GetLocations);
+      queryClient.invalidateQueries(Client.GetLocationWithPosition);
+      queryClient.invalidateQueries([Client.GetLocationById, data.id], { stale: false });
       queryClient.invalidateQueries({
-        predicate: (query: Query) => query.queryKey[0] === Client.GET_PERSON_BY_ID
+        predicate: (query: Query) => query.queryKey[0] === Client.GetPersonById
           && data.primaryPersons.map(i => i.person?.id)
             .filter(i => i !== undefined && i !== null)
             .includes(query.queryKey[1] as number)
@@ -49,13 +50,13 @@ export const useCurrentLocation = (id: number | null): LocationContext => {
     setLoading(true);
     try {
       await deleteAsync(location.data);
-      createNotification('Successfully deleted location', NotificationType.INFO);
+      createNotification('Successfully deleted location', NotificationType.Info);
       setLoading(false);
       setDeleting(false);
       push(`/rm/locations`);
     }
     catch (e) {
-      createNotification('Failed to delete location', NotificationType.ERROR);
+      createNotification('Failed to delete location', NotificationType.Error);
       setLoading(false);
       setDeleting(false);
     }

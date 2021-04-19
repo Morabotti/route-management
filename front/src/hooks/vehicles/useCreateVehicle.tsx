@@ -6,7 +6,7 @@ import { CreateVehicle, Vehicle } from '@types';
 import { createVehicle } from '@client';
 import { Client, NotificationType } from '@enums';
 import { createVehicleSchema } from '@utils/validation';
-import { CREATE_VEHICLE } from '@utils/default-objects';
+import { CREATE_VEHICLE } from '@utils/defaultObjects';
 import { useApplication } from '@hooks';
 
 interface CreateVehicleContext {
@@ -21,8 +21,8 @@ export const useCreateVehicle = (): CreateVehicleContext => {
 
   const { mutateAsync } = useMutation(createVehicle, {
     onSuccess: (data: Vehicle) => {
-      queryClient.invalidateQueries(Client.GET_VEHICLES);
-      queryClient.setQueryData([Client.GET_VEHICLE_BY_ID, data.id], data);
+      queryClient.invalidateQueries(Client.GetVehicles);
+      queryClient.setQueryData([Client.GetVehicleById, data.id], data);
     }
   });
 
@@ -30,12 +30,12 @@ export const useCreateVehicle = (): CreateVehicleContext => {
     setLoading(true);
     try {
       const vehicle = await mutateAsync(values);
-      createNotification('Successfully created new vehicle', NotificationType.INFO);
+      createNotification('Successfully created new vehicle', NotificationType.Info);
       setLoading(false);
       push(`/rm/vehicles/view/${vehicle.id}`);
     }
     catch (e) {
-      createNotification('Failed to created new vehicle', NotificationType.ERROR);
+      createNotification('Failed to created new vehicle', NotificationType.Error);
       setLoading(false);
     }
   }, [setLoading, createNotification, mutateAsync, push]);

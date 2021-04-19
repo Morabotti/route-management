@@ -25,7 +25,7 @@ export const __MapContext = createContext<MapContext>({
   isLoaded: false,
   center: null,
   map: null,
-  tool: MapTool.CURSOR,
+  tool: MapTool.Cursor,
   zoom: 17,
   handleCenterChange: () => {},
   handleZoomChange: () => {},
@@ -38,7 +38,7 @@ export const __MapContext = createContext<MapContext>({
 export const MapProvider = ({ children }: Props): JSX.Element => {
   const [center, setCenter] = useState<google.maps.LatLng | null>(null);
   const [zoom, setZoom] = useState(17);
-  const [tool, setTool] = useState<MapTool>(MapTool.CURSOR);
+  const [tool, setTool] = useState<MapTool>(MapTool.Cursor);
   const [map, setMap] = useState<null | google.maps.Map>(null);
 
   const { isLoaded } = useJsApiLoader({

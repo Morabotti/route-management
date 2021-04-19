@@ -3,9 +3,9 @@ import { makeStyles, Paper } from '@material-ui/core';
 import { MainMap, MapTools } from '@components/map';
 import { ApplicationNavigation } from '@components/common';
 import { customVariables } from '@theme';
-import clsx from 'clsx';
 import { useHistory } from 'react-router';
 import { useNavigation } from '@hooks';
+import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
   '@global': {

@@ -1,8 +1,15 @@
 import { FC } from 'react';
-import { colors, Divider, IconButton, makeStyles, Typography as T } from '@material-ui/core';
 import { ChevronLeft } from 'mdi-material-ui';
 import { customVariables } from '@theme';
 import clsx from 'clsx';
+
+import {
+  colors,
+  Divider,
+  IconButton,
+  makeStyles,
+  Typography as T
+} from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   fullHeight: {

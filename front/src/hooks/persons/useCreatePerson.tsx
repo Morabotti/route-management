@@ -1,12 +1,12 @@
 import { useCallback, useState } from 'react';
-import { useQueryClient, useMutation, useQuery } from 'react-query';
+import { useQueryClient, useMutation, useQuery, Query } from 'react-query';
 import { useHistory } from 'react-router';
 import { CreatePerson, LocationType, Person } from '@types';
 import { createPerson, getLocations } from '@client';
 import { Client, NotificationType } from '@enums';
 import { useApplication, useDebounce } from '@hooks';
 import { FormikProps, useFormik } from 'formik';
-import { CREATE_PERSON } from '@utils/default-objects';
+import { CREATE_PERSON } from '@utils/defaultObjects';
 import { createPersonSchema } from '@utils/validation';
 
 interface CreatePersonContext {
@@ -34,14 +34,20 @@ export const useCreatePerson = (): CreatePersonContext => {
   const debouncedSearch = useDebounce(inputSearch, 500);
 
   const locations = useQuery(
-    [Client.GET_LOCATIONS, { limit: 20, offset: 0 }, { search: debouncedSearch }],
+    [Client.GetLocations, { limit: 20, offset: 0 }, { search: debouncedSearch }],
     () => getLocations({ limit: 20, offset: 0 }, { search: debouncedSearch })
   );
 
   const { mutateAsync } = useMutation(createPerson, {
     onSuccess: (data: Person) => {
-      queryClient.invalidateQueries(Client.GET_PERSONS);
-      queryClient.setQueryData([Client.GET_PERSON_BY_ID, data.id], data);
+      queryClient.invalidateQueries(Client.GetPersons);
+      queryClient.setQueryData([Client.GetPersonById, data.id], data);
+      queryClient.invalidateQueries({
+        predicate: (query: Query) => query.queryKey[0] === Client.GetLocationById
+          && data.primaryLocations.map(i => i.location?.id)
+            .filter(i => i !== undefined && i !== null)
+            .includes(query.queryKey[1] as number)
+      });
     }
   });
 
@@ -49,12 +55,12 @@ export const useCreatePerson = (): CreatePersonContext => {
     setLoading(true);
     try {
       const person = await mutateAsync(values);
-      createNotification('Successfully created new person', NotificationType.INFO);
+      createNotification('Successfully created new person', NotificationType.Info);
       setLoading(false);
       push(`/rm/persons/view/${person.id}`);
     }
     catch (e) {
-      createNotification('Failed to created new person', NotificationType.ERROR);
+      createNotification('Failed to created new person', NotificationType.Error);
       setLoading(false);
     }
   }, [setLoading, createNotification, mutateAsync, push]);

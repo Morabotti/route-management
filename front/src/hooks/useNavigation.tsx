@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useHistory } from 'react-router';
-import { routePreload } from '@utils/route-utils';
+import { routePreload } from '@utils/routeUtils';
 
 interface NavigationContext {
   preloadRoute: (url: string) => void;

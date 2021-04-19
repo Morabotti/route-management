@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { resolveTsconfigPathsToAlias, mapEnvironmentVariables } = require('./webpack.utils.js')
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const path = require('path');
 
 module.exports = {
@@ -61,6 +62,7 @@ module.exports = {
   plugins: [
     new ContextReplacementPlugin(/moment[/\\]locale$/, /en|fi/),
     new DefinePlugin(mapEnvironmentVariables(['GOOGLE_MAPS_API_KEY'])),
+    // new BundleAnalyzerPlugin(),
     new HtmlWebpackPlugin({
       inject: true,
       hash: true,

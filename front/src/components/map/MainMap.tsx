@@ -1,7 +1,7 @@
 import { FC, Fragment, memo } from 'react';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { makeStyles } from '@material-ui/core';
-import { getCursorByTool } from '@utils/map-utils';
+import { getCursorByTool } from '@utils/mapUtils';
 import { useMap } from '@hooks';
 
 const useStyles = makeStyles(() => ({

@@ -14,7 +14,7 @@ const theme = createMuiTheme({
   }
 });
 
-export { customVariables } from './custom-variables';
-export { useCommonStyles } from './common-styles';
+export { customVariables } from './customVariables';
+export { useCommonStyles } from './commonStyles';
 
 export default theme;

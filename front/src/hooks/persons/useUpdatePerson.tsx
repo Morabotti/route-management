@@ -6,7 +6,7 @@ import { getLocations, getPersonById, updatePerson } from '@client';
 import { Client, NotificationType } from '@enums';
 import { useApplication, useDebounce } from '@hooks';
 import { useFormik, FormikProps } from 'formik';
-import { DEFAULT_PERSON, DEFAULT_PRIMARY_LOCATION } from '@utils/default-objects';
+import { DEFAULT_PERSON, DEFAULT_PRIMARY_LOCATION } from '@utils/defaultObjects';
 import { createPersonSchema } from '@utils/validation';
 
 interface UpdatePersonContext {
@@ -34,21 +34,21 @@ export const useUpdatePerson = (id: number | null): UpdatePersonContext => {
   const debouncedSearch = useDebounce(inputSearch, 500);
 
   const person = useQuery(
-    [Client.GET_PERSON_BY_ID, id],
+    [Client.GetPersonById, id],
     () => id === null ? null : getPersonById(id)
   );
 
   const locations = useQuery(
-    [Client.GET_LOCATIONS, { limit: 20, offset: 0 }, { search: debouncedSearch }],
+    [Client.GetLocations, { limit: 20, offset: 0 }, { search: debouncedSearch }],
     () => getLocations({ limit: 20, offset: 0 }, { search: debouncedSearch })
   );
 
   const { mutateAsync } = useMutation(updatePerson, {
     onSuccess: (data: Person) => {
-      queryClient.invalidateQueries(Client.GET_PERSONS);
-      queryClient.setQueryData([Client.GET_PERSON_BY_ID, data.id], data);
+      queryClient.invalidateQueries(Client.GetPersons);
+      queryClient.setQueryData([Client.GetPersonById, data.id], data);
       queryClient.invalidateQueries({
-        predicate: (query: Query) => query.queryKey[0] === Client.GET_LOCATION_BY_ID
+        predicate: (query: Query) => query.queryKey[0] === Client.GetLocationById
           && data.primaryLocations.map(i => i.location?.id)
             .filter(i => i !== undefined && i !== null)
             .includes(query.queryKey[1] as number)
@@ -60,12 +60,12 @@ export const useUpdatePerson = (id: number | null): UpdatePersonContext => {
     setLoading(true);
     try {
       await mutateAsync(values);
-      createNotification('Successfully updated person', NotificationType.INFO);
+      createNotification('Successfully updated person', NotificationType.Info);
       setLoading(false);
       push(`/rm/persons/view/${values.id}`);
     }
     catch (e) {
-      createNotification('Failed to update person', NotificationType.ERROR);
+      createNotification('Failed to update person', NotificationType.Error);
       setLoading(false);
     }
   }, [setLoading, createNotification, mutateAsync, push]);

@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { usePagination } from '@hooks';
-import { getQueryParamsLength } from '@utils/query-utils';
+import { getQueryParamsLength } from '@utils/queryUtils';
+import { QueryParams } from '@enums';
 
 interface ControlsContext {
   limit: number;
@@ -20,17 +21,17 @@ export const useControls = (): ControlsContext => {
   const updatePath = useCallback((newLimit: number, newOffset: number) => {
     const params = new URLSearchParams(search);
 
-    const offsetParam = params.get('offset');
-    const limitParam = params.get('limit');
+    const offsetParam = params.get(QueryParams.Offset);
+    const limitParam = params.get(QueryParams.Limit);
     let changed = false;
 
     if (parseInt(offsetParam || '0') !== newOffset) {
-      params.set('offset', newOffset.toString());
+      params.set(QueryParams.Offset, newOffset.toString());
       changed = true;
     }
 
     if (parseInt(limitParam || '0') !== newLimit) {
-      params.set('limit', newLimit.toString());
+      params.set(QueryParams.Limit, newLimit.toString());
       changed = true;
     }
 

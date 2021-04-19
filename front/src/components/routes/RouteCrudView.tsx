@@ -9,7 +9,7 @@ const RouteCrudView: FC = () => {
   const { id, view } = useCrudView();
 
   switch (view) {
-    case CrudState.LIST:
+    case CrudState.List:
       return (
         <ApplicationContainer
           title='Routes'
@@ -20,7 +20,7 @@ const RouteCrudView: FC = () => {
           </div>
         </ApplicationContainer>
       );
-    case CrudState.UPDATE:
+    case CrudState.Update:
       return (
         <ApplicationContainer
           title='Update Route'
@@ -31,7 +31,7 @@ const RouteCrudView: FC = () => {
           </div>
         </ApplicationContainer>
       );
-    case CrudState.VIEW:
+    case CrudState.View:
       return (
         <ApplicationContainer
           title='View Route'

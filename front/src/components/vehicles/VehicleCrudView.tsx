@@ -16,27 +16,27 @@ const VehicleCrudView: FC = () => {
   const { id, view } = useCrudView();
 
   switch (view) {
-    case CrudState.LIST:
+    case CrudState.List:
       return (
         <VehicleList
           onBack={onNavigation('/rm')}
           onCreate={onNavigation('/rm/vehicles/create')}
         />
       );
-    case CrudState.CREATE:
+    case CrudState.Create:
       return (
         <CreateNewVehicle
           onBack={onNavigation('/rm/vehicles')}
         />
       );
-    case CrudState.UPDATE:
+    case CrudState.Update:
       return (
         <UpdateVehicle
           vehicleId={id}
           onBack={onNavigation(`/rm/vehicles/view/${id}`)}
         />
       );
-    case CrudState.VIEW:
+    case CrudState.View:
       return (
         <ViewVehicle
           vehicleId={id}

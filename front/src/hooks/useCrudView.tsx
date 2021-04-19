@@ -12,12 +12,12 @@ export const useCrudView = (): CrudViewContext => {
 
   const updatedView = useMemo(() => {
     switch (view) {
-      case undefined: return CrudState.LIST;
-      case 'update': return CrudState.UPDATE;
-      case 'delete': return CrudState.DELETE;
-      case 'create': return CrudState.CREATE;
-      case 'view': return CrudState.VIEW;
-      default: return CrudState.LIST;
+      case undefined: return CrudState.List;
+      case 'update': return CrudState.Update;
+      case 'delete': return CrudState.Delete;
+      case 'create': return CrudState.Create;
+      case 'view': return CrudState.View;
+      default: return CrudState.List;
     }
   }, [view]);
 

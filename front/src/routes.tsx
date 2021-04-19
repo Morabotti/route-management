@@ -10,30 +10,30 @@ const HomeView = lazy(() => import('@components/home/HomeView'));
 const LoginView = lazy(() => import('@components/auth/LoginView'));
 
 export const routeTree: Route[] = [{
-  type: RouteAuthType.AUTH,
+  type: RouteAuthType.Auth,
   component: HomeView,
   path: '/rm'
 }, {
-  type: RouteAuthType.AUTH,
+  type: RouteAuthType.Auth,
   component: VehicleCrudView,
   path: '/rm/vehicles/:view?/:id?'
 }, {
-  type: RouteAuthType.AUTH,
+  type: RouteAuthType.Auth,
   component: RouteCrudView,
   path: '/rm/routes/:view?/:id?'
 }, {
-  type: RouteAuthType.AUTH,
+  type: RouteAuthType.Auth,
   component: PersonCrudView,
   path: '/rm/persons/:view?/:id?'
 }, {
-  type: RouteAuthType.AUTH,
+  type: RouteAuthType.Auth,
   component: LocationCrudView,
   path: '/rm/locations/:view?/:id?'
 }, {
-  type: RouteAuthType.PUBLIC,
+  type: RouteAuthType.Public,
   component: LoginView,
   path: '/login'
 }];
 
-export const publicRoutes = routeTree.filter(i => i.type === RouteAuthType.PUBLIC);
-export const authRoutes = routeTree.filter(i => i.type === RouteAuthType.AUTH);
+export const publicRoutes = routeTree.filter(i => i.type === RouteAuthType.Public);
+export const authRoutes = routeTree.filter(i => i.type === RouteAuthType.Auth);

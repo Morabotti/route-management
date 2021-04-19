@@ -2,9 +2,9 @@ import { MapTool } from '@enums';
 
 export const getCursorByTool = (tool: MapTool): undefined | string => {
   switch (tool) {
-    case MapTool.CURSOR:
+    case MapTool.Cursor:
       return undefined;
-    case MapTool.LOCATION_TOOL:
+    case MapTool.LocationTool:
       return 'pointer';
   }
 };

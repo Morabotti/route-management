@@ -29,13 +29,13 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
   const { push } = useHistory();
 
   const setAuth = useCallback((user: AuthUser) => {
-    localStorage.setItem(LocalStorageKey.TOKEN, user.token);
+    localStorage.setItem(LocalStorageKey.Token, user.token);
     setStateAuth(user);
     setLoading(false);
   }, [setStateAuth, setLoading]);
 
   const revokeAuth = useCallback((queries?: string) => {
-    localStorage.removeItem(LocalStorageKey.TOKEN);
+    localStorage.removeItem(LocalStorageKey.Token);
     setStateAuth(null);
     push(queries ? `/login?${queries}` : '/login');
     setLoading(false);

@@ -6,7 +6,7 @@ import { getLocationById, updateLocation } from '@client';
 import { Client, NotificationType } from '@enums';
 import { useApplication } from '@hooks';
 import { useFormik, FormikProps } from 'formik';
-import { DEFAULT_LOCATION } from '@utils/default-objects';
+import { DEFAULT_LOCATION } from '@utils/defaultObjects';
 import { createLocationSchema } from '@utils/validation';
 
 interface UpdateLocationContext {
@@ -20,17 +20,17 @@ export const useUpdateLocation = (id: number | null): UpdateLocationContext => {
   const { loading, setLoading, createNotification } = useApplication();
 
   const location = useQuery(
-    [Client.GET_LOCATION_BY_ID, id],
+    [Client.GetLocationById, id],
     () => id === null ? null : getLocationById(id)
   );
 
   const { mutateAsync } = useMutation(updateLocation, {
     onSuccess: (data: LocationType) => {
-      queryClient.invalidateQueries(Client.GET_LOCATIONS);
-      queryClient.invalidateQueries(Client.GET_LOCATIONS_WITH_POSITION);
-      queryClient.setQueryData([Client.GET_LOCATION_BY_ID, data.id], data);
+      queryClient.invalidateQueries(Client.GetLocations);
+      queryClient.invalidateQueries(Client.GetLocationWithPosition);
+      queryClient.setQueryData([Client.GetLocationById, data.id], data);
       queryClient.invalidateQueries({
-        predicate: (query: Query) => query.queryKey[0] === Client.GET_PERSON_BY_ID
+        predicate: (query: Query) => query.queryKey[0] === Client.GetPersonById
           && data.primaryPersons.map(i => i.person?.id)
             .filter(i => i !== undefined && i !== null)
             .includes(query.queryKey[1] as number)
@@ -47,12 +47,12 @@ export const useUpdateLocation = (id: number | null): UpdateLocationContext => {
         longitude: Number(values.longitude)
       });
 
-      createNotification('Successfully updated location', NotificationType.INFO);
+      createNotification('Successfully updated location', NotificationType.Info);
       setLoading(false);
       push(`/rm/locations/view/${values.id}`);
     }
     catch (e) {
-      createNotification('Failed to update location', NotificationType.ERROR);
+      createNotification('Failed to update location', NotificationType.Info);
       setLoading(false);
     }
   }, [setLoading, createNotification, mutateAsync, push]);

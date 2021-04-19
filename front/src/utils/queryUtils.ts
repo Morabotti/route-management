@@ -1,3 +1,5 @@
+import { QueryParams } from '@enums';
+
 const getQueryParam = (search: string, key: string): string | null => {
   const params = new URLSearchParams(search);
   const param = params.get(key);
@@ -33,7 +35,7 @@ export const getQueryStringParam = (search: string, key: string): string | undef
 export const setQueryParam = (
   pathname: string,
   search: string,
-  key: string,
+  key: QueryParams,
   value: string | number | undefined,
   defaultValue: string | number
 ): string => {

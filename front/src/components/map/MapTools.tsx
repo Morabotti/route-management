@@ -20,19 +20,19 @@ export const MapTools: FC = memo(() => {
     <div className={classes.background}>
       <NavigationButtonBox
         icon={CursorMove}
-        onClick={onToolChange(MapTool.CURSOR)}
+        onClick={onToolChange(MapTool.Cursor)}
         title='Cursor'
         disabled={!isLoaded}
         placement='right'
-        active={tool === MapTool.CURSOR}
+        active={tool === MapTool.Cursor}
         divider
       />
       <NavigationButtonBox
         icon={MapMarkerPlus}
-        onClick={onToolChange(MapTool.LOCATION_TOOL)}
+        onClick={onToolChange(MapTool.LocationTool)}
         title='Location tool'
         disabled={!isLoaded}
-        active={tool === MapTool.LOCATION_TOOL}
+        active={tool === MapTool.LocationTool}
         placement='right'
       />
     </div>

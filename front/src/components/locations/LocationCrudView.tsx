@@ -16,27 +16,27 @@ const LocationCrudView: FC = () => {
   const { id, view } = useCrudView();
 
   switch (view) {
-    case CrudState.LIST:
+    case CrudState.List:
       return (
         <LocationList
           onBack={onNavigation('/rm')}
           onCreate={onNavigation('/rm/locations/create')}
         />
       );
-    case CrudState.CREATE:
+    case CrudState.Create:
       return (
         <CreateNewLocation
           onBack={onNavigation('/rm/locations')}
         />
       );
-    case CrudState.UPDATE:
+    case CrudState.Update:
       return (
         <UpdateLocation
           locationId={id}
           onBack={onNavigation(`/rm/locations/view/${id}`)}
         />
       );
-    case CrudState.VIEW:
+    case CrudState.View:
       return (
         <ViewLocation
           locationId={id}

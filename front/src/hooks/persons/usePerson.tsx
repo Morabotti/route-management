@@ -22,16 +22,16 @@ export const usePerson = (id: number | null): PersonContext => {
   const [deleting, setDeleting] = useState(false);
 
   const person = useQuery(
-    [Client.GET_PERSON_BY_ID, id],
+    [Client.GetPersonById, id],
     () => id === null ? null : getPersonById(id)
   );
 
   const { mutateAsync: deleteAsync } = useMutation(deletePerson, {
     onSuccess: (res: Response, person: Person) => {
-      queryClient.invalidateQueries(Client.GET_PERSONS);
-      queryClient.invalidateQueries([Client.GET_PERSON_BY_ID, person.id], { stale: false });
+      queryClient.invalidateQueries(Client.GetPersons);
+      queryClient.invalidateQueries([Client.GetPersonById, person.id], { stale: false });
       queryClient.invalidateQueries({
-        predicate: (query: Query) => query.queryKey[0] === Client.GET_LOCATION_BY_ID
+        predicate: (query: Query) => query.queryKey[0] === Client.GetLocationById
           && person.primaryLocations.map(i => i.location?.id)
             .filter(i => i !== undefined && i !== null)
             .includes(query.queryKey[1] as number)
@@ -47,13 +47,13 @@ export const usePerson = (id: number | null): PersonContext => {
     setLoading(true);
     try {
       await deleteAsync(person.data);
-      createNotification('Successfully deleted person', NotificationType.INFO);
+      createNotification('Successfully deleted person', NotificationType.Info);
       setLoading(false);
       setDeleting(false);
       push(`/rm/persons`);
     }
     catch (e) {
-      createNotification('Failed to delete peson', NotificationType.ERROR);
+      createNotification('Failed to delete peson', NotificationType.Error);
       setLoading(false);
       setDeleting(false);
     }

@@ -3,9 +3,9 @@ import { usePagination, useDebounce } from '@hooks';
 import { UseQueryResult, useQuery } from 'react-query';
 import { useHistory, useLocation } from 'react-router';
 import { PaginationResult, LocationType } from '@types';
-import { getQueryStringParam, setQueryParam } from '@utils/query-utils';
+import { getQueryStringParam, setQueryParam } from '@utils/queryUtils';
 import { getLocations } from '@client';
-import { Client } from '@enums';
+import { Client, QueryParams } from '@enums';
 
 interface LocationListContext {
   locations: UseQueryResult<PaginationResult<LocationType>>;
@@ -21,11 +21,13 @@ export const useLocationList = (): LocationListContext => {
   const refPathname = useRef(pathname);
   const refSearch = useRef(search);
 
-  const [searchState, setSearchState] = useState(getQueryStringParam(search, 'search') || '');
+  const [searchState, setSearchState] = useState(
+    getQueryStringParam(search, QueryParams.Search) || ''
+  );
   const debouncedSearch = useDebounce(searchState, 300);
 
   const locations = useQuery(
-    [Client.GET_LOCATIONS, pagination, { search: debouncedSearch }],
+    [Client.GetLocations, pagination, { search: debouncedSearch }],
     () => getLocations(pagination, { search: debouncedSearch }),
     { keepPreviousData: true }
   );
@@ -34,7 +36,7 @@ export const useLocationList = (): LocationListContext => {
     const url = setQueryParam(
       refPathname.current,
       refSearch.current,
-      'search',
+      QueryParams.Search,
       debouncedSearch,
       ''
     );

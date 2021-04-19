@@ -2,7 +2,7 @@ import { useEffect, useCallback, useMemo } from 'react';
 import { AuthUser } from '@types';
 import { useAuth } from '@hooks';
 import { useLocation } from 'react-router-dom';
-import { LocalStorageKey } from '@enums';
+import { LocalStorageKey, QueryParams } from '@enums';
 import { checkSession } from '@client';
 
 interface AuthContext {
@@ -20,18 +20,18 @@ export const useAuthLayer = (): AuthContext => {
     const newParams = new URLSearchParams();
 
     if (pathname !== '/rm') {
-      newParams.set('redirect', pathname);
+      newParams.set(QueryParams.Redirect, pathname);
     }
 
     if (params !== '') {
-      newParams.set('params', params);
+      newParams.set(QueryParams.Params, params);
     }
 
     return newParams.toString();
   }, [search, pathname]);
 
   const getStatus = useCallback(async () => {
-    const token = localStorage.getItem(LocalStorageKey.TOKEN);
+    const token = localStorage.getItem(LocalStorageKey.Token);
     if (auth === null && loading) {
       if (token) {
         try {

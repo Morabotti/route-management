@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getQueryNumberParam } from '@utils/query-utils';
+import { getQueryNumberParam } from '@utils/queryUtils';
+import { QueryParams } from '@enums';
 
 interface PaginationContext {
   offset: number;
@@ -12,8 +13,8 @@ export const usePagination = (): PaginationContext => {
 
   const { offset, limit } = useMemo(() => {
     return {
-      limit: getQueryNumberParam(search, 'limit') || 20,
-      offset: getQueryNumberParam(search, 'offset') || 0
+      limit: getQueryNumberParam(search, QueryParams.Limit) || 20,
+      offset: getQueryNumberParam(search, QueryParams.Offset) || 0
     };
   }, [search]);
 

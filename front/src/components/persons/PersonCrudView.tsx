@@ -16,27 +16,27 @@ const PersonCrudView: FC = () => {
   const { id, view } = useCrudView();
 
   switch (view) {
-    case CrudState.LIST:
+    case CrudState.List:
       return (
         <PersonList
           onBack={onNavigation('/rm')}
           onCreate={onNavigation('/rm/persons/create')}
         />
       );
-    case CrudState.CREATE:
+    case CrudState.Create:
       return (
         <CreateNewPerson
           onBack={onNavigation('/rm/persons')}
         />
       );
-    case CrudState.UPDATE:
+    case CrudState.Update:
       return (
         <UpdatePerson
           personId={id}
           onBack={onNavigation(`/rm/persons/view/${id}`)}
         />
       );
-    case CrudState.VIEW:
+    case CrudState.View:
       return (
         <ViewPerson
           personId={id}

@@ -2,6 +2,7 @@ import { FC, useCallback, useEffect } from 'react';
 import { useAuth } from '@hooks';
 import { Button, makeStyles, Typography as T } from '@material-ui/core';
 import { useHistory, useLocation } from 'react-router';
+import { QueryParams } from '@enums';
 
 const useStyles = makeStyles(theme => ({
   hiddenLoad: {
@@ -43,8 +44,8 @@ const LoginView: FC = () => {
     if (auth !== null) {
       if (search !== '') {
         const params = new URLSearchParams(search);
-        const redirect = params.get('redirect');
-        const queries = params.get('params');
+        const redirect = params.get(QueryParams.Redirect);
+        const queries = params.get(QueryParams.Params);
 
         const path = redirect || '/rm';
         const queryParmas = queries

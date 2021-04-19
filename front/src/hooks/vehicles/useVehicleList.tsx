@@ -3,9 +3,9 @@ import { usePagination, useDebounce } from '@hooks';
 import { UseQueryResult, useQuery } from 'react-query';
 import { useHistory, useLocation } from 'react-router';
 import { Vehicle, PaginationResult } from '@types';
-import { getQueryStringParam, setQueryParam } from '@utils/query-utils';
+import { getQueryStringParam, setQueryParam } from '@utils/queryUtils';
 import { getVehicles } from '@client';
-import { Client } from '@enums';
+import { Client, QueryParams } from '@enums';
 
 interface VehicleListContext {
   vehicles: UseQueryResult<PaginationResult<Vehicle>>;
@@ -21,11 +21,13 @@ export const useVehicleList = (): VehicleListContext => {
   const refPathname = useRef(pathname);
   const refSearch = useRef(search);
 
-  const [searchState, setSearchState] = useState(getQueryStringParam(search, 'search') || '');
+  const [searchState, setSearchState] = useState(
+    getQueryStringParam(search, QueryParams.Search) || ''
+  );
   const debouncedSearch = useDebounce(searchState, 300);
 
   const vehicles = useQuery(
-    [Client.GET_VEHICLES, pagination, { search: debouncedSearch }],
+    [Client.GetVehicles, pagination, { search: debouncedSearch }],
     () => getVehicles(pagination, { search: debouncedSearch }),
     { keepPreviousData: true }
   );
@@ -34,7 +36,7 @@ export const useVehicleList = (): VehicleListContext => {
     const url = setQueryParam(
       refPathname.current,
       refSearch.current,
-      'search',
+      QueryParams.Search,
       debouncedSearch,
       ''
     );
