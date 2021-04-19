@@ -37,10 +37,13 @@ public class RouteDao {
     private final Configuration jooqConfiguration;
     private final TransactionProvider<DSLContext> transactionProvider;
 
+    /*
+    private final fi.morabotti.routemanagement.db.tables.Location destLocation = LOCATION
+            .as("dest_location");
+
     private final fi.morabotti.routemanagement.db.tables.Location stepLocation = LOCATION
             .as("step_location");
-    private final fi.morabotti.routemanagement.db.tables.Location destLocation = LOCATION
-            .as("destination_location");
+    */
 
     @Inject
     public RouteDao(
@@ -60,21 +63,26 @@ public class RouteDao {
     }
 
     public List<Route> fetchRoutes(PositionQuery positionQuery) {
-        return selectRoute(DSL.using(jooqConfiguration))
-                .where(ROUTE.DELETED_AT.isNull())
-                .fetch()
-                .stream()
-                .collect(Route.mapper
-                        .withDestination(Location.mapper.alias(destLocation))
-                        .withVehicle(Vehicle.mapper)
-                        .collectingManyWithSteps(
-                                Step.mapper.withLocation(Location.mapper.alias(stepLocation))
-                                        .collectingManyWithStepItems(
-                                                StepItem.mapper.withPerson(
-                                                        Person.mapper
+        return DSL.using(jooqConfiguration)
+                .select()
+                .from(ROUTE)
+                .leftJoin(LOCATION).on(LOCATION.ID.eq(ROUTE.DESTINATION_ID))
+                .leftJoin(VEHICLE).on(VEHICLE.ID.eq(ROUTE.VEHICLE_ID))
+                .leftJoin(STEP).on(STEP.ROUTE_ID.eq(ROUTE.ID))
+                .leftJoin(STEP_ITEM).on(STEP_ITEM.STEP_ID.eq(STEP.ID))
+                .leftJoin(PERSON).on(PERSON.ID.eq(STEP_ITEM.PERSON_ID))
+                .fetchStream()
+                .collect(
+                        Route.mapper
+                                .withDestination(Location.mapper)
+                                .withVehicle(Vehicle.mapper)
+                                .collectingManyWithSteps(
+                                        Step.mapper
+                                                .withLocation(Location.mapper)
+                                                .collectingManyWithStepItems(
+                                                        StepItem.mapper.withPerson(Person.mapper)
                                                 )
-                                        )
-                        )
+                                )
                 );
     }
 
@@ -89,11 +97,9 @@ public class RouteDao {
                         .withDestination(Location.mapper)
                         .withVehicle(Vehicle.mapper)
                         .collectingManyWithSteps(
-                                Step.mapper.withLocation(Location.mapper.alias(stepLocation))
+                                Step.mapper.withLocation(Location.mapper)
                                         .collectingManyWithStepItems(
-                                                StepItem.mapper.withPerson(
-                                                        Person.mapper
-                                                )
+                                                StepItem.mapper.withPerson(Person.mapper)
                                         )
                         )
                 );
@@ -111,7 +117,7 @@ public class RouteDao {
                                 .withVehicle(Vehicle.mapper)
                                 .collectingWithSteps(
                                         Step.mapper.withLocation(
-                                                Location.mapper.alias(stepLocation)
+                                                Location.mapper
                                         )
                                                 .collectingManyWithStepItems(
                                                         StepItem.mapper.withPerson(
@@ -173,17 +179,15 @@ public class RouteDao {
         return context.select(
                 ROUTE.asterisk(),
                 VEHICLE.asterisk(),
-                destLocation.asterisk(),
+                LOCATION.asterisk(),
                 STEP.asterisk(),
                 STEP_ITEM.asterisk(),
-                PERSON.asterisk(),
-                stepLocation.asterisk()
+                PERSON.asterisk()
         )
                 .from(ROUTE)
-                .leftJoin(destLocation).onKey(Keys.FK_ROUTE_LOCATION)
+                .leftJoin(LOCATION).onKey(Keys.FK_ROUTE_LOCATION)
                 .leftJoin(VEHICLE).onKey(Keys.FK_ROUTE_VEHICLE)
                 .leftJoin(STEP).onKey(Keys.FK_STEP_ROUTE)
-                .leftJoin(stepLocation).onKey(Keys.FK_STEP_LOCATION)
                 .leftJoin(STEP_ITEM).onKey(Keys.FK_STEP_ITEM_STEP)
                 .leftJoin(PERSON).onKey(Keys.FK_STEP_ITEM_PERSON);
     }
