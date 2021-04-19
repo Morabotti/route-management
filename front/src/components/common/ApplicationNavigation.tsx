@@ -23,7 +23,11 @@ const useStyles = makeStyles(theme => ({
     borderRight: `1px solid ${theme.palette.divider}`,
     backgroundColor: colors.grey[100],
     width: customVariables.navigationSize + 1,
-    minWidth: customVariables.navigationSize + 1
+    minWidth: customVariables.navigationSize + 1,
+    [theme.breakpoints.down('sm')]: {
+      width: customVariables.navigationSizeMobile + 1,
+      minWidth: customVariables.navigationSizeMobile + 1
+    }
   },
   link: {
     textDecoration: 'none',

@@ -22,10 +22,7 @@ const useStyles = makeStyles(theme => createStyles({
     width: '100%'
   },
   buttonGroup: {
-    display: 'inline-flex',
-    [theme.breakpoints.down('xs')]: {
-      display: 'inline-block'
-    },
+    display: 'contents',
     '& > button': {
       backgroundColor: theme.palette.background.paper
     }

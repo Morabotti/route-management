@@ -16,6 +16,9 @@ const useStyles = makeStyles(theme => createStyles({
     height: customVariables.navigationSize,
     '&:hover $icon': {
       color: theme.palette.primary.light
+    },
+    [theme.breakpoints.down('sm')]: {
+      height: customVariables.navigationSizeMobile
     }
   },
   paper: {
@@ -33,7 +36,11 @@ const useStyles = makeStyles(theme => createStyles({
     width: customVariables.navigationIconSize,
     height: customVariables.navigationIconSize,
     transition: 'color 150ms ease-in-out, transform 300ms ease-in-out',
-    color: 'rgba(0, 0, 0, 0.67)'
+    color: 'rgba(0, 0, 0, 0.67)',
+    [theme.breakpoints.down('sm')]: {
+      width: customVariables.navigationIconSizeMobile,
+      height: customVariables.navigationIconSizeMobile
+    }
   },
   active: {
     '& $icon': {

@@ -11,11 +11,17 @@ const useStyles = makeStyles(theme => ({
     '& > p': {
       fontWeight: theme.typography.fontWeightBold,
       color: theme.palette.text.primary
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: 'auto'
     }
   },
   data: {
     paddingLeft: theme.spacing(2),
-    flexGrow: 1
+    flexGrow: 1,
+    [theme.breakpoints.down('sm')]: {
+      textAlign: 'right'
+    }
   }
 }));
 

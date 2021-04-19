@@ -46,10 +46,16 @@ const useStyles = makeStyles(theme => ({
   },
   titleSection: {
     position: 'relative',
-    height: customVariables.navigationSize
+    height: customVariables.navigationSize,
+    [theme.breakpoints.down('sm')]: {
+      height: customVariables.navigationSizeMobile
+    }
   },
   bottomSection: {
-    height: customVariables.navigationSize + 1
+    height: customVariables.navigationSize + 1,
+    [theme.breakpoints.down('sm')]: {
+      height: customVariables.navigationSizeMobile + 1
+    }
   },
   backButtonWrapper: {
     position: 'absolute',
@@ -88,7 +94,10 @@ const useStyles = makeStyles(theme => ({
     }
   },
   nowrap: {
-    whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap',
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '2rem'
+    }
   }
 }));
 

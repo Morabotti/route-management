@@ -33,10 +33,16 @@ const useStyles = makeStyles(theme => ({
     width: `calc(clamp(550px, 30vw, 750px) + ${customVariables.navigationSize}px)`,
     height: `100%`,
     display: 'flex',
-    transition: '300ms width ease-in-out'
+    transition: '300ms width ease-in-out',
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
+    }
   },
   minmized: {
-    width: customVariables.navigationSize
+    width: customVariables.navigationSize,
+    [theme.breakpoints.down('sm')]: {
+      width: customVariables.navigationSizeMobile
+    }
   },
   navigation: {
     width: '100px',
@@ -68,7 +74,10 @@ const useStyles = makeStyles(theme => ({
     width: customVariables.navigationSize,
     height: `auto`,
     overflow: 'hidden',
-    transform: 'translate(0,-50%)'
+    transform: 'translate(0,-50%)',
+    [theme.breakpoints.down('sm')]: {
+      width: customVariables.navigationSizeMobile
+    }
   }
 }));
 
