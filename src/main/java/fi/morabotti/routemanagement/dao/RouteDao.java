@@ -39,6 +39,8 @@ public class RouteDao {
 
     private final fi.morabotti.routemanagement.db.tables.Location stepLocation = LOCATION
             .as("step_location");
+    private final fi.morabotti.routemanagement.db.tables.Location destLocation = LOCATION
+            .as("destination_location");
 
     @Inject
     public RouteDao(
@@ -63,7 +65,7 @@ public class RouteDao {
                 .fetch()
                 .stream()
                 .collect(Route.mapper
-                        .withDestination(Location.mapper)
+                        .withDestination(Location.mapper.alias(destLocation))
                         .withVehicle(Vehicle.mapper)
                         .collectingManyWithSteps(
                                 Step.mapper.withLocation(Location.mapper.alias(stepLocation))
@@ -171,14 +173,14 @@ public class RouteDao {
         return context.select(
                 ROUTE.asterisk(),
                 VEHICLE.asterisk(),
-                LOCATION.asterisk(),
+                destLocation.asterisk(),
                 STEP.asterisk(),
                 STEP_ITEM.asterisk(),
                 PERSON.asterisk(),
                 stepLocation.asterisk()
         )
                 .from(ROUTE)
-                .leftJoin(LOCATION).onKey(Keys.FK_ROUTE_LOCATION)
+                .leftJoin(destLocation).onKey(Keys.FK_ROUTE_LOCATION)
                 .leftJoin(VEHICLE).onKey(Keys.FK_ROUTE_VEHICLE)
                 .leftJoin(STEP).onKey(Keys.FK_STEP_ROUTE)
                 .leftJoin(stepLocation).onKey(Keys.FK_STEP_LOCATION)

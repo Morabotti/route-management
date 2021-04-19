@@ -12,6 +12,9 @@ export const createVehicleSchema = Yup.object({
     .required('License number is required')
 });
 
+export const createRouteSchema = Yup.object({
+});
+
 export const createLocationSchema = Yup.object({
   longitude: Yup.string()
     .matches(longitudeRegex, 'Please enter valid longitude')

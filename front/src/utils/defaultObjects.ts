@@ -1,10 +1,12 @@
 import {
   CreateLocation,
   CreatePerson,
+  CreateRouteForm,
   CreateVehicle,
   LocationType,
   Person,
   PrimaryLocation,
+  RouteType,
   Vehicle
 } from '@types';
 
@@ -54,4 +56,19 @@ export const DEFAULT_LOCATION: LocationType = {
   zip: '',
   primaryPersons: [],
   deletedAt: null
+};
+
+export const CREATE_ROUTE: CreateRouteForm = {
+  destination: null,
+  startTime: null,
+  vehicle: null
+};
+
+export const DEFAULT_ROUTE: RouteType = {
+  id: 0,
+  destination: DEFAULT_LOCATION,
+  startTime: null,
+  vehicle: DEFAULT_VEHICLE,
+  deletedAt: null,
+  steps: []
 };

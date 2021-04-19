@@ -121,6 +121,12 @@ export interface CreateRoute {
   startTime: null | string;
 }
 
+export interface CreateRouteForm {
+  vehicle: null | Vehicle;
+  destination: null | LocationType;
+  startTime: null | string;
+}
+
 export interface Vehicle {
   id: number;
   licenseNumber: string;

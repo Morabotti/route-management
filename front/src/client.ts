@@ -252,8 +252,11 @@ export const deleteLocationAsPrimary = (
 )
   .then(checkResponse);
 
-export const getRoutes = (): Promise<PaginationResult<RouteType>> => fetch(
-  `/api/route`,
+export const getRoutes = (
+  pagination: PaginationQuery,
+  search: SearchQuery
+): Promise<PaginationResult<RouteType>> => fetch(
+  `/api/route?${searchParams([pagination, search])}`,
   {
     method: 'GET',
     headers: getHeaders()
@@ -306,8 +309,8 @@ export const updateRoute = (set: RouteType): Promise<RouteType> => fetch(
   .then(checkResponse)
   .then((res) => res.json());
 
-export const deleteRoute = (id: number): Promise<Response> => fetch(
-  `/api/route/${id}`,
+export const deleteRoute = (route: RouteType): Promise<Response> => fetch(
+  `/api/route/${route.id}`,
   {
     method: 'DELETE',
     headers: getHeaders()
