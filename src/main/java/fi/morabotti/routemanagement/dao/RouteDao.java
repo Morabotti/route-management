@@ -3,7 +3,6 @@ package fi.morabotti.routemanagement.dao;
 import fi.jubic.easyutils.transactional.TransactionProvider;
 import fi.jubic.easyutils.transactional.Transactional;
 import fi.morabotti.routemanagement.configuration.ApplicationConfiguration;
-import fi.morabotti.routemanagement.db.Keys;
 import fi.morabotti.routemanagement.model.Location;
 import fi.morabotti.routemanagement.model.Person;
 import fi.morabotti.routemanagement.model.Route;
@@ -37,13 +36,11 @@ public class RouteDao {
     private final Configuration jooqConfiguration;
     private final TransactionProvider<DSLContext> transactionProvider;
 
-    /*
     private final fi.morabotti.routemanagement.db.tables.Location destLocation = LOCATION
             .as("dest_location");
 
     private final fi.morabotti.routemanagement.db.tables.Location stepLocation = LOCATION
             .as("step_location");
-    */
 
     @Inject
     public RouteDao(
@@ -63,26 +60,19 @@ public class RouteDao {
     }
 
     public List<Route> fetchRoutes(PositionQuery positionQuery) {
-        return DSL.using(jooqConfiguration)
-                .select()
-                .from(ROUTE)
-                .leftJoin(LOCATION).on(LOCATION.ID.eq(ROUTE.DESTINATION_ID))
-                .leftJoin(VEHICLE).on(VEHICLE.ID.eq(ROUTE.VEHICLE_ID))
-                .leftJoin(STEP).on(STEP.ROUTE_ID.eq(ROUTE.ID))
-                .leftJoin(STEP_ITEM).on(STEP_ITEM.STEP_ID.eq(STEP.ID))
-                .leftJoin(PERSON).on(PERSON.ID.eq(STEP_ITEM.PERSON_ID))
+        return selectRoute(DSL.using(jooqConfiguration))
+                .where(ROUTE.DELETED_AT.isNull())
                 .fetchStream()
-                .collect(
-                        Route.mapper
-                                .withDestination(Location.mapper)
-                                .withVehicle(Vehicle.mapper)
-                                .collectingManyWithSteps(
-                                        Step.mapper
-                                                .withLocation(Location.mapper)
-                                                .collectingManyWithStepItems(
-                                                        StepItem.mapper.withPerson(Person.mapper)
-                                                )
-                                )
+                .collect(Route.mapper
+                        .withDestination(Location.mapper.alias(destLocation))
+                        .withVehicle(Vehicle.mapper)
+                        .collectingManyWithSteps(
+                                Step.mapper
+                                        .withLocation(Location.mapper.alias(stepLocation))
+                                        .collectingManyWithStepItems(
+                                                StepItem.mapper.withPerson(Person.mapper)
+                                        )
+                        )
                 );
     }
 
@@ -94,10 +84,10 @@ public class RouteDao {
                 .fetch()
                 .stream()
                 .collect(Route.mapper
-                        .withDestination(Location.mapper)
+                        .withDestination(Location.mapper.alias(destLocation))
                         .withVehicle(Vehicle.mapper)
                         .collectingManyWithSteps(
-                                Step.mapper.withLocation(Location.mapper)
+                                Step.mapper.withLocation(Location.mapper.alias(stepLocation))
                                         .collectingManyWithStepItems(
                                                 StepItem.mapper.withPerson(Person.mapper)
                                         )
@@ -113,11 +103,11 @@ public class RouteDao {
                         .fetch()
                         .stream()
                         .collect(Route.mapper
-                                .withDestination(Location.mapper)
+                                .withDestination(Location.mapper.alias(destLocation))
                                 .withVehicle(Vehicle.mapper)
                                 .collectingWithSteps(
                                         Step.mapper.withLocation(
-                                                Location.mapper
+                                                Location.mapper.alias(stepLocation)
                                         )
                                                 .collectingManyWithStepItems(
                                                         StepItem.mapper.withPerson(
@@ -176,19 +166,13 @@ public class RouteDao {
     private SelectJoinStep<Record> selectRoute(
             DSLContext context
     ) {
-        return context.select(
-                ROUTE.asterisk(),
-                VEHICLE.asterisk(),
-                LOCATION.asterisk(),
-                STEP.asterisk(),
-                STEP_ITEM.asterisk(),
-                PERSON.asterisk()
-        )
+        return context.select()
                 .from(ROUTE)
-                .leftJoin(LOCATION).onKey(Keys.FK_ROUTE_LOCATION)
-                .leftJoin(VEHICLE).onKey(Keys.FK_ROUTE_VEHICLE)
-                .leftJoin(STEP).onKey(Keys.FK_STEP_ROUTE)
-                .leftJoin(STEP_ITEM).onKey(Keys.FK_STEP_ITEM_STEP)
-                .leftJoin(PERSON).onKey(Keys.FK_STEP_ITEM_PERSON);
+                .leftJoin(destLocation).on(destLocation.ID.eq(ROUTE.DESTINATION_ID))
+                .leftJoin(VEHICLE).on(VEHICLE.ID.eq(ROUTE.VEHICLE_ID))
+                .leftJoin(STEP).on(STEP.ROUTE_ID.eq(ROUTE.ID))
+                .leftJoin(stepLocation).on(stepLocation.ID.eq(STEP.LOCATION_ID))
+                .leftJoin(STEP_ITEM).on(STEP_ITEM.STEP_ID.eq(STEP.ID))
+                .leftJoin(PERSON).on(PERSON.ID.eq(STEP_ITEM.PERSON_ID));
     }
 }
