@@ -52,17 +52,13 @@ public class LocationDao {
     }
 
     public List<Location> fetchLocations(PositionQuery positionQuery) {
-        return selectLocation(DSL.using(jooqConfiguration))
-                .where(LOCATION.DELETED_AT.isNull())
+        return DSL.using(jooqConfiguration)
+                .select(LOCATION.asterisk())
+                .from(LOCATION)
+                .where(getConditions(positionQuery))
                 .fetch()
                 .stream()
-                .collect(
-                        Location.mapper.collectingManyWithPrimaryPersons(
-                                PrimaryLocation.mapper.withPerson(
-                                        Person.mapper
-                                )
-                        )
-                );
+                .collect(Location.mapper);
     }
 
     public List<Location> fetchLocations(PaginationQuery paginationQuery, SearchQuery searchQuery) {
@@ -153,8 +149,14 @@ public class LocationDao {
                 .leftJoin(PERSON).onKey(Keys.FK_PRIMARY_LOCATION_PERSON);
     }
 
+    private Condition getConditions(PositionQuery query) {
+        return LOCATION.DELETED_AT.isNull()
+                .and(LOCATION.LATITUDE.between(query.getMinLatitude(), query.getMaxLatitude()))
+                .and(LOCATION.LONGITUDE.between(query.getMinLongitude(), query.getMaxLongitude()));
+    }
+
     private Condition getConditions(SearchQuery searchQuery) {
-        return Optional.of(LOCATION.DELETED_AT.isNull().and(LOCATION.DELETED_AT.isNull()))
+        return Optional.of(LOCATION.DELETED_AT.isNull())
                 .map(condition -> searchQuery.getSearch()
                         .map(search -> condition.and(LOCATION.ADDRESS.contains(search))
                                 .or(LOCATION.CITY.contains(search))

@@ -1,46 +1,50 @@
 package fi.morabotti.routemanagement.view;
 
-import javax.annotation.Nullable;
 import javax.ws.rs.QueryParam;
 import java.math.BigDecimal;
-import java.util.Optional;
 
 public class PositionQuery {
-    @QueryParam("lat")
-    @Nullable
-    private BigDecimal latitude;
+    @QueryParam("minLat")
+    private BigDecimal minLatitude;
 
-    @QueryParam("lng")
-    @Nullable
-    private BigDecimal longitude;
+    @QueryParam("maxLat")
+    private BigDecimal maxLatitude;
 
-    @QueryParam("zoom")
-    @Nullable
-    private Integer zoom;
+    @QueryParam("minLng")
+    private BigDecimal minLongitude;
+
+    @QueryParam("maxLng")
+    private BigDecimal maxLongitude;
 
     public PositionQuery() {
 
     }
 
     public PositionQuery(
-            @Nullable BigDecimal latitude,
-            @Nullable BigDecimal longitude,
-            @Nullable Integer zoom
+            BigDecimal minLatitude,
+            BigDecimal maxLatitude,
+            BigDecimal minLongitude,
+            BigDecimal maxLongitude
     ) {
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.zoom = zoom;
+        this.minLatitude = minLatitude;
+        this.maxLatitude = maxLatitude;
+        this.minLongitude = minLongitude;
+        this.maxLongitude = maxLongitude;
     }
 
-    public Optional<BigDecimal> getLatitude() {
-        return Optional.ofNullable(this.latitude);
+    public BigDecimal getMinLatitude() {
+        return this.minLatitude;
     }
 
-    public Optional<BigDecimal> getLongitude() {
-        return Optional.ofNullable(this.longitude);
+    public BigDecimal getMaxLatitude() {
+        return this.maxLatitude;
     }
 
-    public Optional<Integer> getZoom() {
-        return Optional.ofNullable(this.zoom);
+    public BigDecimal getMinLongitude() {
+        return this.minLongitude;
+    }
+
+    public BigDecimal getMaxLongitude() {
+        return this.maxLongitude;
     }
 }

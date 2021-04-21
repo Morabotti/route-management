@@ -1,7 +1,11 @@
 import { useState, createContext, ReactNode, useContext, useCallback } from 'react';
 import { useJsApiLoader } from '@react-google-maps/api';
-import { MapTool } from '@enums';
-import { Position } from '@types';
+import { Client, MapTool } from '@enums';
+import { LocationType, Position } from '@types';
+import { useDebounce } from '@hooks';
+import { getMapBounds, offsetCenter } from '@utils/mapUtils';
+import { useQuery } from 'react-query';
+import { getLocationsWithPosition } from '@client';
 
 interface MapContext {
   map: google.maps.Map | null;
@@ -9,6 +13,7 @@ interface MapContext {
   isLoaded: boolean;
   tool: MapTool;
   zoom: number;
+  mapLocations: LocationType[];
   handleZoomChange: () => void;
   handleCenterChange: () => void;
   onLoad: (map: google.maps.Map) => void;
@@ -27,6 +32,7 @@ export const __MapContext = createContext<MapContext>({
   map: null,
   tool: MapTool.Cursor,
   zoom: 17,
+  mapLocations: [],
   handleCenterChange: () => {},
   handleZoomChange: () => {},
   onLoad: () => {},
@@ -37,9 +43,22 @@ export const __MapContext = createContext<MapContext>({
 
 export const MapProvider = ({ children }: Props): JSX.Element => {
   const [center, setCenter] = useState<google.maps.LatLng | null>(null);
-  const [zoom, setZoom] = useState(17);
+  const [zoom, setZoom] = useState(15);
   const [tool, setTool] = useState<MapTool>(MapTool.Cursor);
   const [map, setMap] = useState<null | google.maps.Map>(null);
+
+  const debounced = useDebounce(center, 200);
+
+  const locationQuery = useQuery(
+    [Client.GetLocationWithPosition, {
+      lat: debounced?.lat().toFixed(3),
+      lng: debounced?.lng().toFixed(3)
+    }],
+    () => debounced === null || map === null || center === null
+      ? null
+      : getLocationsWithPosition(getMapBounds(debounced, map)),
+    { keepPreviousData: true }
+  );
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
@@ -47,16 +66,17 @@ export const MapProvider = ({ children }: Props): JSX.Element => {
   });
 
   const onLoad = useCallback((loaded: google.maps.Map) => {
-    const bounds = new window.google.maps.LatLngBounds({
+    const bounds = new window.google.maps.LatLngBounds(offsetCenter({
       lat: 63.1092301,
-      lng: 21.6019174
-    });
+      lng: 21.6019174,
+      zoom
+    }));
 
     loaded.setCenter(bounds.getCenter());
 
     setCenter(bounds.getCenter());
     setMap(loaded);
-  }, []);
+  }, [zoom]);
 
   const onUnload = useCallback(() => {
     setMap(null);
@@ -70,7 +90,7 @@ export const MapProvider = ({ children }: Props): JSX.Element => {
 
   const onLocationChange = useCallback((set: Position) => {
     if (map) {
-      setCenter(new google.maps.LatLng(set.lat, set.lng));
+      setCenter(offsetCenter(set));
       setZoom(set.zoom);
     }
   }, [map]);
@@ -95,6 +115,7 @@ export const MapProvider = ({ children }: Props): JSX.Element => {
         center,
         tool,
         zoom,
+        mapLocations: locationQuery.data || [],
         onLoad,
         onUnload,
         handleZoomChange,

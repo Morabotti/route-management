@@ -1,8 +1,9 @@
-import { FC, Fragment, memo } from 'react';
-import { GoogleMap, Marker } from '@react-google-maps/api';
+import { FC, Fragment, memo, useCallback, useState } from 'react';
+import { GoogleMap } from '@react-google-maps/api';
 import { makeStyles } from '@material-ui/core';
 import { getCursorByTool } from '@utils/mapUtils';
 import { useMap } from '@hooks';
+import { LocationMapMarker } from './LocationMapMarker';
 
 const useStyles = makeStyles(() => ({
   hidecopyright: {
@@ -17,6 +18,7 @@ const useStyles = makeStyles(() => ({
 
 export const MainMap: FC = memo(() => {
   const classes = useStyles();
+  const [hover, setHover] = useState<null | number>(null);
 
   const {
     isLoaded,
@@ -25,9 +27,18 @@ export const MainMap: FC = memo(() => {
     center,
     zoom,
     tool,
+    mapLocations,
     handleZoomChange,
     handleCenterChange
   } = useMap();
+
+  const onMouseOver = useCallback((id: number) => () => {
+    setHover(id);
+  }, []);
+
+  const onMouseOut = useCallback(() => {
+    setHover(null);
+  }, []);
 
   return isLoaded ? (
     <GoogleMap
@@ -43,6 +54,7 @@ export const MainMap: FC = memo(() => {
       onCenterChanged={handleCenterChange}
       mapContainerClassName={classes.hidecopyright}
       options={{
+        clickableIcons: false,
         disableDefaultUI: true,
         disableDoubleClickZoom: true,
         maxZoom: 20,
@@ -57,7 +69,15 @@ export const MainMap: FC = memo(() => {
         }]
       }}
     >
-      <Marker position={{ lat: 63.1092301, lng: 21.6019174 }} />
+      {mapLocations.map(location => (
+        <LocationMapMarker
+          key={location.id}
+          location={location}
+          selected={hover === location.id}
+          onMouseOver={onMouseOver(location.id)}
+          onMouseOut={onMouseOut}
+        />
+      ))}
     </GoogleMap>
   ) : (
     <Fragment />

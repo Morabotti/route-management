@@ -19,9 +19,10 @@ export interface PaginationQuery {
 }
 
 export interface PositionQuery {
-  lat?: number;
-  lng?: number;
-  zoom?: number;
+  minLat: number;
+  maxLat: number;
+  minLng: number;
+  maxLng: number;
 }
 
 export interface Position {

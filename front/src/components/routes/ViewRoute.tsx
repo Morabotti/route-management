@@ -2,13 +2,15 @@ import { FC } from 'react';
 import { Button } from '@material-ui/core';
 import { useRoute } from '@hooks';
 import { useCommonStyles } from '@theme';
+import moment from 'moment';
 
 import {
   Actions,
   ApplicationContainer,
   ConfirmationDialog,
   DetailBlock,
-  DetailBlockText
+  DetailBlockText,
+  DetailBlockTitle
 } from '@components/common';
 
 interface Props {
@@ -36,6 +38,7 @@ export const ViewRoute: FC<Props> = ({
       <ApplicationContainer
         title='Route Details'
         onBack={onBack}
+        disablePadding
         actions={
           <Actions>
             <Button
@@ -70,17 +73,39 @@ export const ViewRoute: FC<Props> = ({
           </Actions>
         }
       >
-        <div>
+        <div className={commonClasses.containerPadding}>
           <DetailBlock
             title='General information'
             loading={route.isLoading}
+            marginBottom
           >
             <DetailBlockText
-              title='Route Id'
-              value={route.data?.id.toString()}
+              title='Start date'
+              value={route.data?.startTime
+                ? moment(route.data.startTime).format('DD.MM.YYYY')
+                : 'Not set'}
+              loading={route.isLoading}
+            />
+            <DetailBlockText
+              title='Vehicle'
+              value={route.data?.vehicle.licenseNumber}
+              loading={route.isLoading}
+            />
+            <DetailBlockText
+              title='Destination'
+              value={`${route.data?.destination.address}, ${route.data?.destination.zip} ${route.data?.destination.city}`}
+              loading={route.isLoading}
+            />
+            <DetailBlockText
+              title='Number of steps'
+              value={`${route.data?.steps.length}`}
               loading={route.isLoading}
             />
           </DetailBlock>
+          <DetailBlockTitle
+            text='Route steps'
+            loading={route.isLoading}
+          />
         </div>
       </ApplicationContainer>
       <ConfirmationDialog

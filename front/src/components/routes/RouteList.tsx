@@ -1,8 +1,9 @@
 import { FC } from 'react';
 import { useNavigation, useRouteList } from '@hooks';
 import { Button, InputAdornment, List, makeStyles, TextField } from '@material-ui/core';
-import { CarOff, CarSide, Magnify, Plus } from 'mdi-material-ui';
+import { CarOff, Magnify, Plus, Routes } from 'mdi-material-ui';
 import { useCommonStyles } from '@theme';
+import moment from 'moment';
 
 import {
   ApplicationContainer,
@@ -89,7 +90,7 @@ export const RouteList: FC<Props> = ({
             key={i}
             primaryText='loading'
             secondaryText='loading'
-            icon={CarSide}
+            icon={Routes}
             fetching
           />
         )) : routes.data?.length === 0 ? (
@@ -102,9 +103,11 @@ export const RouteList: FC<Props> = ({
         ) : routes.data?.result.map(route => (
           <CrudListItem
             key={route.id}
-            primaryText={route.id.toString()}
-            secondaryText={route.id.toString()}
-            icon={CarSide}
+            primaryText={`${route?.destination.city} - ${route?.destination.address}`}
+            secondaryText={`${route.startTime
+              ? moment(route.startTime).format('DD.MM.YYYY')
+              : 'Starting time not set'}`}
+            icon={Routes}
             onClick={onNavigation(`/rm/routes/view/${route.id}`)}
           />
         ))}

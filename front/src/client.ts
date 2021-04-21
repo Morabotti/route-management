@@ -162,7 +162,7 @@ export const deletePerson = (person: Person): Promise<Response> => fetch(
   .then(checkResponse);
 
 export const getLocationsWithPosition = (
-  position: PositionQuery
+  position: PositionQuery | null
 ): Promise<LocationType[]> => fetch(
   `/api/location/map?${searchParams([position])}`,
   {
