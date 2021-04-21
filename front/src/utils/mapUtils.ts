@@ -1,5 +1,5 @@
 import { MapTool } from '@enums';
-import { Position, PositionQuery } from '@types';
+import { PositionQuery } from '@types';
 
 export const getCursorByTool = (tool: MapTool): undefined | string => {
   switch (tool) {
@@ -10,12 +10,29 @@ export const getCursorByTool = (tool: MapTool): undefined | string => {
   }
 };
 
-export const offsetCenter = (center: Position): google.maps.LatLng => {
-  return new google.maps.LatLng({
-    lat: center.lat,
-    lng: center.lng + 0.01
-  });
-};
+export function offsetCenter (
+  latlng: google.maps.LatLng,
+  map: google.maps.Map | null
+): google.maps.LatLng {
+  if (!map) {
+    return latlng;
+  }
+
+  const scale = Math.pow(2, map.getZoom());
+  const worldCoordinateCenter = map.getProjection()?.fromLatLngToPoint(latlng);
+  const pixelOffset = new google.maps.Point((-300 / scale) || 0, (0 / scale) || 0);
+
+  if (!worldCoordinateCenter) {
+    return latlng;
+  }
+
+  const worldCoordinateNewCenter = new google.maps.Point(
+    worldCoordinateCenter.x - pixelOffset.x,
+    worldCoordinateCenter.y + pixelOffset.y
+  );
+
+  return map.getProjection()?.fromPointToLatLng(worldCoordinateNewCenter) || latlng;
+}
 
 export const getMapBounds = (
   center: google.maps.LatLng | null,

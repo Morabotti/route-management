@@ -6,20 +6,24 @@ import { useDebounce } from '@hooks';
 import { getMapBounds, offsetCenter } from '@utils/mapUtils';
 import { useQuery } from 'react-query';
 import { getLocationsWithPosition } from '@client';
+import { useHistory } from 'react-router';
 
 interface MapContext {
   map: google.maps.Map | null;
   center: google.maps.LatLng | null;
+  selected: google.maps.LatLng | null;
   isLoaded: boolean;
   tool: MapTool;
   zoom: number;
   mapLocations: LocationType[];
   handleZoomChange: () => void;
   handleCenterChange: () => void;
+  handleOnClick: (e: google.maps.MapMouseEvent) => void;
   onLoad: (map: google.maps.Map) => void;
   onUnload: () => void;
   onLocationChange: (set: Position) => void;
-  onToolChange: (set: MapTool) => () => void;
+  onSelectedChange: (set: Position | null) => void;
+  onToolChange: (set: MapTool) => void;
 }
 
 interface Props {
@@ -29,23 +33,28 @@ interface Props {
 export const __MapContext = createContext<MapContext>({
   isLoaded: false,
   center: null,
+  selected: null,
   map: null,
   tool: MapTool.Cursor,
   zoom: 17,
   mapLocations: [],
   handleCenterChange: () => {},
   handleZoomChange: () => {},
+  handleOnClick: () => {},
   onLoad: () => {},
   onUnload: () => {},
   onLocationChange: () => {},
-  onToolChange: () => () => {}
+  onSelectedChange: () => {},
+  onToolChange: () => {}
 });
 
 export const MapProvider = ({ children }: Props): JSX.Element => {
+  const { push } = useHistory();
   const [center, setCenter] = useState<google.maps.LatLng | null>(null);
   const [zoom, setZoom] = useState(15);
   const [tool, setTool] = useState<MapTool>(MapTool.Cursor);
   const [map, setMap] = useState<null | google.maps.Map>(null);
+  const [selected, setSelected] = useState<google.maps.LatLng | null>(null);
 
   const debounced = useDebounce(center, 200);
 
@@ -66,23 +75,24 @@ export const MapProvider = ({ children }: Props): JSX.Element => {
   });
 
   const onLoad = useCallback((loaded: google.maps.Map) => {
-    const bounds = new window.google.maps.LatLngBounds(offsetCenter({
-      lat: 63.1092301,
-      lng: 21.6019174,
-      zoom
-    }));
+    const bounds = new window.google.maps.LatLngBounds(
+      offsetCenter(
+        new google.maps.LatLng(63.1092301, 21.6019174),
+        loaded
+      )
+    );
 
     loaded.setCenter(bounds.getCenter());
 
     setCenter(bounds.getCenter());
     setMap(loaded);
-  }, [zoom]);
+  }, []);
 
   const onUnload = useCallback(() => {
     setMap(null);
   }, []);
 
-  const onToolChange = useCallback((set: MapTool) => () => {
+  const onToolChange = useCallback((set: MapTool) => {
     if (map) {
       setTool(set);
     }
@@ -90,8 +100,23 @@ export const MapProvider = ({ children }: Props): JSX.Element => {
 
   const onLocationChange = useCallback((set: Position) => {
     if (map) {
-      setCenter(offsetCenter(set));
-      setZoom(set.zoom);
+      setCenter(offsetCenter(
+        new google.maps.LatLng(set.lat, set.lng),
+        map
+      ));
+    }
+  }, [map]);
+
+  const onSelectedChange = useCallback((set: Position | null) => {
+    if (map) {
+      if (!set) {
+        setSelected(null);
+        return;
+      }
+
+      const latLng = new google.maps.LatLng(set.lat, set.lng);
+      setSelected(latLng);
+      setCenter(offsetCenter(latLng, map));
     }
   }, [map]);
 
@@ -107,12 +132,37 @@ export const MapProvider = ({ children }: Props): JSX.Element => {
     }
   }, [map]);
 
+  const handleOnClick = useCallback((e: google.maps.MapMouseEvent) => {
+    if (!map) {
+      return;
+    }
+
+    switch (tool) {
+      case MapTool.LocationTool:
+        onLocationChange({
+          lat: e.latLng.lat(),
+          lng: e.latLng.lng(),
+          zoom: map.getZoom() >= 16 ? map.getZoom() : 16
+        });
+        setSelected(new google.maps.LatLng({
+          lat: e.latLng.lat(),
+          lng: e.latLng.lng()
+        }));
+        push('/rm/locations/create', {
+          lat: e.latLng.lat(),
+          lng: e.latLng.lng()
+        });
+        break;
+    }
+  }, [tool, push, map, onLocationChange]);
+
   return (
     <__MapContext.Provider
       value={{
         isLoaded,
         map,
         center,
+        selected,
         tool,
         zoom,
         mapLocations: locationQuery.data || [],
@@ -120,8 +170,10 @@ export const MapProvider = ({ children }: Props): JSX.Element => {
         onUnload,
         handleZoomChange,
         handleCenterChange,
+        handleOnClick,
         onToolChange,
-        onLocationChange
+        onLocationChange,
+        onSelectedChange
       }}
     >
       {children}

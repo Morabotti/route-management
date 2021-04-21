@@ -1,10 +1,10 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useQuery, useQueryClient, useMutation, Query } from 'react-query';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { LocationType } from '@types';
 import { getLocationById, updateLocation } from '@client';
-import { Client, NotificationType } from '@enums';
-import { useApplication } from '@hooks';
+import { Client, MapTool, NotificationType } from '@enums';
+import { useApplication, useMap } from '@hooks';
 import { useFormik, FormikProps } from 'formik';
 import { DEFAULT_LOCATION } from '@utils/defaultObjects';
 import { createLocationSchema } from '@utils/validation';
@@ -17,7 +17,10 @@ interface UpdateLocationContext {
 export const useUpdateLocation = (id: number | null): UpdateLocationContext => {
   const queryClient = useQueryClient();
   const { push } = useHistory();
+  const { state } = useLocation<null | google.maps.LatLngLiteral>();
+  const { onSelectedChange, onToolChange } = useMap();
   const { loading, setLoading, createNotification } = useApplication();
+  const [latest, setLatest] = useState<google.maps.LatLngLiteral | null>(null);
 
   const location = useQuery(
     [Client.GetLocationById, id],
@@ -66,8 +69,43 @@ export const useUpdateLocation = (id: number | null): UpdateLocationContext => {
   useEffect(() => {
     if (location.data && location.data.id !== formik.values.id) {
       formik.setValues(location.data, false);
+      setLatest({
+        lat: location.data.latitude,
+        lng: location.data.longitude
+      });
     }
   }, [location.data, formik]);
+
+  useEffect(() => {
+    if (state
+      && state.lng !== latest?.lng
+      && state.lat !== latest?.lat
+      && state.lat !== formik.values.latitude
+      && state.lng !== formik.values.longitude
+    ) {
+      setLatest({ lat: state.lat, lng: state.lng });
+      formik.setValues(prev => ({
+        ...prev,
+        latitude: Number(state.lat.toFixed(7)),
+        longitude: Number(state.lng.toFixed(7))
+      }));
+    }
+  }, [state, formik, latest]);
+
+  useEffect(() => {
+    onToolChange(MapTool.LocationTool);
+    return () => {
+      onToolChange(MapTool.Cursor);
+    };
+  }, [onToolChange]);
+
+  useEffect(() => {
+    if (state
+      && (state?.lat !== formik.values.latitude || state?.lng !== formik.values.longitude)
+    ) {
+      onSelectedChange({ lat: formik.values.latitude, lng: formik.values.longitude, zoom: 0 });
+    }
+  }, [formik.values.latitude, formik.values.longitude, onSelectedChange, state]);
 
   return {
     loading,

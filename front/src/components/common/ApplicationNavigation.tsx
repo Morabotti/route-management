@@ -104,10 +104,13 @@ export const ApplicationNavigation: FC<Props> = ({
       ))}
       <div className={classes.grow} />
       <Divider />
-      <NavigationButtonBox
+      <NavigationLinkBox
+        to='/rm/settings'
         icon={Cog}
-        onClick={() => console.log('settings')}
         title='Settings'
+        onClick={onNavigation('/rm/settings')}
+        onMouseEnter={onRoutePreload('/rm/settings')}
+        active={pathname === '/rm/settings'}
         divider
       />
       <NavigationButtonBox

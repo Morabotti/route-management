@@ -7,6 +7,7 @@ const RouteCrudView = lazy(() => import('@components/routes/RouteCrudView'));
 const PersonCrudView = lazy(() => import('@components/persons/PersonCrudView'));
 const LocationCrudView = lazy(() => import('@components/locations/LocationCrudView'));
 const HomeView = lazy(() => import('@components/home/HomeView'));
+const SettingsView = lazy(() => import('@components/settings/SettingsView'));
 const LoginView = lazy(() => import('@components/auth/LoginView'));
 
 export const routeTree: Route[] = [{
@@ -29,6 +30,10 @@ export const routeTree: Route[] = [{
   type: RouteAuthType.Auth,
   component: LocationCrudView,
   path: '/rm/locations/:view?/:id?'
+}, {
+  type: RouteAuthType.Auth,
+  component: SettingsView,
+  path: '/rm/settings'
 }, {
   type: RouteAuthType.Public,
   component: LoginView,

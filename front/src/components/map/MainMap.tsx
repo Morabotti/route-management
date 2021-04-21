@@ -3,7 +3,8 @@ import { GoogleMap } from '@react-google-maps/api';
 import { makeStyles } from '@material-ui/core';
 import { getCursorByTool } from '@utils/mapUtils';
 import { useMap } from '@hooks';
-import { LocationMapMarker } from './LocationMapMarker';
+import { LocationMapMarker, SelectedMarker } from '@components/map';
+import { MapTool } from '@enums';
 
 const useStyles = makeStyles(() => ({
   hidecopyright: {
@@ -25,11 +26,13 @@ export const MainMap: FC = memo(() => {
     onLoad,
     onUnload,
     center,
+    selected,
     zoom,
     tool,
     mapLocations,
     handleZoomChange,
-    handleCenterChange
+    handleCenterChange,
+    handleOnClick
   } = useMap();
 
   const onMouseOver = useCallback((id: number) => () => {
@@ -52,6 +55,7 @@ export const MainMap: FC = memo(() => {
       center={center || undefined}
       onZoomChanged={handleZoomChange}
       onCenterChanged={handleCenterChange}
+      onClick={handleOnClick}
       mapContainerClassName={classes.hidecopyright}
       options={{
         clickableIcons: false,
@@ -69,6 +73,9 @@ export const MainMap: FC = memo(() => {
         }]
       }}
     >
+      {selected && (
+        <SelectedMarker location={selected} />
+      )}
       {mapLocations.map(location => (
         <LocationMapMarker
           key={location.id}
@@ -76,6 +83,7 @@ export const MainMap: FC = memo(() => {
           selected={hover === location.id}
           onMouseOver={onMouseOver(location.id)}
           onMouseOut={onMouseOut}
+          draggable={tool === MapTool.LocationTool}
         />
       ))}
     </GoogleMap>

@@ -24,6 +24,7 @@ const useStyles = makeStyles(theme => ({
 interface Props {
   location: LocationType;
   selected: boolean;
+  draggable?: boolean;
   onMouseOver: () => void;
   onMouseOut: () => void;
 }
@@ -31,6 +32,7 @@ interface Props {
 export const LocationMapMarker: FC<Props> = ({
   location,
   selected,
+  draggable = false,
   onMouseOut,
   onMouseOver
 }: Props) => {
@@ -42,11 +44,14 @@ export const LocationMapMarker: FC<Props> = ({
       position={{ lat: location.latitude, lng: location.longitude }}
       onMouseOver={onMouseOver}
       onMouseOut={onMouseOut}
+      zIndex={20}
+      draggable={draggable}
     >
       <InfoBox
         position={{ lat: location.latitude, lng: location.longitude }}
         zIndex={10}
         options={{
+          visible: selected,
           closeBoxURL: ``,
           enableEventPropagation: true,
           alignBottom: false,
