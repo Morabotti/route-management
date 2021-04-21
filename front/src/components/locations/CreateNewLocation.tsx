@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { Actions, ApplicationContainer } from '@components/common';
-import { Button, Grid, TextField } from '@material-ui/core';
+import { Button, Grid } from '@material-ui/core';
 import { useCreateLocation } from '@hooks';
-import { useCommonStyles } from '@theme';
+import { FormikTextField } from '@components/forms';
 
 interface Props {
   onBack: () => void;
@@ -11,7 +11,6 @@ interface Props {
 export const CreateNewLocation: FC<Props> = ({
   onBack
 }: Props) => {
-  const commonClasses = useCommonStyles();
   const { loading, formik } = useCreateLocation();
 
   return (
@@ -46,106 +45,60 @@ export const CreateNewLocation: FC<Props> = ({
       <form onSubmit={formik.handleSubmit} id='form-create-location'>
         <Grid container spacing={2}>
           <Grid item xs={6}>
-            <TextField
-              fullWidth
-              id='latitude'
-              name='latitude'
+            <FormikTextField
+              formik={formik}
+              formikName='latitude'
               label='Latitude'
               variant='outlined'
               required
-              value={formik.values.latitude}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              error={formik.touched.latitude && Boolean(formik.errors.latitude)}
-              helperText={formik.touched.latitude && formik.errors.latitude}
-              className={commonClasses.formFieldAbsoluteBase}
+              fullWidth
               disabled={loading}
-              FormHelperTextProps={{
-                className: commonClasses.formFieldAbsoluteHelper
-              }}
             />
           </Grid>
           <Grid item xs={6}>
-            <TextField
-              fullWidth
-              id='longitude'
-              name='longitude'
+            <FormikTextField
+              formik={formik}
+              formikName='longitude'
               label='Longitude'
               variant='outlined'
               required
-              value={formik.values.longitude}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              error={formik.touched.longitude && Boolean(formik.errors.longitude)}
-              helperText={formik.touched.longitude && formik.errors.longitude}
-              className={commonClasses.formFieldAbsoluteBase}
+              fullWidth
               disabled={loading}
-              FormHelperTextProps={{
-                className: commonClasses.formFieldAbsoluteHelper
-              }}
             />
           </Grid>
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              id='address'
-              name='address'
+            <FormikTextField
+              formik={formik}
+              formikName='address'
               label='Address'
               variant='outlined'
               required
-              autoComplete='street-address'
-              value={formik.values.address}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              error={formik.touched.address && Boolean(formik.errors.address)}
-              helperText={formik.touched.address && formik.errors.address}
-              className={commonClasses.formFieldAbsoluteBase}
+              fullWidth
               disabled={loading}
-              FormHelperTextProps={{
-                className: commonClasses.formFieldAbsoluteHelper
-              }}
             />
           </Grid>
           <Grid item xs={6}>
-            <TextField
-              fullWidth
-              id='zip'
-              name='zip'
+            <FormikTextField
+              formik={formik}
+              formikName='zip'
               label='Zip code'
               variant='outlined'
               autoComplete='postal_code'
               required
-              value={formik.values.zip}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              error={formik.touched.zip && Boolean(formik.errors.zip)}
-              helperText={formik.touched.zip && formik.errors.zip}
-              className={commonClasses.formFieldAbsoluteBase}
+              fullWidth
               disabled={loading}
-              FormHelperTextProps={{
-                className: commonClasses.formFieldAbsoluteHelper
-              }}
             />
           </Grid>
           <Grid item xs={6}>
-            <TextField
-              fullWidth
-              id='city'
-              name='city'
+            <FormikTextField
+              formik={formik}
+              formikName='city'
               label='City'
               variant='outlined'
               autoComplete='address-level2'
               required
-              value={formik.values.city}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              error={formik.touched.city && Boolean(formik.errors.city)}
-              helperText={formik.touched.city && formik.errors.city}
-              className={commonClasses.formFieldAbsoluteBase}
+              fullWidth
               disabled={loading}
-              FormHelperTextProps={{
-                className: commonClasses.formFieldAbsoluteHelper
-              }}
             />
           </Grid>
         </Grid>

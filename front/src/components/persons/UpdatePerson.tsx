@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { useUpdatePerson } from '@hooks';
 import { LocationType } from '@types';
 import { useCommonStyles } from '@theme';
+import { FormikTextField } from '@components/forms';
 import { Plus } from 'mdi-material-ui';
 
 import {
@@ -14,8 +15,7 @@ import {
 import {
   Button,
   Grid,
-  makeStyles,
-  TextField
+  makeStyles
 } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -95,23 +95,14 @@ export const UpdatePerson: FC<Props> = ({
       <form onSubmit={formik.handleSubmit} id='form-update-person'>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              id='name'
-              name='name'
+            <FormikTextField
+              formik={formik}
+              formikName='name'
               label='Person name'
               variant='outlined'
               required
-              value={formik.values.name}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              error={formik.touched.name && Boolean(formik.errors.name)}
-              helperText={formik.touched.name && formik.errors.name}
-              className={commonClasses.formFieldAbsoluteBase}
+              fullWidth
               disabled={loading}
-              FormHelperTextProps={{
-                className: commonClasses.formFieldAbsoluteHelper
-              }}
             />
           </Grid>
           <Grid item xs={12}>

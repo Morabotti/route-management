@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { Actions, ApplicationContainer } from '@components/common';
-import { Button, Grid, TextField } from '@material-ui/core';
+import { Button, Grid } from '@material-ui/core';
 import { useUpdateVehicle } from '@hooks';
-import { useCommonStyles } from '@theme';
+import { FormikTextField } from '@components/forms';
 
 interface Props {
   onBack: () => void;
@@ -13,7 +13,6 @@ export const UpdateVehicle: FC<Props> = ({
   onBack,
   vehicleId
 }: Props) => {
-  const commonClasses = useCommonStyles();
   const { loading, formik } = useUpdateVehicle(vehicleId);
 
   return (
@@ -57,23 +56,14 @@ export const UpdateVehicle: FC<Props> = ({
       <form onSubmit={formik.handleSubmit} id='form-update-vehicle'>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              id='licenseNumber'
-              name='licenseNumber'
+            <FormikTextField
+              formik={formik}
+              formikName='licenseNumber'
               label='License number'
               variant='outlined'
               required
-              value={formik.values.licenseNumber}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              error={formik.touched.licenseNumber && Boolean(formik.errors.licenseNumber)}
-              helperText={formik.touched.licenseNumber && formik.errors.licenseNumber}
-              className={commonClasses.formFieldAbsoluteBase}
+              fullWidth
               disabled={loading}
-              FormHelperTextProps={{
-                className: commonClasses.formFieldAbsoluteHelper
-              }}
             />
           </Grid>
         </Grid>
