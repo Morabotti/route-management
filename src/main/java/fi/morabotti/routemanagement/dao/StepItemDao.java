@@ -87,7 +87,7 @@ public class StepItemDao {
         );
     }
 
-    public Transactional<Long, DSLContext> batchCreate(
+    public Transactional<Void, DSLContext> batchCreate(
             List<Long> personIds,
             Long stepId
     ) {

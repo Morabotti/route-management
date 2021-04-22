@@ -7,6 +7,7 @@ import fi.morabotti.routemanagement.model.Vehicle;
 
 import javax.annotation.Nullable;
 import java.time.Instant;
+import java.util.List;
 
 @EasyValue
 @JsonDeserialize(builder = CreateRouteRequest.Builder.class)
@@ -17,6 +18,8 @@ public abstract class CreateRouteRequest {
 
     @Nullable
     public abstract Instant getStartTime();
+
+    public abstract List<CreateStepRequest> getSteps();
 
     public static Builder builder() {
         return new Builder();

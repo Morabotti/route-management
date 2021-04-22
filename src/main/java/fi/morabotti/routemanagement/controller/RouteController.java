@@ -59,10 +59,14 @@ public class RouteController {
     }
 
     public Route createRoute(CreateRouteRequest request) {
-        return routeDao.create(
-                routeDomain.createRoute(request)
-        )
-                .flatMap(routeDao::getById)
+        Long routeId = routeDao.create(routeDomain.createRoute(request))
+                .get();
+
+        for (CreateStepRequest step: request.getSteps()) {
+            this.createStep(step, routeId);
+        }
+
+        return routeDao.getById(routeId)
                 .get()
                 .orElseThrow(BadRequestException::new);
     }
@@ -89,12 +93,12 @@ public class RouteController {
                 routeDomain.createStep(request),
                 routeId
         )
-                .peek(stepId -> stepItemDao.batchCreate(
+                .peekMap(stepId -> stepItemDao.batchCreate(
                                 routeDomain.mapPersonIds(request),
                                 stepId
                         )
                 )
-                .flatMap(routeDao::getById)
+                .flatMap(ignored -> routeDao.getById(routeId))
                 .get()
                 .orElseThrow(BadRequestException::new);
     }
